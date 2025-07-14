@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import "@/styles/globals.css";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -6,11 +7,18 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-black text-white px-6 py-12 font-sans">
       <section className="text-center mb-20">
-        <h1 className="text-5xl font-bold mb-4">Akshay Dongare</h1>
-        <p className="text-xl opacity-75">
-          AI Engineer. OSS Contributor. Builder of Intelligent Systems.
-        </p>
-      </section>
+      <Image
+        src="/profile.jpg"
+        alt="Akshay Dongare"
+        width={120}
+        height={120}
+        className="rounded-full mx-auto mb-6 border-4 border-white"
+      />
+      <h1 className="text-5xl font-bold mb-4">Akshay Dongare</h1>
+      <p className="text-xl opacity-75">
+        AI Engineer. OSS Contributor. Builder of Intelligent Systems.
+      </p>
+    </section>
 
       <section className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-20">
         <Card className="bg-zinc-900 text-white shadow-xl">
