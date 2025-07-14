@@ -1,4 +1,5 @@
 import Link from "next/link";
+import "@/styles/globals.css";
 import { Card, CardContent } from "@/components/ui/card";
 
 export default function Home() {
