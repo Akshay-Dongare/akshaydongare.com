@@ -1,73 +1,63 @@
 import Link from "next/link";
 import Image from "next/image";
 import "@/styles/globals.css";
-import { Card, CardContent } from "@/components/ui/card";
+
+function GlitchText({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  return (
+    <span className={`relative inline-block ${className}`}>
+      {children}
+      <span className="absolute inset-0 animate-pulse text-lightblue/30 blur-sm pointer-events-none select-none">
+        {children}
+      </span>
+    </span>
+  );
+}
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-black text-white px-6 py-12 font-sans">
-      <section className="text-center mb-20">
-      <Image
-        src="/profile.jpg"
-        alt="Akshay Dongare"
-        width={120}
-        height={120}
-        className="rounded-full mx-auto mb-6 border-4 border-white"
-      />
-      <h1 className="text-5xl font-bold mb-4">Akshay Dongare</h1>
-      <p className="text-xl opacity-75">
-        AI Engineer. OSS Contributor. Builder of Intelligent Systems.
-      </p>
-    </section>
-
-      <section className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-20">
-        <Card className="bg-zinc-900 text-white shadow-xl">
-          <CardContent className="p-6">
-            <h2 className="text-2xl font-semibold mb-2">About Me</h2>
-            <p className="opacity-75">
-              Placeholder text about Akshay's background, interests, and current work in applied AI.
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-zinc-900 text-white shadow-xl">
-          <CardContent className="p-6">
-            <h2 className="text-2xl font-semibold mb-2">Projects</h2>
-            <ul className="list-disc list-inside opacity-75">
-              <li>LangChain Open Source Contributions</li>
-              <li>Predictive Maintenance Dashboard</li>
-              <li>OSS Tools for LangGraph/MCP</li>
-            </ul>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-zinc-900 text-white shadow-xl">
-          <CardContent className="p-6">
-            <h2 className="text-2xl font-semibold mb-2">Blog</h2>
-            <p className="opacity-75">Blog posts coming soon...</p>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-zinc-900 text-white shadow-xl">
-          <CardContent className="p-6">
-            <h2 className="text-2xl font-semibold mb-2">Open Source</h2>
-            <p className="opacity-75">
-              Featured GitHub PRs and contributions to LangChain and other tools.
-            </p>
-          </CardContent>
-        </Card>
-      </section>
-
-      <footer className="text-center text-sm opacity-50">
-        <p>Connect with me:</p>
-        <div className="flex justify-center gap-4 mt-2">
-          <Link href="#">GitHub</Link>
-          <Link href="#">LinkedIn</Link>
-          <Link href="#">Resume</Link>
-          <Link href="#">Instagram</Link>
-          <Link href="#">YouTube</Link>
+    <main className="relative min-h-screen overflow-x-hidden bg-matteblack text-lightgray font-sans">
+      {/* Grid Background */}
+      <div className="absolute inset-0 z-0 bg-grid bg-lightblue/40 bg-repeat bg-[length:36px_36px] opacity-20 [mask-image:radial-gradient(ellipse_at_center,white,transparent_75%)] pointer-events-none" />
+      {/* Animated Blurred Orbs */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
+        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-gradient-to-br from-lightblue/10 to-darkblue/10 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute top-3/4 right-1/4 w-96 h-96 bg-gradient-to-br from-darkblue/10 to-lightblue/10 rounded-full blur-3xl animate-pulse" />
+      </div>
+      {/* Hero Section */}
+      <section className="relative z-10 flex flex-col items-center justify-center min-h-[80vh] px-4 py-24 text-center">
+        <div className="backdrop-blur-2xl bg-lightblue/10 border border-lightblue/20 rounded-3xl p-10 md:p-16 shadow-2xl max-w-3xl mx-auto flex flex-col items-center">
+          <Image
+            src="/profile.jpg"
+            alt="Akshay Dongare"
+            width={120}
+            height={120}
+            className="rounded-full mx-auto mb-6 border-4 border-lightblue shadow-lg"
+          />
+          <h1 className="font-Mono text-4xl sm:text-5xl md:text-6xl font-bold text-lightblue mb-4">
+            <GlitchText>Akshay Dongare</GlitchText>
+          </h1>
+          <p className="text-xl md:text-2xl font-Quicksand text-lightgray mb-8">
+            AI Engineer. OSS Contributor. Builder of Intelligent Systems.
+          </p>
+          <Link
+            href="/about"
+            className="inline-block font-Mono text-base md:text-lg text-lightblue px-8 py-3 rounded-full border border-lightblue/50 bg-matteblack/60 hover:bg-lightblue/10 hover:border-lightblue/80 transition-colors duration-300 shadow-lg hover:shadow-lightblue/30"
+          >
+            Learn More About Me
+          </Link>
         </div>
-        <p className="mt-4">© 2025 Akshay Dongare</p>
+      </section>
+      {/* Footer */}
+      <footer className="relative z-10 text-center text-sm opacity-70 mt-12 pb-8">
+        <p className="mb-2">Connect with me:</p>
+        <div className="flex justify-center gap-4 mb-4">
+          <Link href="#" className="hover:text-lightblue transition-colors">GitHub</Link>
+          <Link href="#" className="hover:text-lightblue transition-colors">LinkedIn</Link>
+          <Link href="#" className="hover:text-lightblue transition-colors">Resume</Link>
+          <Link href="#" className="hover:text-lightblue transition-colors">Instagram</Link>
+          <Link href="#" className="hover:text-lightblue transition-colors">YouTube</Link>
+        </div>
+        <p className="mt-2">© 2025 Akshay Dongare</p>
       </footer>
     </main>
   );
