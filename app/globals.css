@@ -1,0 +1,123 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-cream: #f0ede7;
+  --color-cream-dark: #e8e4dc;
+  --color-charcoal: #1c1c1c;
+  --color-muted: #8a8a8a;
+  --color-steel: #5e7a8a;
+  --color-steel-dark: #4a6070;
+  --color-overlay-text: rgba(255,255,255,0.92);
+  --color-border: rgba(28,28,28,0.12);
+
+  /* Deep Obsidian Blend System */
+  --blend-void: #07090f;
+  --blend-deep: #0d1117;
+  --blend-mid: #141920;
+  --blend-surface: #1c2230;
+  --blend-slate: #5b7fa6;
+  --blend-mist: #c8d4e0;
+  --blend-parchment: #f2efe9;
+  --blend-warm: #e9e4da;
+  --blend-accent: #6b9fd4;
+  --blend-accent-dim: #3a6288;
+
+  --text-on-dark: rgba(255,255,255,0.92);
+  --text-on-dark-dim: rgba(255,255,255,0.55);
+  --text-on-light: #0d1117;
+  --text-on-light-dim: #5a6370;
+  --border-on-dark: rgba(255,255,255,0.08);
+  --border-on-light: rgba(13,17,23,0.10);
+
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+:root {
+  --color-cream: #f0ede7;
+  --color-cream-dark: #e8e4dc;
+  --color-charcoal: #1c1c1c;
+  --color-muted: #8a8a8a;
+  --color-steel: #5e7a8a;
+  --color-steel-dark: #4a6070;
+  --color-white: #ffffff;
+  --color-black: #000000;
+  --color-overlay-text: rgba(255,255,255,0.92);
+  --color-border: rgba(28,28,28,0.12);
+
+  /* Deep Obsidian Blend System */
+  --blend-void: #07090f;
+  --blend-deep: #0d1117;
+  --blend-mid: #141920;
+  --blend-surface: #1c2230;
+  --blend-slate: #5b7fa6;
+  --blend-mist: #c8d4e0;
+  --blend-parchment: #f2efe9;
+  --blend-warm: #e9e4da;
+  --blend-accent: #6b9fd4;
+  --blend-accent-dim: #3a6288;
+
+  --text-on-dark: rgba(255,255,255,0.92);
+  --text-on-dark-dim: rgba(255,255,255,0.55);
+  --text-on-light: #0d1117;
+  --text-on-light-dim: #5a6370;
+  --border-on-dark: rgba(255,255,255,0.08);
+  --border-on-light: rgba(13,17,23,0.10);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+html.skip-boot .boot-mask {
+  display: none !important;
+}
+
+body {
+  background-color: var(--blend-void);
+  color: var(--color-charcoal);
+  font-family: var(--font-geist-sans), sans-serif;
+  cursor: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a, button, [role="button"], input, select, textarea {
+  cursor: none;
+}
+
+@layer utilities {
+  .text-display-xl {
+    font-size: clamp(2.8rem, 6vw, 5.5rem);
+    font-weight: 400;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+  }
+  .text-display-l {
+    font-size: clamp(2rem, 4vw, 3.8rem);
+    font-weight: 400;
+    line-height: 1.1;
+  }
+  .text-display-m {
+    font-size: clamp(1.4rem, 2.5vw, 2.4rem);
+    font-weight: 400;
+  }
+  .text-body {
+    /* 16px on phones (already ~40 chars/line there), scaling to 18px on desktop.
+       Larger type in a fixed column also pulls characters-per-line down. */
+    font-size: clamp(1rem, 0.9rem + 0.45vw, 1.125rem);
+    line-height: 1.6;
+    font-weight: 400;
+  }
+  .text-label {
+    font-family: var(--font-geist-mono), monospace;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--color-muted);
+  }
+  .text-code {
+    font-family: var(--font-geist-mono), monospace;
+    font-size: 0.8rem;
+  }
+}
