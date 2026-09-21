@@ -89,7 +89,23 @@ export function Navbar() {
                 <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 h-[80px] flex items-center justify-between">
 
                     {/* LOGO - Left */}
-                    <Link href="/" className="flex items-center cursor-none pointer-events-auto" onClick={() => setIsMobileMenuOpen(false)}>
+                    {/* On a sub-page this navigates home, which App Router already scrolls to
+                        the top. On the homepage itself, linking to the route you are already
+                        on is a no-op, so the logo felt dead — scroll instead. aria-label
+                        because "[ AD ]" reads as punctuation to a screen reader. */}
+                    <Link
+                        href="/"
+                        aria-label={pathname === "/" ? "Akshay Dongare — back to top" : "Akshay Dongare — home"}
+                        className="flex items-center cursor-none pointer-events-auto"
+                        onClick={(e) => {
+                            setIsMobileMenuOpen(false);
+                            if (pathname === "/") {
+                                e.preventDefault();
+                                const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+                                window.scrollTo({ top: 0, behavior: reduced ? "auto" : "smooth" });
+                            }
+                        }}
+                    >
                         <span className={`font-mono text-sm font-medium tracking-[0.1em] ${isMobileMenuOpen ? "text-white" : textColorClass} transition-colors duration-300`}>
                             [ AD ]
                         </span>
