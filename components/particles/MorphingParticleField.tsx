@@ -50,7 +50,6 @@ function createSharedState(): SharedState {
 // ═════════════════════════════════════════════════════════════
 function MorphingPointCloud({ color, shared }: { color: string; shared: React.MutableRefObject<SharedState> }) {
     const pointsRef = useRef<THREE.Points>(null);
-    const { mouse, viewport } = useThree();
 
     const stateRef = useRef({
         currentShapeIdx: 0,
@@ -163,8 +162,18 @@ function MorphingPointCloud({ color, shared }: { color: string; shared: React.Mu
         const halfH = Math.tan(THREE.MathUtils.degToRad(cam.fov / 2)) * cam.position.z;
         const floorY = -Math.max(-SHATTER_FLOOR, halfH + 1);
 
-        const mouseX = (mouse.x * viewport.width) / 2;
-        const mouseY = (mouse.y * viewport.height) / 2;
+        // Map the pointer from CSS pixels to world space against the LIVE camera.
+        // Two separate reasons this cannot use R3F's `mouse` / `viewport`:
+        //  - `mouse` only updates on pointermove, and a touch press-and-hold fires
+        //    pointerdown with no move, so a finger at rest never registers at all;
+        //  - `viewport` is recomputed only in setSize, so CameraFit's imperative
+        //    setZ leaves it describing the z=10 frustum while the camera actually
+        //    sits at z~19.5 on a phone — about half the true world extent.
+        // Both the mouse and touch handlers already write cursorX/cursorY in
+        // element-relative CSS pixels, so derive from those instead.
+        const halfW = halfH * (state.size.width / state.size.height);
+        const mouseX = ((sh.cursorX / state.size.width) * 2 - 1) * halfW;
+        const mouseY = -((sh.cursorY / state.size.height) * 2 - 1) * halfH;
         const time = state.clock.getElapsedTime();
         const dtScale = Math.min(delta * 60, 3);
 

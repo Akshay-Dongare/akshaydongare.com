@@ -65,7 +65,7 @@ export function WorkSection({ stats }: { stats: PackageStats }) {
                                 key={project.id}
                                 layout
                                 onClick={() => setActiveId(project.id)}
-                                className={`relative rounded-xl overflow-hidden cursor-none flex-shrink-0 group w-full md:h-full ${isActive ? "h-[440px] md:w-[45%]" : "h-[116px] md:w-[25%] opacity-70 hover:opacity-100"
+                                className={`relative rounded-xl overflow-hidden cursor-none flex-shrink-0 group w-full md:h-full ${isActive ? "min-h-[440px] md:w-[45%]" : "min-h-[116px] md:w-[25%] opacity-70 hover:opacity-100"
                                     }`}
                                 transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
                             >
@@ -74,7 +74,7 @@ export function WorkSection({ stats }: { stats: PackageStats }) {
 
                                 {!isActive && <div className="absolute inset-0 bg-[rgba(0,0,0,0.2)] backdrop-blur-sm" />}
 
-                                <div className="absolute inset-0 p-6 flex flex-col justify-between z-10">
+                                <div className="relative md:absolute md:inset-0 p-6 flex flex-col justify-between gap-6 md:gap-0 z-10">
                                     <div className="flex flex-col items-start gap-3">
                                         <div className="font-mono text-[0.65rem] tracking-widest text-white uppercase bg-[rgba(0,0,0,0.3)] backdrop-blur-md px-3 py-1.5 rounded-full self-start inline-flex items-center gap-2">
                                             {project.label}
@@ -94,7 +94,7 @@ export function WorkSection({ stats }: { stats: PackageStats }) {
                                                 animate={{ opacity: 1, y: 0 }}
                                                 exit={{ opacity: 0, y: 20 }}
                                                 transition={{ duration: 0.4, delay: 0.08 }}
-                                                className="bg-black/40 backdrop-blur-md p-6 rounded-lg max-w-[80%]"
+                                                className="bg-black/40 backdrop-blur-md p-6 rounded-lg max-w-full md:max-w-[80%]"
                                             >
                                                 <p className="text-[0.95rem] text-white/90 leading-relaxed font-sans">
                                                     {project.desc}

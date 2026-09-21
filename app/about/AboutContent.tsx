@@ -66,7 +66,7 @@ export function AboutContent({ stats }: { stats: PackageStats }) {
                             href={PEPY_URL}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-white/85 underline underline-offset-4 decoration-white/20 hover:text-white/55 transition-colors cursor-none"
+                            className="text-white/85 hover:underline hover:underline-offset-4 hover:decoration-white/40 hover:text-white/70 transition-colors cursor-none"
                         >
                             {stats.long} downloads
                         </Link>
