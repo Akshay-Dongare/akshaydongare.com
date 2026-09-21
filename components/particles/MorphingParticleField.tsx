@@ -9,6 +9,12 @@ const PARTICLE_COUNT = 8000;
 const MORPH_DURATION = 2.5;
 const HOLD_AFTER_MORPH = 1.0;      // hold longer so the easter egg word has time to display
 const SHATTER_HOLD_TIME = 2.25;
+// Touch gets roughly half. Resting a mouse is passive — your hand is doing
+// nothing — but holding a finger against glass is active effort, and 2.25s of
+// it reads as a hang rather than a charge. 1.1s still sits well clear of the
+// ~500ms long-press threshold both iOS and Android use, so a sloppy tap cannot
+// trigger it, and it is long enough for the tension ring to visibly sweep.
+const SHATTER_HOLD_TIME_TOUCH = 1.1;
 const SPRING_STRENGTH = 0.1;
 const DAMPING = 0.82;
 const GRAVITY = -1.5;              // gentle fall (was -4.0)
@@ -32,6 +38,12 @@ interface SharedState {
         which is the centre of the viewport and therefore on top of the shape,
         so without this the charge begins before any input exists. */
     pointerActive: boolean;
+    /** True when the last input to aim the cursor was a finger or stylus.
+        Drives both the hold duration and the tension ring's radius, which have
+        to agree about which device is live. */
+    coarsePointer: boolean;
+    /** Hold required to shatter — see SHATTER_HOLD_TIME_TOUCH. */
+    holdTime: number;
     reformStartedAt: number;
     reformShapeIdx: number;
     showWord: boolean;
@@ -41,6 +53,7 @@ function createSharedState(): SharedState {
     return {
         hoverProgress: 0, isShattered: false, cursorOverShape: false,
         cursorX: 0, cursorY: 0, pointerActive: false,
+        coarsePointer: false, holdTime: SHATTER_HOLD_TIME,
         reformStartedAt: 0, reformShapeIdx: 0, showWord: false,
     };
 }
@@ -57,6 +70,7 @@ function MorphingPointCloud({ color, shared }: { color: string; shared: React.Mu
         morphProgress: 0,
         timeSinceLastMorph: 0,
         cursorHoverStart: -1,
+        lastHoldTime: SHATTER_HOLD_TIME,
         isShattered: false,
         shatterTime: 0,
         isRebuilding: false,
@@ -209,12 +223,20 @@ function MorphingPointCloud({ color, shared }: { color: string; shared: React.Mu
         let hoverProgress = 0;
         if (cursorIsOverShape && !s.isShattered) {
             if (s.cursorHoverStart < 0) s.cursorHoverStart = time;
+            // Switching input device mid-charge changes the denominator. Carry the
+            // fraction already charged rather than the elapsed seconds, or the ring
+            // jumps to full (mouse -> touch) or visibly unwinds (touch -> mouse).
+            if (sh.holdTime !== s.lastHoldTime) {
+                const carried = Math.min((time - s.cursorHoverStart) / s.lastHoldTime, 1.0);
+                s.cursorHoverStart = time - carried * sh.holdTime;
+                s.lastHoldTime = sh.holdTime;
+            }
             const hoverTime = time - s.cursorHoverStart;
-            hoverProgress = Math.min(hoverTime / SHATTER_HOLD_TIME, 1.0);
+            hoverProgress = Math.min(hoverTime / sh.holdTime, 1.0);
             sh.hoverProgress = hoverProgress;
 
             // ── Trigger shatter ─────────────────────────────
-            if (hoverTime >= SHATTER_HOLD_TIME) {
+            if (hoverTime >= sh.holdTime) {
                 s.isShattered = true;
                 s.shatterTime = time;
                 s.cursorHoverStart = -1;
@@ -333,22 +355,41 @@ function MorphingPointCloud({ color, shared }: { color: string; shared: React.Mu
 function TensionRing({ shared }: { shared: React.MutableRefObject<SharedState> }) {
     const svgRef = useRef<SVGSVGElement>(null);
     const circleRef = useRef<SVGCircleElement>(null);
-    const R = 20;
-    const C = 2 * Math.PI * R;
+    // Fine pointers get a tight ring at the cursor; a fingertip occludes roughly
+    // 44pt, so coarse input needs a radius that clears it or the only explicit
+    // progress cue is invisible exactly when it is being used.
+    const R_FINE = 20;
+    const R_COARSE = 44;
+    const BOX = (r: number) => r * 2 + 10;
+    const CIRC = (r: number) => 2 * Math.PI * r;
 
     useEffect(() => {
         let id: number;
+        let appliedR = -1;   // only rewrite geometry when the pointer kind changes
         function tick() {
             const s = shared.current;
             const svg = svgRef.current;
             const circle = circleRef.current;
             if (svg && circle) {
                 if (s.cursorOverShape && !s.isShattered && s.hoverProgress > 0.04) {
+                    const r = s.coarsePointer ? R_COARSE : R_FINE;
+                    const box = BOX(r);
+                    const c = CIRC(r);
+                    if (appliedR !== r) {
+                        svg.setAttribute("width", String(box));
+                        svg.setAttribute("height", String(box));
+                        circle.setAttribute("cx", String(box / 2));
+                        circle.setAttribute("cy", String(box / 2));
+                        circle.setAttribute("r", String(r));
+                        circle.setAttribute("transform", `rotate(-90 ${box / 2} ${box / 2})`);
+                        circle.style.strokeDasharray = String(c);
+                        appliedR = r;
+                    }
                     svg.style.display = "block";
-                    svg.style.left = `${s.cursorX - 25}px`;
-                    svg.style.top = `${s.cursorY - 25}px`;
+                    svg.style.left = `${s.cursorX - box / 2}px`;
+                    svg.style.top = `${s.cursorY - box / 2}px`;
                     svg.style.opacity = String(Math.min(0.12 + s.hoverProgress * 0.58, 0.7));
-                    circle.style.strokeDashoffset = String(C * (1 - s.hoverProgress));
+                    circle.style.strokeDashoffset = String(c * (1 - s.hoverProgress));
                 } else {
                     svg.style.display = "none";
                 }
@@ -357,17 +398,17 @@ function TensionRing({ shared }: { shared: React.MutableRefObject<SharedState> }
         }
         id = requestAnimationFrame(tick);
         return () => cancelAnimationFrame(id);
-    }, [shared, C]);
+    }, [shared]);
 
     return (
-        <svg ref={svgRef} width={50} height={50}
+        <svg ref={svgRef} width={BOX(R_FINE)} height={BOX(R_FINE)}
             className="absolute pointer-events-none z-[11]"
             style={{ display: "none", isolation: "isolate" }}>
             <circle ref={circleRef}
-                cx={25} cy={25} r={R}
+                cx={BOX(R_FINE) / 2} cy={BOX(R_FINE) / 2} r={R_FINE}
                 fill="none" stroke="rgba(255,255,255,0.55)" strokeWidth={1.5}
-                strokeDasharray={C} strokeDashoffset={C}
-                strokeLinecap="round" transform="rotate(-90 25 25)" />
+                strokeDasharray={CIRC(R_FINE)} strokeDashoffset={CIRC(R_FINE)}
+                strokeLinecap="round" transform={`rotate(-90 ${BOX(R_FINE) / 2} ${BOX(R_FINE) / 2})`} />
         </svg>
     );
 }
@@ -439,11 +480,13 @@ export function MorphingParticleField({ color = "#ffffff", className = "" }: { c
         const el = wrapperRef.current;
         if (!el) return;
 
-        const aim = (clientX: number, clientY: number) => {
+        const aim = (clientX: number, clientY: number, coarse: boolean) => {
             const rect = el.getBoundingClientRect();
             shared.current.cursorX = clientX - rect.left;
             shared.current.cursorY = clientY - rect.top;
             shared.current.pointerActive = true;
+            shared.current.coarsePointer = coarse;
+            shared.current.holdTime = coarse ? SHATTER_HOLD_TIME_TOUCH : SHATTER_HOLD_TIME;
         };
 
         // After a tap, browsers replay a synthetic mouse sequence. A touchscreen
@@ -457,7 +500,7 @@ export function MorphingParticleField({ color = "#ffffff", className = "" }: { c
         // the section is reached by scrolling without nudging the cursor.
         const move = (e: MouseEvent) => {
             if (performance.now() - lastTouch < REPLAY_WINDOW) return;
-            aim(e.clientX, e.clientY);
+            aim(e.clientX, e.clientY, false);
         };
         const leave = () => { shared.current.pointerActive = false; };
 
@@ -466,12 +509,12 @@ export function MorphingParticleField({ color = "#ffffff", className = "" }: { c
         const down = (e: PointerEvent) => {
             if (e.pointerType === "mouse") return;
             lastTouch = performance.now();
-            aim(e.clientX, e.clientY);
+            aim(e.clientX, e.clientY, true);
         };
         const drag = (e: PointerEvent) => {
             if (e.pointerType === "mouse") return;
             lastTouch = performance.now();
-            aim(e.clientX, e.clientY);
+            aim(e.clientX, e.clientY, true);
         };
         const lift = (e: PointerEvent) => {
             if (e.pointerType === "mouse") return;

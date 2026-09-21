@@ -20,7 +20,7 @@ export function ContactSection() {
     return (
         <section
             ref={containerRef}
-            // A two-second press-and-hold IS the interaction here, which is exactly
+            // A press-and-hold IS the interaction here (1.1s on touch), which is exactly
             // the gesture iOS reads as "select text" — it was grabbing the CONNECT
             // label and raising the Copy / Search callout mid-charge. Suppress both
             // for this section only; the rest of the site stays selectable.
