@@ -31,8 +31,21 @@ const FLOOR_BOUNCE = 0.2;
 // halo fired 43-70% of the time. Same value for mouse and finger: there is no
 // reason a mouse should be the less reliable of the two.
 const HIT_TOLERANCE_PX = 24;
-// Test every Nth particle; the loop early-exits as soon as one is in range.
+// Test every Nth particle; the loop early-exits as soon as the threshold is met.
 const HIT_TEST_STRIDE = 2;
+// ...and require MANY of them, not one. Every generator scatters ~5% of its
+// particles uniformly across the whole box as ambient "stars", so a
+// nearest-particle test treats the entire bounding box as the shape — press
+// beside the DNA helix and you are still within 24px of a stray dot. Density
+// separates the two cleanly: measured across all five shapes, real structure has
+// a median of 353-609 particles inside the tolerance circle while scatter-only
+// regions have 5-9. At 14 (strided, so ~28 unstrided) every shape detects 100%
+// of its real structure and the stars stop counting.
+const HIT_MIN_NEIGHBOURS = 14;
+// Portrait stacks the headline and the CONNECT link across the top of the
+// section while the artwork is centred, so they collide. Lift the camera on
+// portrait aspects to drop the shape clear of them.
+const PORTRAIT_CAMERA_LIFT = 1.5;
 const SETTLE_TIME = 1.0;           // time on ground before reform
 const REBUILD_VULNERABILITY_DELAY = 4.0; // time to ignore cursor while reforming & showing word
 
@@ -186,7 +199,8 @@ function MorphingPointCloud({ color, shared }: { color: string; shared: React.Mu
         // the aspects that matter here.
         const cam = state.camera as THREE.PerspectiveCamera;
         const halfH = Math.tan(THREE.MathUtils.degToRad(cam.fov / 2)) * cam.position.z;
-        const floorY = -Math.max(-SHATTER_FLOOR, halfH + 1);
+        // Just below the bottom edge of what the camera can see, wherever it sits.
+        const floorY = Math.min(SHATTER_FLOOR, cam.position.y - halfH - 1);
 
         // Map the pointer from CSS pixels to world space against the LIVE camera.
         // Two separate reasons this cannot use R3F's `mouse` / `viewport`:
@@ -199,7 +213,7 @@ function MorphingPointCloud({ color, shared }: { color: string; shared: React.Mu
         // element-relative CSS pixels, so derive from those instead.
         const halfW = halfH * (state.size.width / state.size.height);
         const mouseX = ((sh.cursorX / state.size.width) * 2 - 1) * halfW;
-        const mouseY = -((sh.cursorY / state.size.height) * 2 - 1) * halfH;
+        const mouseY = cam.position.y - ((sh.cursorY / state.size.height) * 2 - 1) * halfH;
         const time = state.clock.getElapsedTime();
         const dtScale = Math.min(delta * 60, 3);
 
@@ -222,12 +236,13 @@ function MorphingPointCloud({ color, shared }: { color: string; shared: React.Mu
         const pxPerUnit = (state.size.height / 2) / halfH;
         const tolWorld = HIT_TOLERANCE_PX / pxPerUnit;
         const tol2 = tolWorld * tolWorld;
+        let near = 0;
         let overShape = false;
         for (let i = 0; i < PARTICLE_COUNT; i += HIT_TEST_STRIDE) {
             const i3 = i * 3;
             const dx = posArr[i3] - mouseX;
             const dy = posArr[i3 + 1] - mouseY;
-            if (dx * dx + dy * dy < tol2) { overShape = true; break; }
+            if (dx * dx + dy * dy < tol2 && ++near >= HIT_MIN_NEIGHBOURS) { overShape = true; break; }
         }
         const cursorIsOverShape = sh.pointerActive && !s.isRebuilding && overShape;
 
@@ -483,7 +498,9 @@ function CameraFit() {
     const { camera, size } = useThree();
     useLayoutEffect(() => {
         const cam = camera as THREE.PerspectiveCamera;
-        cam.position.setZ(Math.max(10, 9.0 / (size.width / size.height)));
+        const aspect = size.width / size.height;
+        cam.position.setZ(Math.max(10, 9.0 / aspect));
+        cam.position.setY(aspect < 1 ? PORTRAIT_CAMERA_LIFT : 0);
         cam.updateProjectionMatrix();
     }, [camera, size]);
     return null;
