@@ -225,9 +225,49 @@ The two systems are intentionally different in character: the first is a quiet, 
 
 **`aSize` geometry attribute:** `generateParticleSizes()` in `particleData.ts` produces 70% fine grain `[0.75, 1.0]` and 30% structural nodes `[1.5, 2.5]`. Node probability is correlated with the `densityWave` formula so large particles land on the bright strands — not in void zones. In the vertex shader: `gl_PointSize = max(3.0, 45.0 * aSize / (-mvPos.z))`.
 
-**Interaction model — silk swirl, not repulsion:** mouse velocity captured each frame as a world-space delta. Force = `perpendicular(particle→cursor) × mouseSpeed × smoothstep_falloff`. A 0.22× inward component drapes the silk toward the hand. Stationary cursor: micro-breathing radial push.
+**Interaction model — a wake field, not a force on each particle.** The cursor never
+touches a particle. It deposits into a coarse 64×40 displacement grid, and every particle
+reads that grid and glides toward `base + wake`. The character is unchanged and still
+protected: tangential silk flow around the cursor path, a 0.22 inward drape toward the
+hand, a trail offset behind the cursor so it reads as a comet rather than a disc, never
+repulsion.
 
-**Spring dynamics — underdamped wobble:** `SPRING_STIFFNESS = 0.028`, `DAMPING = 0.91` (ratio ≈ 0.27 → underdamped). Particles overshoot base and ring back organically.
+Two properties follow from the structure rather than from tuning, and both are load-bearing:
+
+- **Nothing can ring.** Particles track the field with a first-order lag, and the worst-case
+  gain is `(1 - exp(-MAX_DT/FOLLOW_TAU)) × maxLag = 0.55`, which is below 1 at any frame
+  rate. A first-order approach with gain under 1 is monotonic, so overshoot is not damped,
+  it is impossible.
+- **There is no feedback path.** The field is sampled at each particle's REST position, not
+  its current one, so a particle can never drag its own sample around and nothing can
+  amplify. This is why the first property holds in practice and not just on paper.
+
+Persistence lives in the field, which decays exponentially (`FIELD_TAU`) and blooms outward
+through a 5-point blur as it fades, so motion keeps living after the cursor leaves. A linear
+`FIELD_FLOOR` bleed on top of the exponential is what lets the wake reach exact zero in
+finite time rather than trailing an asymptote, which is also what lets the whole system
+detect it is finished and sleep.
+
+**Anything per-frame in here must be scaled by dt.** The blur coefficient was the one term
+that was not, and the wake bloomed about twice as wide at 120fps as at 30 for the same
+gesture. It is `min(FIELD_DIFFUSION * dt * 60, 0.24)` now, and the clamp is not optional: an
+explicit 5-point stencil goes unstable above 0.25 and a long frame would otherwise reach
+0.39.
+
+**The spring is gone, and should not come back.** It was `SPRING_STIFFNESS = 0.028`,
+`DAMPING = 0.91`, a damping ratio of 0.288 measured from the discrete map
+`[[1-Dk, D], [-Dk, D]]`: a 0.67s oscillation, 1.06s to settle to 5%, about 1.6 visible
+bounces. Five thousand particles each ringing 1.6 times at different phases summed into a
+wobbling sheet, and the owner's description of it was "like dipping a hand in jelly".
+
+Retuning could not have fixed it. Within that integrator the per-frame decay is `sqrt(D)`
+whenever the system oscillates, so reaching non-oscillatory behaviour forces heavy friction
+and collapses travel: the knee sits around ratio 0.71, which keeps roughly 62% of the
+motion. Removing the oscillator was the only way to get full amplitude with zero ring.
+Measured after: 0.78s to 2% with zero bounces, and peak travel and settle time now vary by
+under 1.5% across 30, 60, 120 and 144fps, where the old model varied about 2.7× in travel
+because only the position integration was dt-scaled and the spring, force and damping were
+not.
 
 **`components/particles/MorphingParticleField.tsx`** — Used in `ContactSection`. The "Dynamic Climax." 8,000 particles morphing between geometric shapes (`lib/shapeGenerators.ts`). Cursor-hover charge (tension ring SVG overlay) → violent shatter → gravity/floor-bounce physics → reform. Custom GLSL `ShaderMaterial` with per-particle opacity. Mutable `SharedState` ref bridges the `useFrame` WebGL loop and HTML overlays (`TensionRing`, `ShapeWord`) without React re-renders. Easter-egg words cycle after each reform: `["imagine.", "build.", "endure.", "connect.", "evolve."]`.
 
