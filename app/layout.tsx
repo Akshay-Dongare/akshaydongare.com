@@ -39,7 +39,9 @@ export async function generateMetadata(): Promise<Metadata> {
     // /?utm_source=linkedin are indexed as the page itself rather than as
     // duplicates. "./" resolves per route, so /about canonicalises to /about.
     alternates: { canonical: "./" },
-    title: TITLE,
+    // default covers the homepage; template gives every other route its own title
+    // while keeping the name in it, which is the string we want to rank for.
+    title: { default: TITLE, template: "%s · Akshay Dongare" },
     description,
     openGraph: {
       title: TITLE,
