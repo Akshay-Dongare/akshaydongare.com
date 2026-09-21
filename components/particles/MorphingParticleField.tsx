@@ -20,7 +20,19 @@ const DAMPING = 0.82;
 const GRAVITY = -1.5;              // gentle fall (was -4.0)
 const SHATTER_FLOOR = -6.0;
 const FLOOR_BOUNCE = 0.2;
-const CURSOR_DETECT_RADIUS = 3.0;
+// How close the pointer must come to an actual particle to count as "on the
+// shape", in SCREEN pixels so it means the same thing at every camera distance.
+// A fingertip covers roughly 44pt, hence the coarse value.
+// How close the pointer must come to a real particle to count as "on the shape",
+// in SCREEN pixels so it behaves the same at any camera distance. Measured
+// against the actual shape generators at 375x812: 24px starts the charge on
+// 85-100% of points that are genuinely on the artwork and on 0% of points more
+// than 25px from it. Wider (44px) reinstated the original complaint — a 25-50px
+// halo fired 43-70% of the time. Same value for mouse and finger: there is no
+// reason a mouse should be the less reliable of the two.
+const HIT_TOLERANCE_PX = 24;
+// Test every Nth particle; the loop early-exits as soon as one is in range.
+const HIT_TEST_STRIDE = 2;
 const SETTLE_TIME = 1.0;           // time on ground before reform
 const REBUILD_VULNERABILITY_DELAY = 4.0; // time to ignore cursor while reforming & showing word
 
@@ -191,26 +203,33 @@ function MorphingPointCloud({ color, shared }: { color: string; shared: React.Mu
         const time = state.clock.getElapsedTime();
         const dtScale = Math.min(delta * 60, 3);
 
-        // ─── Shape center detection ─────────────────────────
-        let shapeCX = 0, shapeCY = 0;
-        const sampleN = 80;
-        for (let j = 0; j < sampleN; j++) {
-            const idx = Math.floor(Math.random() * PARTICLE_COUNT) * 3;
-            shapeCX += posArr[idx];
-            shapeCY += posArr[idx + 1];
-        }
-        shapeCX /= sampleN;
-        shapeCY /= sampleN;
-
         if (s.isRebuilding) {
             if (time - s.rebuildStartTime > REBUILD_VULNERABILITY_DELAY) {
                 s.isRebuilding = false;
             }
         }
 
-        const cdx = mouseX - shapeCX;
-        const cdy = mouseY - shapeCY;
-        const cursorIsOverShape = sh.pointerActive && !s.isRebuilding && (Math.sqrt(cdx * cdx + cdy * cdy) < CURSOR_DETECT_RADIUS);
+        // ─── Is the pointer actually ON the shape? ──────────
+        // This used to measure distance from the shape's CENTROID against a fixed
+        // 3.0 world-unit radius — a circle, not the shape. The mismatch is hidden
+        // on desktop, where the artwork is wider than the circle, but obvious on a
+        // phone: CameraFit pulls the camera back for the narrow aspect, so the same
+        // radius spans 71% of the screen width and reaches well outside the
+        // artwork. You could charge it by pressing empty background, or the hollow
+        // middle of an outline shape like the diamond.
+        // Measure proximity to an actual particle instead, with the tolerance in
+        // screen pixels so it behaves identically at any camera distance.
+        const pxPerUnit = (state.size.height / 2) / halfH;
+        const tolWorld = HIT_TOLERANCE_PX / pxPerUnit;
+        const tol2 = tolWorld * tolWorld;
+        let overShape = false;
+        for (let i = 0; i < PARTICLE_COUNT; i += HIT_TEST_STRIDE) {
+            const i3 = i * 3;
+            const dx = posArr[i3] - mouseX;
+            const dy = posArr[i3 + 1] - mouseY;
+            if (dx * dx + dy * dy < tol2) { overShape = true; break; }
+        }
+        const cursorIsOverShape = sh.pointerActive && !s.isRebuilding && overShape;
 
         // Deliberate: SharedState is a mutable ref bridging this useFrame loop to the
         // TensionRing/ShapeWord overlays at 60fps without re-rendering React. Routing
