@@ -2,13 +2,14 @@
 
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import type { PackageStats } from "@/lib/downloads";
 
-const PROJECTS = [
+const buildProjects = (stats: PackageStats) => [
     {
         id: "proj-1",
         label: "LANGCHAIN-LITELLM",
         metric: "1M installs every month",
-        desc: "Creator and lead maintainer of LangChain's official LiteLLM integration. A project I started on my own that now lives and ships inside the langchain-ai organization. One Python interface to 100+ model providers, plus router-backed load balancing, embeddings and OCR loading. 15 million downloads to date, and around a million every month.",
+        desc: `Creator and lead maintainer of LangChain's official LiteLLM integration. A project I started on my own that now lives and ships inside the langchain-ai organization. One Python interface to 100+ model providers, plus router-backed load balancing, embeddings and OCR loading. ${stats.long} downloads to date, and around a million every month.`,
         theme: "from-[#1c2230] to-[#07090f]"
     },
     {
@@ -27,7 +28,8 @@ const PROJECTS = [
     }
 ];
 
-export function WorkSection() {
+export function WorkSection({ stats }: { stats: PackageStats }) {
+    const PROJECTS = buildProjects(stats);
     const [activeId, setActiveId] = useState<string>("proj-1");
 
     return (

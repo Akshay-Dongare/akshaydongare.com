@@ -1,5 +1,5 @@
 import { ImageResponse } from "next/og";
-import { getDownloadCount } from "@/lib/downloads";
+import { getPackageStats } from "@/lib/downloads";
 
 // Generated at build time rather than shipped as a binary, so the card cannot
 // drift from the design tokens the way a hand-exported PNG would.
@@ -32,8 +32,8 @@ function chips(downloads: string) {
 }
 
 export default async function OpengraphImage() {
-    const [geist, downloads] = await Promise.all([loadGeist(), getDownloadCount()]);
-    const CHIPS = chips(downloads);
+    const [geist, stats] = await Promise.all([loadGeist(), getPackageStats()]);
+    const CHIPS = chips(stats.compact);
 
     return new ImageResponse(
         (

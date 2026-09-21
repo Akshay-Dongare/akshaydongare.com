@@ -3,9 +3,10 @@
 import React from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import type { PackageStats } from "@/lib/downloads";
 
 
-export function AboutSection() {
+export function AboutSection({ stats }: { stats: PackageStats }) {
     return (
         <section className="relative w-full pt-24 pb-32" style={{ background: 'linear-gradient(to bottom, #c8d4e0 0%, #f2efe9 100%)', marginBottom: '-1px' }} data-theme="light">
             <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 h-full flex flex-col md:flex-row gap-12 lg:gap-24">
@@ -20,7 +21,7 @@ export function AboutSection() {
                         transition={{ duration: 0.35 }}
                         className="text-display-l text-[var(--color-charcoal)] mb-10 max-w-[720px] leading-tight"
                     >
-                        I maintain langchain-litellm, LangChain&apos;s official interface to 100+ model providers, downloaded 15 million times and counting.
+                        I maintain langchain-litellm, LangChain&apos;s official interface to 100+ model providers, downloaded {stats.long} times and counting.
                     </motion.h2>
 
                     <motion.div

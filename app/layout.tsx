@@ -5,6 +5,7 @@ import { CursorProvider } from "@/components/cursor/CustomCursor";
 import { Navbar } from "@/components/nav/Navbar";
 import { Footer } from "@/components/sections/Footer";
 import { BootSequence } from "@/components/boot/BootSequence";
+import { getPackageStats } from "@/lib/downloads";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -17,31 +18,40 @@ const geistMono = Geist_Mono({
 });
 
 const TITLE = "Akshay Dongare · AI Platform Engineer";
-const DESCRIPTION =
-  "I build the layer between applications and language models. Creator and lead maintainer of langchain-litellm, LangChain's official LiteLLM integration, with 15 million downloads and counting.";
-// Shorter line for link previews, which truncate around 160-200 characters.
-const SHARE_DESCRIPTION =
-  "Creator and lead maintainer of langchain-litellm, LangChain's official LiteLLM integration. 15 million downloads and counting.";
 
-export const metadata: Metadata = {
-  // Required for the generated opengraph-image to resolve to an absolute URL.
-  metadataBase: new URL("https://akshaydongare.com"),
-  title: TITLE,
-  description: DESCRIPTION,
-  openGraph: {
+// Async so the download figure in the description stays current. Next caches
+// this alongside the page; getPackageStats carries its own revalidate window.
+export async function generateMetadata(): Promise<Metadata> {
+  const stats = await getPackageStats();
+
+  const description =
+    `I build the layer between applications and language models. Creator and lead maintainer of ` +
+    `langchain-litellm, LangChain's official LiteLLM integration, with ${stats.long} downloads and counting.`;
+  // Shorter line for link previews, which truncate around 160-200 characters.
+  const shareDescription =
+    `Creator and lead maintainer of langchain-litellm, LangChain's official LiteLLM integration. ` +
+    `${stats.long} downloads and counting.`;
+
+  return {
+    // Required for the generated opengraph-image to resolve to an absolute URL.
+    metadataBase: new URL("https://akshaydongare.com"),
     title: TITLE,
-    description: SHARE_DESCRIPTION,
-    url: "https://akshaydongare.com",
-    siteName: "Akshay Dongare",
-    locale: "en_US",
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: TITLE,
-    description: SHARE_DESCRIPTION,
-  },
-};
+    description,
+    openGraph: {
+      title: TITLE,
+      description: shareDescription,
+      url: "https://akshaydongare.com",
+      siteName: "Akshay Dongare",
+      locale: "en_US",
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: TITLE,
+      description: shareDescription,
+    },
+  };
+}
 
 const bootSkipScript = `try{if(sessionStorage.getItem('bootPlayed'))document.documentElement.classList.add('skip-boot')}catch(e){}`;
 

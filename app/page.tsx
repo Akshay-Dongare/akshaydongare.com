@@ -5,17 +5,17 @@ import { AboutSection } from "@/components/sections/AboutSection";
 import { WorkSection } from "@/components/sections/WorkSection";
 import { CodeSection } from "@/components/sections/CodeSection";
 import { ContactSection } from "@/components/sections/ContactSection";
-import { getDownloadCount } from "@/lib/downloads";
+import { getPackageStats } from "@/lib/downloads";
 
 export default async function Home() {
-  const downloads = await getDownloadCount();
+  const stats = await getPackageStats();
 
   return (
     <>
-      <HeroSection downloads={downloads} />
+      <HeroSection downloads={stats.compact} />
       <ParticleSection />
-      <AboutSection />
-      <WorkSection />
+      <AboutSection stats={stats} />
+      <WorkSection stats={stats} />
       <MissionSection />
       <CodeSection />
       <ContactSection />
