@@ -14,22 +14,18 @@ npm run start    # serve the production build locally
 ```
 
 Lint is clean and expected to stay that way, so a non-zero exit means you
-introduced something. Eight rule violations are suppressed at their call sites,
+introduced something. Six rule violations are suppressed at their call sites,
 each with a comment explaining why; do not add a suppression without one, and do
 not widen any of these to a file- or directory-level disable.
 
-Six are inherent to the WebGL work and will not be "fixed": `react-hooks/purity`
-where `Math.random()` seeds a typed array inside an empty-dep `useMemo` (the
-randomness must be rolled once and then stay stable, or the particles reshuffle
-on every re-render), `react-hooks/immutability` where `useFrame` writes directly
-into the shared ref and the velocity buffer (allocating fresh arrays for 8,000
-particles per frame would thrash GC), and `set-state-in-effect` in
-`BootSequence`, where `sessionStorage` is unreachable during SSR so the
-already-played check can only run after mount.
-
-The other two are deferred rather than inherent: both portraits are plain
-`<img>` where `next/image` would optimise. Worth revisiting if LCP on `/about`
-becomes a concern.
+All six are inherent to the WebGL and boot work and will not be "fixed":
+`react-hooks/purity` where `Math.random()` seeds a typed array inside an
+empty-dep `useMemo` (the randomness must be rolled once and then stay stable, or
+the particles reshuffle on every re-render), `react-hooks/immutability` where
+`useFrame` writes directly into the shared ref and the velocity buffer
+(allocating fresh arrays for 8,000 particles per frame would thrash GC), and
+`set-state-in-effect` in `BootSequence`, where `sessionStorage` is unreachable
+during SSR so the already-played check can only run after mount.
 
 There is no test suite.
 
@@ -60,9 +56,17 @@ The Navbar (`components/nav/Navbar.tsx`) adapts its text and background colors b
 
 **Logo:** typographical brutalist `[ AD ]` in monospace — Navbar (small, inline, inherits theme text color) and Footer (medium weight, paired with the Akshay Dongare wordmark). Do not revert to the old overlapping-circles letterform.
 
-**Portrait:** `/public/Akshay_Headshot.jpg` — integrated in two places:
-- `components/sections/AboutSection.tsx` (homepage right-column card): `object-cover object-top` inside a rounded card with a subtle gradient overlay
-- `app/about/page.tsx` (full-width 400px portrait): `object-cover object-top` in a rounded container
+**Portrait:** `/public/Akshay_Headshot.jpg` (1197x1497) — rendered through
+`next/image` with `fill` in two places, so each one needs a positioned ancestor
+and an accurate `sizes`. Do not revert either to a plain `<img>`: the source is
+836KB and both boxes are under 500px wide, so the optimizer is doing real work.
+- `components/sections/AboutSection.tsx` (homepage right-column card):
+  `object-cover object-top` inside a rounded card with a gradient overlay.
+  `sizes="(max-width: 768px) 100vw, 480px"`, and no `priority` — it is below the
+  fold, so the default lazy load is correct.
+- `app/about/AboutContent.tsx` (full-width portrait): `object-cover object-top`
+  in a rounded container. Carries `priority` because it is that page's LCP
+  element, and `sizes="320px"` because the box is capped by `max-w-[320px]`.
 
 ### Color System — "Deep Obsidian" Tokens
 

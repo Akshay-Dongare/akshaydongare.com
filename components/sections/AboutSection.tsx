@@ -3,6 +3,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import Image from "next/image";
 import { PEPY_URL, type PackageStats } from "@/lib/downloads";
 
 
@@ -59,14 +60,15 @@ export function AboutSection({ stats }: { stats: PackageStats }) {
                     {/* Card container */}
                     <div className="w-full h-full max-w-[480px] rounded-xl overflow-hidden group shadow-lg">
                         <div className="w-full h-full relative transition-transform duration-[600ms] cubic-bezier(0.25,0.1,0.25,1) group-hover:scale-[1.02]">
-                            {/* Deferred, not inherent: the portrait is a local static asset that would
-                                benefit from next/image. Left as a plain <img> for now; revisit if LCP on
-                                this page becomes a concern. */}
-                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img
+                            {/* No priority: this sits below the fold, so the default lazy
+                                load is correct. `fill` supplies absolute/inset-0/w-full/h-full
+                                itself, so only the object-fit classes remain. */}
+                            <Image
                                 src="/Akshay_Headshot.jpg"
                                 alt="Portrait of Akshay Dongare"
-                                className="absolute inset-0 w-full h-full object-cover object-top"
+                                fill
+                                sizes="(max-width: 768px) 100vw, 480px"
+                                className="object-cover object-top"
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-[rgba(0,0,0,0.18)] to-transparent pointer-events-none" />
                         </div>

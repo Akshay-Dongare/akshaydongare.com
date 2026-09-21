@@ -3,6 +3,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import Image from "next/image";
 import { PEPY_URL, type PackageStats } from "@/lib/downloads";
 
 export function AboutContent({ stats }: { stats: PackageStats }) {
@@ -24,19 +25,22 @@ export function AboutContent({ stats }: { stats: PackageStats }) {
                 </motion.h1>
 
                 <motion.div
-                    className="mb-16 w-full max-w-[320px] aspect-[4/5] rounded-xl overflow-hidden"
+                    className="relative mb-16 w-full max-w-[320px] aspect-[4/5] rounded-xl overflow-hidden"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.35, delay: 0.1, ease: [0.25, 0.1, 0.25, 1] }}
                 >
-                    {/* Deferred, not inherent: the portrait is a local static asset that would
-                        benefit from next/image. Left as a plain <img> for now; revisit if LCP on
-                        this page becomes a concern. */}
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
+                    {/* priority: this is the page's LCP element, so it must not lazy-load.
+                        sizes is the box's real cap (max-w-[320px]) rather than a viewport
+                        fraction, so the srcset tops out at 320px x DPR instead of the
+                        source's 1197px. */}
+                    <Image
                         src="/Akshay_Headshot.jpg"
                         alt="Portrait of Akshay Dongare"
-                        className="w-full h-full object-cover object-top"
+                        fill
+                        priority
+                        sizes="320px"
+                        className="object-cover object-top"
                     />
                 </motion.div>
 
