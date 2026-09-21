@@ -108,12 +108,20 @@ export function HeroSection({ stats }: { stats: PackageStats }) {
                         href={PEPY_URL}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="block text-[1.05rem] font-mono text-white/90 hover:text-white tracking-[0.04em] uppercase text-right leading-none mb-2 pointer-events-auto cursor-none transition-colors"
+                        className="block text-[1.05rem] font-mono text-white/90 hover:text-white tracking-[0.04em] uppercase text-right leading-none mb-2 pointer-events-auto cursor-none transition-colors underline underline-offset-4 decoration-white/25 hover:decoration-white/60"
                     >
                         {stats.compact} downloads
                     </Link>
                     <span className="text-[0.62rem] font-mono text-white/60 tracking-[0.15em] uppercase leading-relaxed text-right">
-                        {stats.monthlyCompact}+ EVERY MONTH.<br />
+                        <Link
+                            href={PEPY_URL}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="pointer-events-auto cursor-none hover:text-white/90 transition-colors underline underline-offset-4 decoration-white/25 hover:decoration-white/60"
+                        >
+                            {stats.monthlyCompact}+ every month.
+                        </Link>
+                        <br />
                         MAINTAINED IN THE LANGCHAIN ORG.<br />
                         RUNNING IN PRODUCTION.
                     </span>

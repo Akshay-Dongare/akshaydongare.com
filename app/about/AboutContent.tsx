@@ -3,7 +3,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import type { PackageStats } from "@/lib/downloads";
+import { PEPY_URL, type PackageStats } from "@/lib/downloads";
 
 export function AboutContent({ stats }: { stats: PackageStats }) {
     return (
@@ -54,7 +54,15 @@ export function AboutContent({ stats }: { stats: PackageStats }) {
                         >
                             langchain-litellm
                         </Link>
-                        {" "}and still lead its maintenance. It began as my own repository and now lives inside the langchain-ai organization as LangChain’s official LiteLLM integration, with its own page in the LangChain docs and an entry in the Python API reference. One interface to 100+ model providers, plus router-backed load balancing, embeddings and OCR loading. {stats.long} downloads across {stats.releases} releases, and around {stats.monthlyLong} every month. I also contribute upstream to{" "}
+                        {" "}and still lead its maintenance. It began as my own repository and now lives inside the langchain-ai organization as LangChain’s official LiteLLM integration, with its own page in the LangChain docs and an entry in the Python API reference. One interface to 100+ model providers, plus router-backed load balancing, embeddings and OCR loading. <Link
+                            href={PEPY_URL}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-white/85 underline underline-offset-4 decoration-white/20 hover:text-white/55 transition-colors cursor-none"
+                        >
+                            {stats.long} downloads
+                        </Link>
+                        {" "}across {stats.releases} releases, and around {stats.monthlyLong} every month. I also contribute upstream to{" "}
                         <Link
                             href="https://github.com/langchain-ai/langchain/pulls?q=is%3Apr+author%3AAkshay-Dongare+"
                             target="_blank"

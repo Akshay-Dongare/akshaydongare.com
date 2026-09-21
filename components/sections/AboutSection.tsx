@@ -3,7 +3,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import type { PackageStats } from "@/lib/downloads";
+import { PEPY_URL, type PackageStats } from "@/lib/downloads";
 
 
 export function AboutSection({ stats }: { stats: PackageStats }) {
@@ -21,7 +21,16 @@ export function AboutSection({ stats }: { stats: PackageStats }) {
                         transition={{ duration: 0.35 }}
                         className="text-display-l text-[var(--color-charcoal)] mb-10 max-w-[720px] leading-tight"
                     >
-                        I maintain langchain-litellm, LangChain&apos;s official interface to 100+ model providers, downloaded {stats.long} times and counting.
+                        I maintain langchain-litellm, LangChain&apos;s official interface to 100+ model providers, downloaded{" "}
+                        <Link
+                            href={PEPY_URL}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="underline underline-offset-[6px] decoration-[var(--color-charcoal)]/25 hover:decoration-[var(--color-charcoal)]/60 transition-colors cursor-none"
+                        >
+                            {stats.long} times
+                        </Link>
+                        {" "}and counting.
                     </motion.h2>
 
                     <motion.div
