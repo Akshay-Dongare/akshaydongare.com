@@ -163,6 +163,22 @@ cards to ~4.3 screens down — past where attention has measurably decayed. Movi
 below `WorkSection` lifts the proof to ~3.2 screens and reads better rhetorically:
 evidence first, thesis as the close.
 
+**A joint needs to match in slope, not just in value.** Matching colours is necessary
+and not sufficient: the eye reads a break in the *rate* of change as a line too, which is
+the Mach band effect. Hero to ParticleSection was the case that proved it. Its value step
+was 0 and it still showed a visible seam, because the hero drifts void to deep across a
+whole 768px viewport (about 1.0 levels per 100px) while ParticleSection used to sprint
+deep to surface inside its first 25% (13.0), a tenfold jump in slope exactly at the
+boundary. ParticleSection now eases into that ramp over five extra stops, which brings the
+worst crease down to 3.0x. It cannot go much lower: the first stop has to move at least
+one 8-bit level, and over 4.2% of the section that is already 3.1 levels per 100px.
+
+Two joints still carry a visible-in-principle slope break, both left alone deliberately:
+WorkSection to MissionSection at 15.7x and ParticleSection to AboutSection at 6.0x. Both
+run steep-into-flat rather than flat-into-steep, which reads far more softly, and both sit
+where the surrounding luminance is low enough that the absolute rates are small. Revisit
+them only if someone actually sees a line.
+
 **Every joint is measured, and they are all 0.** Adjacent sections must agree on the
 colour at their shared edge; a mismatch shows up as a hard line across the full width,
 not as a soft difference. `CodeSection` was the last one to be fixed and shows why the

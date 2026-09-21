@@ -41,7 +41,7 @@ export function ParticleSection({ stats }: { stats: PackageStats }) {
             // the headline and raise the Copy / Search callout. Scoped to coarse
             // pointers so the sentence stays selectable with a mouse.
             className="relative w-full h-svh overflow-hidden pointer-coarse:select-none [-webkit-touch-callout:none]"
-            style={{ background: 'linear-gradient(to bottom, var(--blend-deep) 0%, var(--blend-surface) 25%, #2e4560 50%, #7da0c0 72%, var(--blend-mist) 100%)', marginBottom: '-1px' }}
+            style={{ background: 'linear-gradient(to bottom, var(--blend-deep) 0%, #0e1218 4.2%, #0f131a 8.3%, #11161e 12.5%, #141923 16.7%, #181d29 20.8%, var(--blend-surface) 25%, #2e4560 50%, #7da0c0 72%, var(--blend-mist) 100%)', marginBottom: '-1px' }}
         >
             {/* Dark theme sentinel covers the top portion — keeps Navbar white text while dark bg is visible */}
             <div className="absolute top-0 left-0 w-full h-[55%] pointer-events-none" data-theme="dark" />

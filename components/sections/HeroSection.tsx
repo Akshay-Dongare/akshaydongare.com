@@ -17,7 +17,7 @@ export function HeroSection({ stats }: { stats: PackageStats }) {
     // Framer has nothing to opt out of. Collapsing the output range is the opt-out.
     const reduced = !!useReducedMotion();
     // Parallax effect moves the image slightly slower than scroll
-    const y = useTransform(scrollYProgress, [0, 1], reduced ? ["0%", "0%"] : ["0%", "40%"]);
+    const y = useTransform(scrollYProgress, [0, 1], reduced ? [0, 0] : [0, 280]);
     // Subtle scale up on scroll
     const scale = useTransform(scrollYProgress, [0, 1], reduced ? [1, 1] : [1, 1.04]);
 
@@ -28,21 +28,40 @@ export function HeroSection({ stats }: { stats: PackageStats }) {
             style={{ background: 'linear-gradient(to bottom, var(--blend-void) 0%, var(--blend-deep) 100%)', marginBottom: '-1px' }}
             data-theme="dark"
         >
-            {/* Background Image Container */}
-            <motion.div
-                className="absolute inset-0 w-full h-full origin-bottom"
-                style={{ y, scale }}
+            {/* Static masked wrapper, anchored to the SECTION rather than to the thing that
+                moves inside it. The depth layer below is opaque and covers the whole hero, so
+                it — not the section — used to own the bottom edge, and its 135deg gradient
+                cannot present a uniform edge: at the bottom it ran from roughly --blend-deep
+                on the left to #0a0e15 on the right while ParticleSection opens flat on
+                --blend-deep. Fading the last 12% hands the joint back to the section's own
+                gradient, which ends on exactly the colour ParticleSection starts with.
+                Only the bottom is masked: nothing sits above the hero to join. */}
+            <div
+                className="absolute inset-0 overflow-hidden pointer-events-none"
+                style={{
+                    WebkitMaskImage: 'linear-gradient(to bottom, #000 0%, #000 88%, transparent 100%)',
+                    maskImage: 'linear-gradient(to bottom, #000 0%, #000 88%, transparent 100%)',
+                }}
             >
-                {/* Micro-diagonal gradient for depth — imperceptible hue shift */}
-                <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, var(--blend-void) 0%, var(--blend-deep) 55%, #0a0e15 100%)' }} />
+                {/* Bled 340px past both edges against 280px of travel, plus the ~58px the
+                    1.04 scale adds at the top from origin-bottom, so this layer's own edges
+                    can never enter the wrapper. Before, it was inset-0 and slid down, which
+                    dragged its top edge into the hero as a hard line across the full width. */}
+                <motion.div
+                    className="absolute inset-x-0 origin-bottom"
+                    style={{ y, scale, top: '-340px', height: 'calc(100% + 680px)' }}
+                >
+                    {/* Micro-diagonal gradient for depth — imperceptible hue shift */}
+                    <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, var(--blend-void) 0%, var(--blend-deep) 55%, #0a0e15 100%)' }} />
 
                 {/* The backdrop is a CSS gradient rather than a photograph, deliberately: it
                     costs no request and no layout shift. There used to be a second div here
                     meant to lay a vignette over it, but its radial-gradient was written into
                     className instead of style, so Tailwind emitted nothing and it rendered as
                     an empty box from the day it was written. Removed rather than switched on,
-                    because the hero everyone has been looking at is the one without it. */}
-            </motion.div>
+                        because the hero everyone has been looking at is the one without it. */}
+                </motion.div>
+            </div>
 
             {/* Content Container */}
             <div className="relative w-full h-full max-w-[1400px] mx-auto z-10">
