@@ -34,7 +34,6 @@ export function BootSequence({ children }: { children: React.ReactNode }) {
 
         const start = performance.now();
         let triggered = false;
-        let safety: ReturnType<typeof setTimeout> | undefined;
 
         const brand = brandRef.current;
         const rule = ruleRef.current;
@@ -86,7 +85,7 @@ export function BootSequence({ children }: { children: React.ReactNode }) {
         const trigger = () => {
             if (triggered) return;
             triggered = true;
-            if (safety) clearTimeout(safety);
+            clearTimeout(safety);
             const remaining = Math.max(0, MIN_HOLD_MS - (performance.now() - start));
             window.setTimeout(beginReveal, remaining);
         };
@@ -95,11 +94,11 @@ export function BootSequence({ children }: { children: React.ReactNode }) {
         // reveal actually waits on. The safety timer is now a backstop for a dropped
         // frame, not a resource budget.
         const raf1 = requestAnimationFrame(() => requestAnimationFrame(trigger));
-        safety = setTimeout(trigger, SAFETY_TIMEOUT_MS);
+        const safety = setTimeout(trigger, SAFETY_TIMEOUT_MS);
 
         return () => {
             cancelAnimationFrame(raf1);
-            if (safety) clearTimeout(safety);
+            clearTimeout(safety);
         };
     }, []);
 
