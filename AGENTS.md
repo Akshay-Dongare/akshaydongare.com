@@ -9,9 +9,17 @@ so Claude Code picks it up without a second copy to keep in sync.
 ```bash
 npm run dev      # start dev server at localhost:3000
 npm run build    # production build (also used to type-check — no separate tsc script)
-npm run lint     # ESLint via next lint
+npm run lint     # ESLint directly (`next lint` was removed in Next 16)
 npm run start    # serve the production build locally
 ```
+
+`npm run lint` currently exits non-zero on a standing baseline of 6 errors and
+2 warnings, none of them regressions: `react-hooks/purity` on the
+`Math.random()` seeding inside `useMemo` and `react-hooks/immutability` on the
+buffer writes inside `useFrame` (both particle components, inherent to seeding
+and mutating typed arrays for WebGL), `set-state-in-effect` in `BootSequence`,
+and two `no-img-element` warnings on the portrait. Compare the count against
+that baseline rather than reading the exit code, which is always non-zero.
 
 There is no test suite.
 
