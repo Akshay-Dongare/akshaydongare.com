@@ -34,7 +34,7 @@ export default function ContactPage() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.35, delay: 0.05, ease: [0.25, 0.1, 0.25, 1] }}
                 >
-                    If you’re building on this layer, I’d like to hear about it. Open an issue, or send a note.
+                    I finish my Master’s at NC State in December 2026 and can start on 11 January 2027. AI platform, LLM infrastructure, or backend and platform engineering: full time preferred, contract worth hearing about, anywhere in the US, remote, hybrid or relocating. Authorized to work in the US on F-1 OPT through January 2030. If you’re building on this layer, open an issue, or send a note.
                 </motion.p>
 
                 <div className="flex flex-col w-full border-b border-white/[0.08]">

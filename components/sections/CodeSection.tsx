@@ -11,7 +11,7 @@ const PR_URL = "https://github.com/langchain-ai/langchain-litellm/pull/161/files
 
 // Verbatim from langchain-ai/langchain-litellm PR #161 (merged 2026-05-21),
 // verified against the GitHub diff API. Not a paraphrase.
-const DIFF = `# langchain-litellm — langchain_litellm/chat_models/litellm.py
+const DIFF = `# langchain-litellm · langchain_litellm/chat_models/litellm.py
 # PR #161  remove global litellm module mutations from _client_params
 
      @property

@@ -51,7 +51,7 @@ export function AboutContent({ stats }: { stats: PackageStats }) {
                     transition={{ duration: 0.35, delay: 0.08, ease: [0.25, 0.1, 0.25, 1] }}
                 >
                     <p>
-                        AI platform engineer in Raleigh, North Carolina, finishing a Master’s in Computer Science at NC State. I work on LLM infrastructure: the gateways, provider routing, auth and concurrency that sit between an application and a model.
+                        AI platform engineer in Raleigh, North Carolina, finishing a Master’s in Computer Science at NC State. I work on LLM infrastructure: the gateways, provider routing, auth and concurrency that sit between an application and a model. The degree finishes in December 2026, and from 11 January 2027 this is the whole job: AI platform, LLM infrastructure, or the backend work underneath both, wherever in the country the team sits. I’m authorized to work in the US on F-1 OPT through January 2030.
                     </p>
                     <p>
                         I created{" "}

@@ -95,7 +95,7 @@ export function Navbar() {
                         because "[ AD ]" reads as punctuation to a screen reader. */}
                     <Link
                         href="/"
-                        aria-label={pathname === "/" ? "Akshay Dongare — back to top" : "Akshay Dongare — home"}
+                        aria-label={pathname === "/" ? "Akshay Dongare, back to top" : "Akshay Dongare, home"}
                         className="flex items-center cursor-none pointer-events-auto"
                         onClick={(e) => {
                             setIsMobileMenuOpen(false);
