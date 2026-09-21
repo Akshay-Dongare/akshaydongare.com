@@ -86,13 +86,32 @@ body {
   background-color: var(--blend-void);
   color: var(--color-charcoal);
   font-family: var(--font-geist-sans), sans-serif;
-  cursor: none;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-a, button, [role="button"], input, select, textarea {
+/* The native pointer is hidden ONLY while the custom cursor is actually running.
+   CursorProvider adds .custom-cursor-active to <html> at the exact point it attaches
+   its mousemove listener and drops it on cleanup, so the CSS and the component cannot
+   disagree. They used to be independent, and they did disagree: the component bails on
+   a touch device or prefers-reduced-motion, while these rules stayed on unconditionally.
+   That left two real groups with no pointer at all — someone who asked for reduced
+   motion and is using a mouse, and anyone on a touchscreen laptop driving it with a
+   mouse, since maxTouchPoints > 0 is enough to make the component bail. The dot itself
+   is parked at -100,-100 in that state, so nothing replaces what the CSS took away. */
+html.custom-cursor-active body,
+html.custom-cursor-active :is(a, button, [role="button"], input, select, textarea),
+html.custom-cursor-active .cursor-none {
   cursor: none;
+}
+
+/* Tailwind's own .cursor-none utility is unconditional and is on 24 elements, so it has
+   to be reverted too. `revert` restores the UA value, which correctly gives pointer on
+   links and buttons and text on inputs, rather than flattening everything to auto.
+   This rule is deliberately unlayered: unlayered styles outrank @layer utilities in the
+   cascade regardless of specificity, which is what lets it beat the utility. */
+html:not(.custom-cursor-active) .cursor-none {
+  cursor: revert;
 }
 
 @layer utilities {

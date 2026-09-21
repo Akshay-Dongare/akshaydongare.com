@@ -34,6 +34,10 @@ export function CursorProvider({ children }: { children: React.ReactNode }) {
 
         if (isTouchDevice || prefersReducedMotion) return;
 
+        // globals.css hides the native pointer only while this class is present, so the
+        // early return above can never strand a mouse user with no cursor at all.
+        document.documentElement.classList.add("custom-cursor-active");
+
         const moveCursor = (e: MouseEvent) => {
             cursorX.set(e.clientX);
             cursorY.set(e.clientY);
@@ -73,6 +77,7 @@ export function CursorProvider({ children }: { children: React.ReactNode }) {
         window.addEventListener("mouseout", handleMouseOut);
 
         return () => {
+            document.documentElement.classList.remove("custom-cursor-active");
             window.removeEventListener("mousemove", moveCursor);
             window.removeEventListener("mouseover", handleMouseOver);
             window.removeEventListener("mouseout", handleMouseOut);
