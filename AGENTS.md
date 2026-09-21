@@ -106,6 +106,15 @@ The `--blend-*` token family defines the unified scroll palette:
 
 The old `--color-cream`, `--color-steel`, etc. tokens are still defined in `globals.css` but are **not applied to any page** — all sub-pages and the Footer now use the deep obsidian dark canvas.
 
+**Typography utilities in `@layer utilities` must not declare `color`.** `.text-label`
+did, and it silently beat every `text-white/NN` written beside it: same specificity,
+same layer, and it comes later in the sheet, so the markup's colour lost. Every
+`.text-label` on the site rendered `#8a8a8a` regardless of what the class list asked
+for. On the dark canvas that happened to look plausible, which is why it survived; on
+the light `mist → parchment` gradient, `AboutSection`'s "MORE ABOUT ME" measured
+2.78:1 at 10.4px against the `#1c1c1c` it asked for, which clears ~13.7:1. If a
+utility needs a default colour, give it to the call sites instead.
+
 ### Blended Scroll Journey (Home Page)
 
 The homepage (`app/page.tsx`) assembles 7 sections. Each section uses `style={{ background: 'linear-gradient(...)' }}` with end-colors matched to the next section's start-color. All full-viewport sections use `h-svh` (not `h-screen`/`100vh`, which on mobile is taller
