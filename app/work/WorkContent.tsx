@@ -112,7 +112,6 @@ export function WorkContent({ stats }: { stats: PackageStats }) {
                         >
                             <Link
                                 href={proj.link}
-                                target="_blank"
                                 className="group block h-full border border-white/[0.08] rounded-lg p-8 md:p-10 cursor-none hover:border-white/20 hover:-translate-y-1 hover:shadow-[0_8px_40px_rgba(107,159,212,0.07)] transition-all duration-[300ms] cubic-bezier(0.25,0.1,0.25,1) bg-[#141920]"
                             >
                                 <div className="flex justify-between items-start mb-6">

@@ -30,6 +30,7 @@ export function AboutSection({ stats }: { stats: PackageStats }) {
                             className="hover:underline hover:underline-offset-[6px] hover:decoration-[var(--color-charcoal)]/40 transition-colors cursor-none"
                         >
                             {stats.long} times
+                            <span className="sr-only"> (opens in a new tab)</span>
                         </Link>
                         {" "}and counting.
                     </motion.h2>

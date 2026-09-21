@@ -52,6 +52,31 @@ The Navbar (`components/nav/Navbar.tsx`) adapts its text and background colors b
 
 **Key pattern for section components:** sections that span both dark and light backgrounds (e.g. `ParticleSection`, `WorkSection`) use invisible sentinel `<div>`s with the appropriate `data-theme` to cover only the relevant vertical portion of the section. This lets the Navbar correctly transition as the user scrolls through gradient bridges.
 
+### External Links — Evidence vs Destination
+
+Outbound links are split by what the reader is trying to do, and the two halves
+behave differently. Match the existing pattern rather than picking one.
+
+**Evidence** — a link that substantiates a claim in the sentence around it: the
+pepy download figures, the langchain-litellm repo, the upstream PR searches.
+These keep `target="_blank" rel="noopener noreferrer"` so a reader checking the
+claim does not lose their place mid-sentence, and each one ends with
+`<span className="sr-only"> (opens in a new tab)</span>`. That span is what makes
+a forced new tab acceptable rather than a WCAG 3.2.5 failure, and it is used in
+preference to `aria-label` because several of these wrap interpolated values
+(`{stats.long}`) that an aria-label would have to duplicate and then drift from.
+
+**Destination** — a link the reader follows to go somewhere and stay: the
+project cards on `/work`, the GitHub/LinkedIn rows on `/contact`, the source
+link on `/colophon`, the footer's social links. These carry no `target`, so Back
+returns, and bfcache restores scroll and Framer's `once: true` animation state
+without a remount.
+
+If you add an outbound link, decide which it is. Every `target="_blank"` in the
+tree should be an evidence link carrying both `rel="noopener noreferrer"` and the
+sr-only span — one without the span is a bug. Everything else, including all the
+project cards, the footer socials and the contact rows, opens in place.
+
 ### Branding
 
 **Logo:** typographical brutalist `[ AD ]` in monospace — Navbar (small, inline, inherits theme text color) and Footer (medium weight, paired with the Akshay Dongare wordmark). Do not revert to the old overlapping-circles letterform.

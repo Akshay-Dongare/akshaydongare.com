@@ -111,6 +111,7 @@ export function HeroSection({ stats }: { stats: PackageStats }) {
                         className="block text-[1.05rem] font-mono text-white/90 hover:text-white tracking-[0.04em] uppercase text-right leading-none mb-2 pointer-events-auto cursor-none transition-colors hover:underline hover:underline-offset-4 hover:decoration-white/40"
                     >
                         {stats.compact} downloads
+                        <span className="sr-only"> (opens in a new tab)</span>
                     </Link>
                     <span className="text-[0.62rem] font-mono text-white/60 tracking-[0.15em] uppercase leading-relaxed text-right">
                         <Link
@@ -120,6 +121,7 @@ export function HeroSection({ stats }: { stats: PackageStats }) {
                             className="pointer-events-auto cursor-none hover:text-white/90 transition-colors hover:underline hover:underline-offset-4 hover:decoration-white/40"
                         >
                             {stats.monthlyCompact}+ every month.
+                            <span className="sr-only"> (opens in a new tab)</span>
                         </Link>
                         <br />
                         MAINTAINED IN THE LANGCHAIN ORG.<br />

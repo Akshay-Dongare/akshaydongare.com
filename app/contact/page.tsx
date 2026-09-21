@@ -47,7 +47,6 @@ export default function ContactPage() {
                         >
                             <Link
                                 href={link.href}
-                                target={link.href.startsWith("mailto") ? "_self" : "_blank"}
                                 className="group flex justify-between items-center py-8 md:py-12 border-t border-white/[0.08] cursor-none"
                             >
                                 <span className="text-display-m text-white/80 group-hover:text-white/50 transition-colors duration-300">

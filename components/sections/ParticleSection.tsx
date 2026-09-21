@@ -51,6 +51,7 @@ export function ParticleSection({ stats }: { stats: PackageStats }) {
                             className="pointer-events-auto cursor-none hover:underline hover:underline-offset-[10px] hover:decoration-white/40 transition-colors"
                         >
                             {stats.monthlyLong} installs
+                            <span className="sr-only"> (opens in a new tab)</span>
                         </Link>
                         {" "}a month means someone else&apos;s production depends on your defaults.
                     </h2>
