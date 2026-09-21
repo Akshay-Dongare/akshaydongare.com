@@ -2,6 +2,12 @@
 
 import React, { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
+import Link from "next/link";
+
+// The /files view is the diff itself rather than the conversation, which is what
+// the section is showing. Verified: this PR changed exactly the two files quoted
+// below — litellm.py (+2/-25) and test_litellm.py (+38/-8).
+const PR_URL = "https://github.com/langchain-ai/langchain-litellm/pull/161/files";
 
 // Verbatim from langchain-ai/langchain-litellm PR #161 (merged 2026-05-21),
 // verified against the GitHub diff API. Not a paraphrase.
@@ -142,6 +148,17 @@ export function CodeSection() {
                     style={{ y: codeY }}
                     className="w-full md:w-1/2"
                 >
+                    <Link
+                        href={PR_URL}
+                        aria-label="Read pull request 161 on GitHub: remove global litellm module mutations from _client_params"
+                        className="group block pointer-events-auto cursor-none"
+                    >
+                        {/* Visible at rest rather than on hover: touch has no hover, and the
+                            code has to look clickable before anyone taps it. */}
+                        <span className="mb-5 flex items-center gap-2 font-mono text-[0.62rem] tracking-[0.15em] uppercase text-white/55 group-hover:text-white/90 transition-colors">
+                            Read this diff on GitHub
+                            <span aria-hidden="true" className="text-white/40 group-hover:text-white/80 transition-colors">[ &rarr; ]</span>
+                        </span>
                     <pre className="font-mono text-[0.75rem] leading-relaxed whitespace-pre max-md:overflow-x-auto max-md:overscroll-x-contain max-md:pointer-events-auto max-md:-mx-6 max-md:px-6" style={{ textShadow: "0 0 12px rgba(255,255,255,0.08)" }}>
                         <code className="block w-max"><DiffLines source={DIFF} /></code>
                     </pre>
@@ -150,6 +167,7 @@ export function CodeSection() {
                     <pre className="font-mono text-[0.75rem] leading-relaxed whitespace-pre mt-12 max-md:overflow-x-auto max-md:overscroll-x-contain max-md:pointer-events-auto max-md:-mx-6 max-md:px-6" style={{ textShadow: "0 0 12px rgba(255,255,255,0.08)" }}>
                         <code className="block w-max"><DiffLines source={TEST} /></code>
                     </pre>
+                    </Link>
                 </motion.div>
 
                 {/* Dramatic silhouette element lower right */}
