@@ -13,7 +13,7 @@ const LINKS = [
 export function ContactContent() {
     return (
         <div
-            className="star-masthead w-full min-h-screen pt-32 pb-24 flex flex-col items-center justify-center"
+            className="masthead-glow w-full min-h-screen pt-32 pb-24 flex flex-col items-center justify-center"
             style={{ background: 'linear-gradient(to bottom, #0d1117 0%, #07090f 100%)' }}
             data-theme="dark"
         >
@@ -47,13 +47,13 @@ export function ContactContent() {
                         >
                             <Link
                                 href={link.href}
-                                className="group flex justify-between items-center py-8 md:py-12 border-t border-white/[0.08] cursor-none"
+                                className="group flex justify-between items-center gap-4 py-8 md:py-12 border-t border-white/[0.08] cursor-none"
                             >
                                 <span className="text-display-m text-white/80 group-hover:text-white/50 transition-colors duration-300">
                                     {link.label}
                                 </span>
 
-                                <span className="hidden md:block font-mono text-white/60 opacity-0 -translate-x-8 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-[400ms] cubic-bezier(0.25,0.1,0.25,1)">
+                                <span className="hidden md:block shrink-0 whitespace-nowrap font-mono text-white/60 opacity-0 -translate-x-8 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-[400ms] cubic-bezier(0.25,0.1,0.25,1)">
                                     [ → ]
                                 </span>
                             </Link>

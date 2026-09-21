@@ -49,7 +49,7 @@ export function ContactSection() {
                             className="group flex items-center gap-2 cursor-none text-label text-white min-h-[44px] py-3"
                         >
                             <span className="opacity-80 group-hover:opacity-100 transition-opacity">CONNECT</span>
-                            <span className="opacity-60 group-hover:opacity-100 transition-opacity">[ → ]</span>
+                            <span className="shrink-0 whitespace-nowrap opacity-60 group-hover:opacity-100 transition-opacity">[ → ]</span>
                         </Link>
 
                     </div>
