@@ -59,6 +59,10 @@ export function AboutSection({ stats }: { stats: PackageStats }) {
                     {/* Card container */}
                     <div className="w-full h-full max-w-[480px] rounded-xl overflow-hidden group shadow-lg">
                         <div className="w-full h-full relative transition-transform duration-[600ms] cubic-bezier(0.25,0.1,0.25,1) group-hover:scale-[1.02]">
+                            {/* Deferred, not inherent: the portrait is a local static asset that would
+                                benefit from next/image. Left as a plain <img> for now; revisit if LCP on
+                                this page becomes a concern. */}
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img
                                 src="/Akshay_Headshot.jpg"
                                 alt="Portrait of Akshay Dongare"

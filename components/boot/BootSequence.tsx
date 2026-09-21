@@ -16,6 +16,10 @@ export function BootSequence({ children }: { children: React.ReactNode }) {
 
     useEffect(() => {
         if (sessionStorage.getItem("bootPlayed")) {
+            // Deliberate: sessionStorage does not exist during SSR, so whether the boot
+            // animation already played this session can only be known after mount. This is a
+            // one-shot skip, not a render loop. ContactSection.tsx disables the same rule.
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setMaskMounted(false);
             return;
         }

@@ -13,13 +13,23 @@ npm run lint     # ESLint directly (`next lint` was removed in Next 16)
 npm run start    # serve the production build locally
 ```
 
-`npm run lint` currently exits non-zero on a standing baseline of 6 errors and
-2 warnings, none of them regressions: `react-hooks/purity` on the
-`Math.random()` seeding inside `useMemo` and `react-hooks/immutability` on the
-buffer writes inside `useFrame` (both particle components, inherent to seeding
-and mutating typed arrays for WebGL), `set-state-in-effect` in `BootSequence`,
-and two `no-img-element` warnings on the portrait. Compare the count against
-that baseline rather than reading the exit code, which is always non-zero.
+Lint is clean and expected to stay that way, so a non-zero exit means you
+introduced something. Eight rule violations are suppressed at their call sites,
+each with a comment explaining why; do not add a suppression without one, and do
+not widen any of these to a file- or directory-level disable.
+
+Six are inherent to the WebGL work and will not be "fixed": `react-hooks/purity`
+where `Math.random()` seeds a typed array inside an empty-dep `useMemo` (the
+randomness must be rolled once and then stay stable, or the particles reshuffle
+on every re-render), `react-hooks/immutability` where `useFrame` writes directly
+into the shared ref and the velocity buffer (allocating fresh arrays for 8,000
+particles per frame would thrash GC), and `set-state-in-effect` in
+`BootSequence`, where `sessionStorage` is unreachable during SSR so the
+already-played check can only run after mount.
+
+The other two are deferred rather than inherent: both portraits are plain
+`<img>` where `next/image` would optimise. Worth revisiting if LCP on `/about`
+becomes a concern.
 
 There is no test suite.
 

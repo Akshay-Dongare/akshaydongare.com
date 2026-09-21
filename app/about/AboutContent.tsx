@@ -29,6 +29,10 @@ export function AboutContent({ stats }: { stats: PackageStats }) {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.35, delay: 0.1, ease: [0.25, 0.1, 0.25, 1] }}
                 >
+                    {/* Deferred, not inherent: the portrait is a local static asset that would
+                        benefit from next/image. Left as a plain <img> for now; revisit if LCP on
+                        this page becomes a concern. */}
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                         src="/Akshay_Headshot.jpg"
                         alt="Portrait of Akshay Dongare"

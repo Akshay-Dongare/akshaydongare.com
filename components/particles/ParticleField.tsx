@@ -29,6 +29,9 @@ function PointCloud({ color = "#8da3b5" }: { color?: string }) {
     // Per-particle opacity baked into geometry — silhouette edges are more diffuse
     const particleOpacities = useMemo(() => {
         const ops = new Float32Array(PARTICLE_COUNT);
+        // Deliberate: opacity jitter is baked into the geometry once per mount so the
+        // silhouette edges stay diffuse. Stability is the point; useMemo provides it.
+        // eslint-disable-next-line react-hooks/purity
         for (let i = 0; i < PARTICLE_COUNT; i++) ops[i] = 0.25 + Math.random() * 0.75;
         return ops;
     }, []);

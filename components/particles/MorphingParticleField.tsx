@@ -78,6 +78,10 @@ function MorphingPointCloud({ color, shared }: { color: string; shared: React.Mu
 
     const particleRand = useMemo(() => {
         const r = new Float32Array(PARTICLE_COUNT * 2);
+        // Deliberate: per-particle jitter must be random once and then STABLE for the
+        // lifetime of the mount, which is what the empty-dep useMemo guarantees. Re-rolling
+        // it on re-render would visibly reshuffle 8,000 particles mid-animation.
+        // eslint-disable-next-line react-hooks/purity
         for (let i = 0; i < PARTICLE_COUNT * 2; i++) r[i] = (Math.random() - 0.5) * 2;
         return r;
     }, []);
@@ -101,6 +105,8 @@ function MorphingPointCloud({ color, shared }: { color: string; shared: React.Mu
         const geo = new THREE.BufferGeometry();
         geo.setAttribute("position", new THREE.BufferAttribute(positions, 3));
         const opacities = new Float32Array(PARTICLE_COUNT);
+        // Same rationale: baked into the geometry buffer once, never re-rolled.
+        // eslint-disable-next-line react-hooks/purity
         for (let i = 0; i < PARTICLE_COUNT; i++) opacities[i] = 0.6 + Math.random() * 0.4;
         geo.setAttribute("opacity", new THREE.BufferAttribute(opacities, 1));
         return geo;
@@ -173,6 +179,10 @@ function MorphingPointCloud({ color, shared }: { color: string; shared: React.Mu
         const cdy = mouseY - shapeCY;
         const cursorIsOverShape = sh.pointerActive && !s.isRebuilding && (Math.sqrt(cdx * cdx + cdy * cdy) < CURSOR_DETECT_RADIUS);
 
+        // Deliberate: SharedState is a mutable ref bridging this useFrame loop to the
+        // TensionRing/ShapeWord overlays at 60fps without re-rendering React. Routing
+        // this through state would re-render the tree every frame. See AGENTS.md.
+        // eslint-disable-next-line react-hooks/immutability
         sh.cursorOverShape = cursorIsOverShape;
         sh.isShattered = s.isShattered;
 
@@ -195,6 +205,9 @@ function MorphingPointCloud({ color, shared }: { color: string; shared: React.Mu
                 // Gentle explosion
                 for (let i = 0; i < PARTICLE_COUNT; i++) {
                     const i3 = i * 3;
+                    // Deliberate: writing the shatter impulse straight into the velocity buffer.
+                    // Allocating a new Float32Array for 8,000 particles each frame would thrash GC.
+                    // eslint-disable-next-line react-hooks/immutability
                     velocities[i3]     = particleRand[i * 2] * 0.35;
                     velocities[i3 + 1] = Math.random() * 0.15 + 0.05;
                     velocities[i3 + 2] = particleRand[i * 2 + 1] * 0.08;
