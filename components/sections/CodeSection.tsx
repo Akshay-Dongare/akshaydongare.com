@@ -47,12 +47,46 @@ const DIFF = `# langchain-litellm — langchain_litellm/chat_models/litellm.py
          return {**self._default_params, **creds}
 `;
 
+// Second hunk of the same PR: the regression test. Shown instead of
+// repeating the fix, which is what the old placeholder sample did.
+const TEST = `# and the test that keeps it fixed
+# tests/unit_tests/test_litellm.py
+
++def test_client_params_does_not_mutate_litellm_globals() -> None:
++    """_client_params must not write instance config to litellm module globals. Fixes #132."""
++    before = {
++        "api_base": litellm.api_base,
++        "api_key": litellm.api_key,
++        "organization": getattr(litellm, "organization", None),
++    }
++
++    llm = ChatLiteLLM(
++        model="azure/gpt-4o",
++        api_base="https://my-azure.openai.azure.com",
++        api_key="azure-key",
++        organization="my-org",
++        extra_headers={"X-Custom": "value"},
++    )
++    params = llm._client_params
++
++    # globals must be untouched
++    assert litellm.api_base == before["api_base"]
++    assert litellm.api_key == before["api_key"]
++    assert getattr(litellm, "organization", None) == before["organization"]
++
++    # values must be present in the returned per-call params instead
++    assert params["api_base"] == "https://my-azure.openai.azure.com"
++    assert params["api_key"] == "azure-key"
++    assert params["organization"] == "my-org"
++    assert params["extra_headers"] == {"X-Custom": "value"}
+`;
+
 // Per-line colouring rather than a highlighter: the +/- gutter is the whole
 // point of showing a diff here, and it has to survive being dimmed.
-function DiffLines() {
+function DiffLines({ source }: { source: string }) {
     return (
         <>
-            {DIFF.split("\n").map((line, i) => {
+            {source.split("\n").map((line, i) => {
                 const cls = line.startsWith("+")
                     ? "text-[#7fd0a3]"
                     : line.startsWith("-")
@@ -109,12 +143,12 @@ export function CodeSection() {
                     className="w-full md:w-1/2 opacity-75"
                 >
                     <pre className="font-mono text-[0.75rem] leading-relaxed whitespace-pre" style={{ textShadow: "0 0 12px rgba(255,255,255,0.08)" }}>
-                        <code><DiffLines /></code>
+                        <code><DiffLines source={DIFF} /></code>
                     </pre>
 
-                    {/* Doubled so the drift never runs out of content */}
+                    {/* Second hunk of the same PR, not a repeat of the first */}
                     <pre className="font-mono text-[0.75rem] leading-relaxed whitespace-pre mt-12" style={{ textShadow: "0 0 12px rgba(255,255,255,0.08)" }}>
-                        <code><DiffLines /></code>
+                        <code><DiffLines source={TEST} /></code>
                     </pre>
                 </motion.div>
 
