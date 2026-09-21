@@ -110,8 +110,8 @@ The two systems are intentionally different in character: the first is a quiet, 
 
 ### MDX Writing System
 
-Blog posts live under `app/writing/`. The MDX pipeline is configured in `next.config.ts` (via `@next/mdx`). Custom MDX component overrides are in `mdx-components.tsx`. Syntax highlighting uses `rehype-pretty-code` + `shiki`.
+There is currently no writing section. `app/writing/` was removed because its three posts were placeholders that all resolved to the same stub. The MDX pipeline is still wired up and unused: `next.config.ts` keeps `createMDX` and `mdx` in `pageExtensions`, `mdx-components.tsx` still holds the component overrides, and `rehype-pretty-code` + `shiki` remain installed. Dropping an `.mdx` file under `app/` will just work; nothing needs re-adding first.
 
 ### Sub-Pages
 
-`/about`, `/work`, `/writing`, `/contact`, `/privacy`, `/colophon` are standalone App Router pages. All use the unified dark obsidian canvas (`linear-gradient(#0d1117 → #07090f)`, `data-theme="dark"`). Text tokens: `text-white/90` headings, `text-white/65–70` body, `text-white/35–45` muted. Borders: `border-white/[0.08]`, hover `border-white/20–25`.
+`/about`, `/work`, `/contact`, `/privacy`, `/colophon` are standalone App Router pages. All use the unified dark obsidian canvas (`linear-gradient(#0d1117 → #07090f)`, `data-theme="dark"`). Text tokens: `text-white/90` headings, `text-white/65–70` body, `text-white/50–55` muted. **Do not go below `/50` on the dark canvas** — `/45` measures 4.54:1 and `/35` measures 3.19:1, which fails WCAG 2.2 SC 1.4.3 AA for text under 24px. Borders: `border-white/[0.08]`, hover `border-white/20–25`.
