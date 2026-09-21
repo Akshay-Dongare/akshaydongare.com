@@ -5,6 +5,16 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import type { PackageStats } from "@/lib/downloads";
 
+// The three closed-source engagements have nothing public to link, so they point at the
+// experience list rather than the top of the profile: a reader who clicks "Airbnb" lands
+// on the roles themselves instead of a headline and a photo. LinkedIn has no per-position
+// permalink - the experience page carries exactly one anchorable id, for the section as a
+// whole, and no fragment links at all - so a single role cannot be deep-linked. Verified
+// that this URL resolves for a LOGGED-OUT visitor in a real browser, which is most people
+// arriving from here; a plain curl gets LinkedIn's 999 bot block and bounces to the
+// profile, so that is not a valid way to test it.
+const LINKEDIN_EXPERIENCE = "https://www.linkedin.com/in/akshay-dongare/details/experience/";
+
 const buildProjects = (stats: PackageStats) => [
     {
         title: "langchain-litellm",
@@ -16,19 +26,19 @@ const buildProjects = (stats: PackageStats) => [
         title: "Airbnb · AI Platform",
         desc: "The team already used the package I maintain, which is how they found me. Their internal LLM gateway, used by roughly 28 services, could not safely serve two providers in one process, because configuration lived in process-wide globals. I moved it to per-model registries resolved per request, giving a structural concurrency guarantee rather than a lock, and put an expiry-aware cache behind the auth path. Thirteen changes across ten repos, zero consumer migrations, and a test suite that went from 17 to 144. Two calls in two months; the rest was async.",
         tags: ["PYTHON", "LLM GATEWAY", "CONCURRENCY", "CONTRACT"],
-        link: "https://www.linkedin.com/in/akshay-dongare/"
+        link: LINKEDIN_EXPERIENCE
     },
     {
         title: "Harvard · Kenya Blood Donation Assistant",
         desc: "Lead developer on a WhatsApp assistant that answers blood donation questions for users in Kenya, built under the Global Alliance for Medical Innovation at Harvard. Most people do not phrase a medical question the way a clinical document answers it, so the pipeline rewrites a query before it searches. I worked on that retrieval path, added guardrails for personal data and prompt injection, and ran a red-team pass covering injection, data exposure and medical accuracy before the system went to closed beta. Won Best Presentation at the Spring 2025 showcase.",
         tags: ["RAG", "GUARDRAILS", "WHATSAPP", "HEALTHCARE"],
-        link: "https://www.linkedin.com/in/akshay-dongare/"
+        link: LINKEDIN_EXPERIENCE
     },
     {
         title: "ISO · Companion",
         desc: "Applied AI engineer on Companion, the assistant the International Organization for Standardization builds for its own standards work. I designed the agentic graph patterns it runs on, which is what let it scale without maintenance cost scaling with it, and ran the comparative evaluation behind its web search layer so answers come from official ISO sources rather than the open web. Started the architecture documentation and refactored the legacy codebase while I was in there.",
         tags: ["LANGGRAPH", "AGENTS", "RETRIEVAL", "CONTRACT"],
-        link: "https://www.linkedin.com/in/akshay-dongare/"
+        link: LINKEDIN_EXPERIENCE
     },
     {
         title: "Satellite Vision",
