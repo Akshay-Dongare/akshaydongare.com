@@ -3,7 +3,8 @@
 import React, { useRef, useState, useEffect } from "react";
 import { motion, useInView } from "framer-motion";
 import { ParticleField } from "@/components/particles/ParticleField";
-import type { PackageStats } from "@/lib/downloads";
+import Link from "next/link";
+import { PEPY_URL, type PackageStats } from "@/lib/downloads";
 
 export function ParticleSection({ stats }: { stats: PackageStats }) {
     const containerRef = useRef<HTMLDivElement>(null);
@@ -41,7 +42,17 @@ export function ParticleSection({ stats }: { stats: PackageStats }) {
                         className="text-display-xl text-white max-w-[800px] leading-[1.05]"
                         style={{ textShadow: '0 2px 24px rgba(7,9,15,0.5)' }}
                     >
-                        {stats.monthlyLong} installs a month means someone else&apos;s production depends on your defaults.
+                        {/* The overlay is pointer-events-none so the mouse reaches the
+                            particle field; the link has to opt back in explicitly. */}
+                        <Link
+                            href={PEPY_URL}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="pointer-events-auto cursor-none hover:underline hover:underline-offset-[10px] hover:decoration-white/40 transition-colors"
+                        >
+                            {stats.monthlyLong} installs
+                        </Link>
+                        {" "}a month means someone else&apos;s production depends on your defaults.
                     </h2>
                 </motion.div>
             </div>

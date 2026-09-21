@@ -108,7 +108,7 @@ export function HeroSection({ stats }: { stats: PackageStats }) {
                         href={PEPY_URL}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="block text-[1.05rem] font-mono text-white/90 hover:text-white tracking-[0.04em] uppercase text-right leading-none mb-2 pointer-events-auto cursor-none transition-colors underline underline-offset-4 decoration-white/25 hover:decoration-white/60"
+                        className="block text-[1.05rem] font-mono text-white/90 hover:text-white tracking-[0.04em] uppercase text-right leading-none mb-2 pointer-events-auto cursor-none transition-colors hover:underline hover:underline-offset-4 hover:decoration-white/40"
                     >
                         {stats.compact} downloads
                     </Link>
@@ -117,7 +117,7 @@ export function HeroSection({ stats }: { stats: PackageStats }) {
                             href={PEPY_URL}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="pointer-events-auto cursor-none hover:text-white/90 transition-colors underline underline-offset-4 decoration-white/25 hover:decoration-white/60"
+                            className="pointer-events-auto cursor-none hover:text-white/90 transition-colors hover:underline hover:underline-offset-4 hover:decoration-white/40"
                         >
                             {stats.monthlyCompact}+ every month.
                         </Link>

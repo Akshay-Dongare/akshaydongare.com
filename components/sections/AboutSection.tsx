@@ -26,7 +26,7 @@ export function AboutSection({ stats }: { stats: PackageStats }) {
                             href={PEPY_URL}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="underline underline-offset-[6px] decoration-[var(--color-charcoal)]/25 hover:decoration-[var(--color-charcoal)]/60 transition-colors cursor-none"
+                            className="hover:underline hover:underline-offset-[6px] hover:decoration-[var(--color-charcoal)]/40 transition-colors cursor-none"
                         >
                             {stats.long} times
                         </Link>

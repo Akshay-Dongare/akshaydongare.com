@@ -1,9 +1,14 @@
 // Live package stats for langchain-litellm.
 //
 // Downloads come from pepy's badge SVG: their JSON API needs a key, the badge
-// does not, and it carries the same number. pepy serves it with
-// cache-control: max-age=43200, so the value only moves twice a day and there
-// is nothing to gain from polling harder than the six-hour window below.
+// does not, and it carries the same number.
+//
+// On how fresh this can be: PyPI publishes download counts as a DAILY batch,
+// so the underlying number changes once a day, not per install. pepy then
+// caches the badge for 12h (cache-control: max-age=43200). Revalidating hourly
+// means we pick up each new value within an hour of pepy publishing it, which
+// is as live as this data gets anywhere. Polling faster would refetch an
+// identical response; there is no real-time download feed to read.
 //
 // The release count comes from PyPI's public JSON, which needs no key either.
 // It is fetched alongside because two sentences on the site read
@@ -13,7 +18,7 @@
 const BADGE_TOTAL = "https://static.pepy.tech/badge/langchain-litellm";
 const BADGE_MONTH = "https://static.pepy.tech/badge/langchain-litellm/month";
 const PYPI = "https://pypi.org/pypi/langchain-litellm/json";
-const REVALIDATE = 21600; // 6h
+const REVALIDATE = 3600; // 1h
 
 export const PEPY_URL = "https://pepy.tech/project/langchain-litellm";
 
