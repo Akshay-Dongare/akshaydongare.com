@@ -2,6 +2,7 @@
 
 import React, { useMemo, useRef, useCallback, useEffect, useLayoutEffect } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { useReducedMotion } from "framer-motion";
 import * as THREE from "three";
 import { SHAPE_GENERATORS, SHAPE_COUNT } from "@/lib/shapeGenerators";
 
@@ -86,7 +87,7 @@ function createSharedState(): SharedState {
 // ═════════════════════════════════════════════════════════════
 //  WebGL Point Cloud
 // ═════════════════════════════════════════════════════════════
-function MorphingPointCloud({ color, shared }: { color: string; shared: React.MutableRefObject<SharedState> }) {
+function MorphingPointCloud({ color, shared, reduced = false }: { color: string; shared: React.MutableRefObject<SharedState>; reduced?: boolean }) {
     const pointsRef = useRef<THREE.Points>(null);
 
     const stateRef = useRef({
@@ -185,6 +186,8 @@ function MorphingPointCloud({ color, shared }: { color: string; shared: React.Mu
 
     useFrame((state, delta) => {
         if (!pointsRef.current) return;
+        // No morph, no charge, no shatter under reduced motion: one still shape.
+        if (reduced) return;
 
         const posAttr = pointsRef.current.geometry.attributes.position as THREE.BufferAttribute;
         const posArr = posAttr.array as Float32Array;
@@ -509,6 +512,12 @@ function CameraFit() {
 //  Main Export
 // ═════════════════════════════════════════════════════════════
 export function MorphingParticleField({ color = "#ffffff", className = "" }: { color?: string; className?: string }) {
+    // Reduced motion: render the field once and then stop, rather than removing it.
+    // The particles are this section's visual content, so a still frame keeps the
+    // composition while the movement — which is the part that triggers vestibular
+    // symptoms — goes away entirely. frameloop "demand" draws on mount and then only
+    // when something invalidates, so there is no ongoing CPU, GPU or battery cost.
+    const reduced = !!useReducedMotion();
     const shared = useRef<SharedState>(createSharedState());
     const wrapperRef = useRef<HTMLDivElement>(null);
 
@@ -582,9 +591,10 @@ export function MorphingParticleField({ color = "#ffffff", className = "" }: { c
                     camera={{ position: [0, 0, 10], fov: 50 }}
                     gl={{ alpha: true, antialias: false, powerPreference: "high-performance" }}
                     dpr={[1, 1.5]}
+                    frameloop={reduced ? "demand" : "always"}
                 >
                     <CameraFit />
-                    <MorphingPointCloud color={color} shared={shared} />
+                    <MorphingPointCloud color={color} shared={shared} reduced={reduced} />
                 </Canvas>
             </div>
 

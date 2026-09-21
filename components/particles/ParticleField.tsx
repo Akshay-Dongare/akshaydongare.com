@@ -2,6 +2,7 @@
 
 import React, { useMemo, useRef } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { useReducedMotion } from "framer-motion";
 import * as THREE from "three";
 import { generateSilhouetteParticles, generateParticleSizes } from "@/lib/particleData";
 
@@ -12,7 +13,7 @@ const DAMPING          = 0.91;   // less friction than before (0.85) → underda
 const INFLUENCE_RADIUS = 2.2;    // world-space radius of mouse influence
 const SWIRL_STRENGTH   = 0.50;   // silk vortex force scaled by mouse velocity
 
-function PointCloud({ color = "#8da3b5" }: { color?: string }) {
+function PointCloud({ color = "#8da3b5", reduced = false }: { color?: string; reduced?: boolean }) {
     const pointsRef = useRef<THREE.Points>(null);
     const { mouse, viewport } = useThree();
 
@@ -101,6 +102,8 @@ function PointCloud({ color = "#8da3b5" }: { color?: string }) {
     }), [color]);
 
     useFrame((state, delta) => {
+        // Nothing animates under reduced motion; the mount frame is the whole effect.
+        if (reduced) return;
         if (!pointsRef.current) return;
 
         const posAttr = pointsRef.current.geometry.attributes.position as THREE.BufferAttribute;
@@ -185,14 +188,21 @@ function PointCloud({ color = "#8da3b5" }: { color?: string }) {
 }
 
 export function ParticleField({ color = "#8da3b5", className = "" }: { color?: string; className?: string }) {
+    // Reduced motion: render the field once and then stop, rather than removing it.
+    // The particles are this section's visual content, so a still frame keeps the
+    // composition while the movement — which is the part that triggers vestibular
+    // symptoms — goes away entirely. frameloop "demand" draws on mount and then only
+    // when something invalidates, so there is no ongoing CPU, GPU or battery cost.
+    const reduced = !!useReducedMotion();
     return (
         <div className={`w-full h-full pointer-events-auto absolute inset-0 z-0 ${className}`}>
             <Canvas
                 camera={{ position: [0, 0, 10], fov: 50 }}
                 gl={{ alpha: true, antialias: false, powerPreference: "high-performance" }}
                 dpr={[1, 1.5]}
+                frameloop={reduced ? "demand" : "always"}
             >
-                <PointCloud color={color} />
+                <PointCloud color={color} reduced={reduced} />
             </Canvas>
         </div>
     );
