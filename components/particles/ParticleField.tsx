@@ -64,22 +64,37 @@ function PointCloud({ color = "#8da3b5" }: { color?: string }) {
             attribute float aOpacity;
             attribute float aSize;
             varying   float vOpacity;
+            varying   float vFade;
             void main() {
                 vOpacity      = aOpacity;
                 vec4 mvPos    = modelViewMatrix * vec4(position, 1.0);
                 gl_PointSize  = max(3.0, 45.0 * aSize / (-mvPos.z));
                 gl_Position   = projectionMatrix * mvPos;
+
+                // Additive blending adds light to whatever is behind it, so it only
+                // works over a dark backdrop. This section's gradient turns pale past
+                // the halfway mark, and down there every channel clips to 255: the
+                // colour flattens to white and the Gaussian edge is crushed into a
+                // hard dot. Scattered 3px white dots on a pale surface read as dust
+                // on the screen rather than as a nebula, so fade the field out as the
+                // background rises to meet it. ndcY is +1 at the top of the section
+                // and -1 at the bottom: full strength to ~52% down, gone by ~87%,
+                // which is before the first channel would clip.
+                float ndcY    = gl_Position.y / gl_Position.w;
+                vFade         = smoothstep(-0.75, -0.05, ndcY);
             }
         `,
         fragmentShader: `
             uniform vec3  uColor;
             uniform float uGlobalOpacity;
             varying float vOpacity;
+            varying float vFade;
             void main() {
                 float d = length(gl_PointCoord - 0.5);
                 if (d > 0.5) discard;
                 // Gaussian falloff — a soft glowing dot, not a hard disc
-                float alpha  = exp(-d * d * 9.0) * vOpacity * uGlobalOpacity;
+                float alpha  = exp(-d * d * 9.0) * vOpacity * uGlobalOpacity * vFade;
+                if (alpha < 0.002) discard;
                 gl_FragColor = vec4(uColor, alpha);
             }
         `,
