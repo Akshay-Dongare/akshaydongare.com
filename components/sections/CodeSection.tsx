@@ -157,7 +157,7 @@ export function CodeSection() {
                             code has to look clickable before anyone taps it. */}
                         <span className="mb-5 flex items-center gap-2 font-mono text-[0.62rem] tracking-[0.15em] uppercase text-white/55 group-hover:text-white/90 transition-colors">
                             Read this diff on GitHub
-                            <span aria-hidden="true" className="shrink-0 whitespace-nowrap text-white/40 group-hover:text-white/80 transition-colors">[ &rarr; ]</span>
+                            <span aria-hidden="true" className="shrink-0 whitespace-nowrap text-white/55 group-hover:text-white/90 transition-colors">[ &rarr; ]</span>
                         </span>
                     <pre className="font-mono text-[0.75rem] leading-relaxed whitespace-pre max-md:overflow-x-auto max-md:overscroll-x-contain max-md:pointer-events-auto max-md:-mx-6 max-md:px-6" style={{ textShadow: "0 0 12px rgba(255,255,255,0.08)" }}>
                         <code className="block w-max"><DiffLines source={DIFF} /></code>

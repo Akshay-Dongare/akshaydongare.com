@@ -78,11 +78,11 @@ export function WorkSection({ stats }: { stats: PackageStats }) {
                                     <div className="flex flex-col items-start gap-3">
                                         <div className="font-mono text-[0.65rem] tracking-widest text-white uppercase bg-[rgba(0,0,0,0.3)] backdrop-blur-md px-3 py-1.5 rounded-full self-start inline-flex items-center gap-2">
                                             {project.label}
-                                            <span className="opacity-60">[ {isActive ? "-" : "+"} ]</span>
+                                            <span>[ {isActive ? "-" : "+"} ]</span>
                                         </div>
                                         {/* Visible while collapsed, so the section heading is
                                             answered at a glance rather than behind a click. */}
-                                        <span className="font-mono text-[0.7rem] text-white/75 tracking-[0.06em] bg-[rgba(0,0,0,0.3)] backdrop-blur-md px-3 py-1 rounded-full">
+                                        <span className="font-mono text-[0.7rem] text-white/90 tracking-[0.06em] bg-[rgba(0,0,0,0.3)] backdrop-blur-md px-3 py-1 rounded-full">
                                             {project.metric}
                                         </span>
                                     </div>

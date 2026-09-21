@@ -12,7 +12,7 @@ function FooterLink({ href, label }: FooterLinkProps) {
     return (
         <Link href={href} className="group flex items-center gap-2 cursor-none text-label text-white/55 hover:text-white/90 transition-colors duration-200">
             <span>{label}</span>
-            <span className="shrink-0 whitespace-nowrap opacity-60 group-hover:opacity-100 transition-opacity duration-200">[<span className="inline-block mx-1 font-mono">→</span>]</span>
+            <span className="shrink-0 whitespace-nowrap text-white/50 group-hover:text-white/90 transition-colors duration-200">[<span className="inline-block mx-1 font-mono">→</span>]</span>
         </Link>
     );
 }

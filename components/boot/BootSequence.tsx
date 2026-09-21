@@ -21,8 +21,23 @@ export function BootSequence({ children }: { children: React.ReactNode }) {
         // W3C's SC 2.3.3 intent text names as a vestibular trigger. Skip it outright
         // rather than shortening or cross-fading it — the reduced state is no animation
         // at all, with the page rendered as if the reveal had already finished.
+        // Safari private browsing, "block all cookies", and some enterprise policies make
+        // even READING sessionStorage throw. The mask renders on the first paint and is
+        // only torn down from inside this effect, so an exception here is the worst
+        // failure this component has: the opaque full-viewport overlay stays up forever,
+        // or React takes the tree down with it. Both are a blank page. The inline
+        // boot-skip script in app/layout.tsx already guards the identical call; this did
+        // not. Failing to "not played yet" is the harmless direction — worst case a
+        // repeat visitor sees the reveal twice.
+        const hasPlayed = () => {
+            try { return !!sessionStorage.getItem("bootPlayed"); } catch { return false; }
+        };
+        const markPlayed = () => {
+            try { sessionStorage.setItem("bootPlayed", "true"); } catch { /* storage blocked; play it again */ }
+        };
+
         const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-        if (prefersReducedMotion || sessionStorage.getItem("bootPlayed")) {
+        if (prefersReducedMotion || hasPlayed()) {
             // Deliberate: neither sessionStorage nor matchMedia exists during SSR, so this
             // can only be decided after mount. A one-shot skip, not a render loop.
             // ContactSection.tsx disables the same rule for the same reason.
@@ -30,7 +45,7 @@ export function BootSequence({ children }: { children: React.ReactNode }) {
             setMaskMounted(false);
             return;
         }
-        sessionStorage.setItem("bootPlayed", "true");
+        markPlayed();
 
         const start = performance.now();
         let triggered = false;

@@ -41,7 +41,7 @@ export function AboutSection({ stats }: { stats: PackageStats }) {
                     >
                         <Link href="/about" className="group flex items-center gap-2 cursor-none text-label text-[var(--color-charcoal)]">
                             <span className="opacity-80 group-hover:opacity-100 transition-opacity">MORE ABOUT ME</span>
-                            <span className="shrink-0 whitespace-nowrap opacity-60 group-hover:opacity-100 transition-opacity">[ → ]</span>
+                            <span className="shrink-0 whitespace-nowrap opacity-80 group-hover:opacity-100 transition-opacity">[ → ]</span>
                         </Link>
                     </motion.div>
 
