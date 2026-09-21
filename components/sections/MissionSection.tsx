@@ -22,14 +22,14 @@ export function MissionSection() {
         <section
             ref={containerRef}
             className="relative w-full h-svh overflow-hidden"
-            style={{ background: 'linear-gradient(to bottom, #0d1117 0%, #07090f 100%)', marginBottom: '-1px' }}
+            style={{ background: 'linear-gradient(to bottom, var(--blend-deep) 0%, var(--blend-void) 100%)', marginBottom: '-1px' }}
             data-theme="dark"
         >
             <motion.div
                 className="absolute inset-0 w-full h-full"
                 style={{ y }}
             >
-                <div className="absolute inset-0 opacity-40" style={{ background: 'linear-gradient(to bottom, #0d1117, #0a0e15, #07090f)' }} />
+                <div className="absolute inset-0 opacity-40" style={{ background: 'linear-gradient(to bottom, var(--blend-deep), #0a0e15, var(--blend-void))' }} />
             </motion.div>
 
             <div className="relative w-full h-full max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 pt-[clamp(5rem,10vw,10rem)] pb-12 flex flex-col justify-between z-10">

@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import gsap from "gsap";
 
 const MIN_HOLD_MS = 900;
 // Backstop only. The reveal fires two frames after hydration, so this should never
@@ -40,8 +39,6 @@ export function BootSequence({ children }: { children: React.ReactNode }) {
         if (prefersReducedMotion || hasPlayed()) {
             // Deliberate: neither sessionStorage nor matchMedia exists during SSR, so this
             // can only be decided after mount. A one-shot skip, not a render loop.
-            // ContactSection.tsx disables the same rule for the same reason.
-            // eslint-disable-next-line react-hooks/set-state-in-effect
             setMaskMounted(false);
             return;
         }
@@ -49,71 +46,99 @@ export function BootSequence({ children }: { children: React.ReactNode }) {
 
         const start = performance.now();
         let triggered = false;
+        let cancelled = false;
+        let raf1 = 0;
+        let safety: ReturnType<typeof setTimeout> | undefined;
+        let revealTimer: ReturnType<typeof setTimeout> | undefined;
 
-        const brand = brandRef.current;
-        const rule = ruleRef.current;
-        if (brand) {
-            gsap.fromTo(
-                brand,
-                { opacity: 0, letterSpacing: "0.5em" },
-                { opacity: 1, letterSpacing: "0.3em", duration: 0.7, ease: "power2.out", delay: 0.05 }
-            );
-        }
-        if (rule) {
-            gsap.fromTo(
-                rule,
-                { scaleX: 0 },
-                { scaleX: 1, duration: 0.65, ease: "power3.out", delay: 0.18 }
-            );
-        }
-
-        const beginReveal = () => {
-            const top = topRef.current;
-            const bottom = bottomRef.current;
-            const lockup = lockupRef.current;
-            if (!top || !bottom || !lockup) {
+        // gsap is ~82KB parsed and this component is the only thing on the site that uses
+        // it, so a static import put a whole animation engine into the initial bundle of
+        // all seven routes — including /privacy, /colophon and the 404, which animate
+        // nothing — for an intro that plays at most once per session. Importing it here
+        // fetches it only on the one pageview that actually runs the reveal.
+        //
+        // The failure path matters more than the saving: this effect is the only thing
+        // that takes the opaque mask down, so if the chunk never arrives the visitor is
+        // left staring at a black screen. A failed import unmounts the mask immediately.
+        (async () => {
+            let gsap;
+            try {
+                gsap = (await import("gsap")).default;
+            } catch {
                 setMaskMounted(false);
                 return;
             }
+            if (cancelled) return;
 
-            const tl = gsap.timeline({
-                onComplete: () => setMaskMounted(false),
-            });
+            const brand = brandRef.current;
+            const rule = ruleRef.current;
+            if (brand) {
+                gsap.fromTo(
+                    brand,
+                    { opacity: 0, letterSpacing: "0.5em" },
+                    { opacity: 1, letterSpacing: "0.3em", duration: 0.7, ease: "power2.out", delay: 0.05 }
+                );
+            }
+            if (rule) {
+                gsap.fromTo(
+                    rule,
+                    { scaleX: 0 },
+                    { scaleX: 1, duration: 0.65, ease: "power3.out", delay: 0.18 }
+                );
+            }
 
-            tl.to(lockup, {
-                opacity: 0,
-                duration: 0.4,
-                ease: "power2.in",
-            });
+            const beginReveal = () => {
+                const top = topRef.current;
+                const bottom = bottomRef.current;
+                const lockup = lockupRef.current;
+                if (!top || !bottom || !lockup) {
+                    setMaskMounted(false);
+                    return;
+                }
 
-            tl.to(
-                [top, bottom],
-                {
-                    yPercent: (i: number) => (i === 0 ? -101 : 101),
-                    duration: 1.1,
-                    ease: "expo.inOut",
-                },
-                "-=0.18"
-            );
-        };
+                const tl = gsap.timeline({
+                    onComplete: () => setMaskMounted(false),
+                });
 
-        const trigger = () => {
-            if (triggered) return;
-            triggered = true;
-            clearTimeout(safety);
-            const remaining = Math.max(0, MIN_HOLD_MS - (performance.now() - start));
-            window.setTimeout(beginReveal, remaining);
-        };
+                tl.to(lockup, {
+                    opacity: 0,
+                    duration: 0.4,
+                    ease: "power2.in",
+                });
 
-        // Two frames after hydration is first paint of real content, which is all the
-        // reveal actually waits on. The safety timer is now a backstop for a dropped
-        // frame, not a resource budget.
-        const raf1 = requestAnimationFrame(() => requestAnimationFrame(trigger));
-        const safety = setTimeout(trigger, SAFETY_TIMEOUT_MS);
+                tl.to(
+                    [top, bottom],
+                    {
+                        yPercent: (i: number) => (i === 0 ? -101 : 101),
+                        duration: 1.1,
+                        ease: "expo.inOut",
+                    },
+                    "-=0.18"
+                );
+            };
+
+            const trigger = () => {
+                if (triggered || cancelled) return;
+                triggered = true;
+                clearTimeout(safety);
+                // MIN_HOLD is measured from mount, not from when gsap landed, so a slow
+                // chunk eats into the hold rather than adding to it.
+                const remaining = Math.max(0, MIN_HOLD_MS - (performance.now() - start));
+                revealTimer = setTimeout(beginReveal, remaining);
+            };
+
+            // Two frames after hydration is first paint of real content, which is all the
+            // reveal actually waits on. The safety timer is now a backstop for a dropped
+            // frame, not a resource budget.
+            raf1 = requestAnimationFrame(() => requestAnimationFrame(trigger));
+            safety = setTimeout(trigger, SAFETY_TIMEOUT_MS);
+        })();
 
         return () => {
+            cancelled = true;
             cancelAnimationFrame(raf1);
             clearTimeout(safety);
+            clearTimeout(revealTimer);
         };
     }, []);
 

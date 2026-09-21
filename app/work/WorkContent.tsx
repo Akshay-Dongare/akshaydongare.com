@@ -74,12 +74,22 @@ const buildProjects = (stats: PackageStats) => [
     }
 ];
 
+// Three of these cards point at the same LinkedIn profile, because the work is closed
+// source and there is nothing public to link. Naming the destination up front is what
+// stops that reading as broken: a reader who clicks Airbnb, comes back and clicks Harvard
+// used to land on the identical page twice with no warning either time.
+function destinationLabel(url: string) {
+    if (url.includes("github.com")) return "GITHUB";
+    if (url.includes("linkedin.com")) return "LINKEDIN";
+    return "OPEN";
+}
+
 export function WorkContent({ stats }: { stats: PackageStats }) {
     const ALL_PROJECTS = buildProjects(stats);
     return (
         <div
             className="masthead-glow w-full min-h-screen pt-32 pb-24"
-            style={{ background: 'linear-gradient(to bottom, #0d1117 0%, #07090f 100%)' }}
+            style={{ background: 'linear-gradient(to bottom, var(--blend-deep) 0%, var(--blend-void) 100%)' }}
             data-theme="dark"
         >
             <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20">
@@ -112,12 +122,14 @@ export function WorkContent({ stats }: { stats: PackageStats }) {
                         >
                             <Link
                                 href={proj.link}
-                                className="group block h-full border border-white/[0.08] rounded-lg p-8 md:p-10 cursor-none hover:border-white/20 hover:-translate-y-1 hover:shadow-[0_8px_40px_rgba(107,159,212,0.07)] transition-all duration-[300ms] cubic-bezier(0.25,0.1,0.25,1) bg-[#141920]"
+                                aria-label={`${proj.title}, on ${destinationLabel(proj.link).toLowerCase()}`}
+                                className="group block h-full border border-white/[0.08] rounded-lg p-8 md:p-10 cursor-none hover:border-white/20 hover:-translate-y-1 hover:shadow-[0_8px_40px_rgba(107,159,212,0.07)] transition-all duration-[300ms] ease-[cubic-bezier(0.25,0.1,0.25,1)] bg-[#141920]"
                             >
                                 <div className="flex justify-between items-start gap-4 mb-6">
                                     <h2 className="text-display-m tracking-tight text-white/90">{proj.title}</h2>
-                                    <span className="hidden md:inline shrink-0 whitespace-nowrap font-mono text-white/60 text-xl md:opacity-0 md:-translate-x-4 md:group-hover:translate-x-0 md:group-hover:opacity-100 transition-all duration-300">
-                                        [ → ]
+                                    <span className="hidden md:inline-flex shrink-0 whitespace-nowrap items-baseline gap-2 font-mono text-white/60 md:opacity-0 md:-translate-x-4 md:group-hover:translate-x-0 md:group-hover:opacity-100 transition-all duration-300">
+                                        <span className="text-label text-white/50">{destinationLabel(proj.link)}</span>
+                                        <span className="text-xl">[ → ]</span>
                                     </span>
                                 </div>
 

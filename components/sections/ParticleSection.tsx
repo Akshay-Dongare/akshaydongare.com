@@ -24,6 +24,10 @@ export function ParticleSection({ stats }: { stats: PackageStats }) {
     // Only render WebGL canvas when near viewport for performance
     useEffect(() => {
         if (isInView) {
+            // A one-way latch, not a render loop: it only ever goes false -> true, and the
+            // value it depends on (an IntersectionObserver) has no SSR equivalent, so it
+            // cannot be decided at render time. The canvas then stays mounted for the rest
+            // of the visit and the `active` prop handles pausing the render loop.
             // eslint-disable-next-line react-hooks/set-state-in-effect
             setShouldRenderParticles(true);
         }
@@ -37,7 +41,7 @@ export function ParticleSection({ stats }: { stats: PackageStats }) {
             // the headline and raise the Copy / Search callout. Scoped to coarse
             // pointers so the sentence stays selectable with a mouse.
             className="relative w-full h-svh overflow-hidden pointer-coarse:select-none [-webkit-touch-callout:none]"
-            style={{ background: 'linear-gradient(to bottom, #0d1117 0%, #1c2230 25%, #2e4560 50%, #7da0c0 72%, #c8d4e0 100%)', marginBottom: '-1px' }}
+            style={{ background: 'linear-gradient(to bottom, var(--blend-deep) 0%, var(--blend-surface) 25%, #2e4560 50%, #7da0c0 72%, var(--blend-mist) 100%)', marginBottom: '-1px' }}
         >
             {/* Dark theme sentinel covers the top portion — keeps Navbar white text while dark bg is visible */}
             <div className="absolute top-0 left-0 w-full h-[55%] pointer-events-none" data-theme="dark" />

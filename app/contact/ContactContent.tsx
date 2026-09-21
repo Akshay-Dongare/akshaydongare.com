@@ -14,7 +14,7 @@ export function ContactContent() {
     return (
         <div
             className="masthead-glow w-full min-h-screen pt-32 pb-24 flex flex-col items-center justify-center"
-            style={{ background: 'linear-gradient(to bottom, #0d1117 0%, #07090f 100%)' }}
+            style={{ background: 'linear-gradient(to bottom, var(--blend-deep) 0%, var(--blend-void) 100%)' }}
             data-theme="dark"
         >
             <div className="w-full max-w-[1000px] px-6 md:px-12 lg:px-20">
@@ -53,7 +53,7 @@ export function ContactContent() {
                                     {link.label}
                                 </span>
 
-                                <span className="hidden md:block shrink-0 whitespace-nowrap font-mono text-white/60 opacity-0 -translate-x-8 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-[400ms] cubic-bezier(0.25,0.1,0.25,1)">
+                                <span className="hidden md:block shrink-0 whitespace-nowrap font-mono text-white/60 opacity-0 -translate-x-8 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-[400ms] ease-[cubic-bezier(0.25,0.1,0.25,1)]">
                                     [ → ]
                                 </span>
                             </Link>

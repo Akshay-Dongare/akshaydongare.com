@@ -47,6 +47,10 @@ export default async function OpengraphImage() {
                     padding: "68px 76px",
                     backgroundColor: "#0d1117",
                     backgroundImage:
+                        // Literal hexes on purpose: this renders through Satori, which has no document and
+                        // therefore no :root to resolve a CSS custom property against. var() here
+                        // silently produces no gradient. Keep these in step with --blend-void/--blend-deep
+                        // in app/globals.css by hand.
                         "linear-gradient(135deg, #07090f 0%, #0d1117 55%, #0a0e15 100%)",
                     ...(geist ? { fontFamily: "Geist" } : {}),
                 }}

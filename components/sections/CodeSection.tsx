@@ -133,7 +133,7 @@ export function CodeSection() {
         <section
             ref={containerRef}
             className="relative w-full h-svh overflow-hidden"
-            style={{ background: 'linear-gradient(to bottom, #07090f 0%, #0d1117 50%, #07090f 100%)', marginBottom: '-1px' }}
+            style={{ background: 'linear-gradient(to bottom, var(--blend-void) 0%, var(--blend-deep) 50%, var(--blend-void) 100%)', marginBottom: '-1px' }}
             data-theme="dark"
         >
             {/* Static masked wrapper. The mask is anchored to the SECTION, not to the layer
@@ -157,7 +157,7 @@ export function CodeSection() {
                     style={{ y: imageY, top: '-200px', height: 'calc(100% + 400px)' }}
                 >
                     {/* Cinematic depth gradient */}
-                    <div className="absolute inset-0" style={{ background: 'linear-gradient(to top right, #0d1a2e, #07090f, #0a0e15)' }} />
+                    <div className="absolute inset-0" style={{ background: 'linear-gradient(to top right, #0d1a2e, var(--blend-void), #0a0e15)' }} />
 
                     {/* Dark overlay */}
                     <div className="absolute inset-0 bg-[rgba(7,9,15,0.5)]" />

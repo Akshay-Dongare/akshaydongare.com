@@ -108,6 +108,16 @@ export default function RootLayout({
     <html lang="en" data-scroll-behavior="smooth" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: bootSkipScript }} />
+        {/* Without JS the page is a black rectangle: the boot mask is in the server HTML
+            and is only ever torn down from an effect, and Framer emits inline opacity:0
+            on 17 reveal elements that nothing is left to animate in. That is what a
+            visitor sees with scripting off, behind a proxy or extension that blocks the
+            bundle, or when a stale cached document asks for a chunk a deploy has since
+            replaced. A stylesheet !important outranks a non-important inline style, so
+            this reveals the content instead. */}
+        <noscript>
+          <style>{`.boot-mask{display:none!important}[style*="opacity:0"]{opacity:1!important;transform:none!important}`}</style>
+        </noscript>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}

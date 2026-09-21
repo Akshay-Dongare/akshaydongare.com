@@ -25,6 +25,9 @@ export function CursorProvider({ children }: { children: React.ReactNode }) {
     const cursorY = useSpring(-100, { stiffness: 2000, damping: 40, mass: 0.1 });
 
     useEffect(() => {
+        // The cursor dot is client-only by definition: it tracks a pointer that does not
+        // exist on the server, and rendering it during SSR would put a stray element in the
+        // static HTML. Flipping a mount flag once is the standard gate for that.
         // eslint-disable-next-line react-hooks/set-state-in-effect
         setIsReady(true);
 

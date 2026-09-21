@@ -25,7 +25,7 @@ export function HeroSection({ stats }: { stats: PackageStats }) {
         <section
             ref={containerRef}
             className="relative w-full h-svh overflow-hidden"
-            style={{ background: 'linear-gradient(to bottom, #07090f 0%, #0d1117 100%)', marginBottom: '-1px' }}
+            style={{ background: 'linear-gradient(to bottom, var(--blend-void) 0%, var(--blend-deep) 100%)', marginBottom: '-1px' }}
             data-theme="dark"
         >
             {/* Background Image Container */}
@@ -34,13 +34,14 @@ export function HeroSection({ stats }: { stats: PackageStats }) {
                 style={{ y, scale }}
             >
                 {/* Micro-diagonal gradient for depth — imperceptible hue shift */}
-                <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, #07090f 0%, #0d1117 55%, #0a0e15 100%)' }} />
+                <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, var(--blend-void) 0%, var(--blend-deep) 55%, #0a0e15 100%)' }} />
 
-                {/* We would use Next/Image here ideally, but using a pure CSS gradient/overlay representation 
-            allows this to run locally without finding external assets.
-            A real image would go here: <Image src="..." fill objectFit="cover" /> 
-        */}
-                <div className="absolute inset-0 radial-gradient(ellipse at center, transparent 0%, rgba(0,0,0,0.3) 100%)" />
+                {/* The backdrop is a CSS gradient rather than a photograph, deliberately: it
+                    costs no request and no layout shift. There used to be a second div here
+                    meant to lay a vignette over it, but its radial-gradient was written into
+                    className instead of style, so Tailwind emitted nothing and it rendered as
+                    an empty box from the day it was written. Removed rather than switched on,
+                    because the hero everyone has been looking at is the one without it. */}
             </motion.div>
 
             {/* Content Container */}

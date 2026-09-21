@@ -7,7 +7,7 @@ export function PrivacyContent() {
     return (
         <div
             className="masthead-glow w-full min-h-screen pt-32 pb-24"
-            style={{ background: 'linear-gradient(to bottom, #0d1117 0%, #07090f 100%)' }}
+            style={{ background: 'linear-gradient(to bottom, var(--blend-deep) 0%, var(--blend-void) 100%)' }}
             data-theme="dark"
         >
             <div className="max-w-[1000px] mx-auto px-6 md:px-12 lg:px-20">
@@ -33,7 +33,7 @@ export function PrivacyContent() {
 
                     <h2 className="text-display-m mt-16 mb-4 text-white/85">Data Collection</h2>
                     <p>
-                        I do not actively collect personal data. Any basic analytics I might use are strictly for understanding broad traffic patterns (e.g., page views) and do not track individual user identities. No third-party ad networks or invasive trackers are installed here.
+                        I do not collect personal data, and there is no analytics here. No page-view counter, no session recording, no ad network, no tracker, and nothing at all that loads from another origin: every script, style and font on this site is served from this domain. The only thing written to your browser is one sessionStorage entry called bootPlayed, which remembers that the intro animation has already run so you do not sit through it a second time. It holds no identifier and it disappears when you close the tab. There are no cookies. If that ever changes, this page changes first.
                     </p>
 
                     <h2 className="text-display-m mt-16 mb-4 text-white/85">Communication</h2>

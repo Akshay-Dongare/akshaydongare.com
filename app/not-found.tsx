@@ -22,7 +22,7 @@ export default function NotFound() {
     return (
         <div
             className="masthead-glow w-full min-h-screen pt-32 pb-24"
-            style={{ background: "linear-gradient(to bottom, #0d1117 0%, #07090f 100%)" }}
+            style={{ background: "linear-gradient(to bottom, var(--blend-deep) 0%, var(--blend-void) 100%)" }}
             data-theme="dark"
         >
             <div className="max-w-[1000px] mx-auto px-6 md:px-12 lg:px-20">

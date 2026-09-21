@@ -25,7 +25,7 @@ export function Footer() {
             // a continuation rather than a 6-level step. The lift eases in below the seam
             // instead of at it, and it returns to void at the very bottom so iOS
             // rubber-band overscroll shows the same colour as body's background-color.
-            style={{ background: 'linear-gradient(to bottom, #07090f 0%, #0d1117 28%, #0d1117 62%, #07090f 100%)' }}
+            style={{ background: 'linear-gradient(to bottom, var(--blend-void) 0%, var(--blend-deep) 28%, var(--blend-deep) 62%, var(--blend-void) 100%)' }}
             data-theme="dark"
         >
             {/* Gradient top fade — replaces sharp border-t */}

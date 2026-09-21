@@ -14,18 +14,26 @@ npm run start    # serve the production build locally
 ```
 
 Lint is clean and expected to stay that way, so a non-zero exit means you
-introduced something. Six rule violations are suppressed at their call sites,
+introduced something. Eight rule violations are suppressed at their call sites,
 each with a comment explaining why; do not add a suppression without one, and do
-not widen any of these to a file- or directory-level disable.
+not widen any of these to a file- or directory-level disable. Keep this count
+accurate: eslint reports an unused `eslint-disable` as a warning, so a stale one
+fails the clean bar exactly as an error does.
 
-All six are inherent to the WebGL and boot work and will not be "fixed":
-`react-hooks/purity` where `Math.random()` seeds a typed array inside an
-empty-dep `useMemo` (the randomness must be rolled once and then stay stable, or
-the particles reshuffle on every re-render), `react-hooks/immutability` where
-`useFrame` writes directly into the shared ref and the velocity buffer
-(allocating fresh arrays for 8,000 particles per frame would thrash GC), and
-`set-state-in-effect` in `BootSequence`, where `sessionStorage` is unreachable
-during SSR so the already-played check can only run after mount.
+All eight are inherent to the WebGL and client-only work and will not be
+"fixed". Three are `react-hooks/purity`, where `Math.random()` seeds a typed
+array inside an empty-dep `useMemo` (the randomness must be rolled once and then
+stay stable, or the particles reshuffle on every re-render). Two are
+`react-hooks/immutability`, where `useFrame` writes straight into the shared ref
+and the velocity buffer (allocating fresh arrays for 8,000 particles per frame
+would thrash GC). Three are `set-state-in-effect` for state that cannot be known
+until after mount: the one-way `shouldRenderParticles` latch in `ParticleSection`
+and `ContactSection`, driven by an IntersectionObserver that has no SSR
+equivalent, and the mount flag in `CursorProvider`, which gates an element that
+tracks a pointer the server does not have.
+
+`BootSequence` used to hold a ninth. It went away on its own when the gsap import
+moved inside the effect, and the directive then started reporting as unused.
 
 There is no test suite.
 
@@ -97,7 +105,24 @@ and an accurate `sizes`. Do not revert either to a plain `<img>`: the source is
 
 ### Color System — "Deep Obsidian" Tokens
 
-All design tokens live in `app/globals.css` under both `@theme inline` (Tailwind v4 utility generation) and `:root` (CSS custom property access). **Do not add colors to `tailwind.config.ts`** — that file is intentionally minimal since Tailwind v4 is configured CSS-first.
+All design tokens live in `app/globals.css` under `:root`. **Do not add colors to
+`tailwind.config.ts`** — that file is intentionally minimal since Tailwind v4 is
+configured CSS-first.
+
+The `--blend-*` names used to be declared twice, once in `:root` and again in
+`@theme inline`. The second copy did nothing: `--blend-*` is not a Tailwind namespace,
+so it generated no utilities, and `inline` means `@theme` emits no custom properties
+either. Confirmed against the built CSS: zero `bg-blend-*`/`text-blend-*` utilities, one
+`--blend-void` definition. Two identical lists is a trap rather than a system, so the
+dead one is gone.
+
+**Gradients reference the tokens, they do not repeat the hex.** 44 literals across 16
+files became `var(--blend-*)`, so retuning the dark spine is one edit instead of twenty
+and the joint contract below cannot drift. Verified as a visual no-op: all 15 computed
+`backgroundImage` values are byte-identical before and after. The one exception is
+`app/opengraph-image.tsx`, which renders through Satori with no document and therefore no
+`:root` to resolve against — `var()` there silently produces no gradient, so it keeps
+literal hexes and a comment saying why. Keep it in step by hand.
 
 The `--blend-*` token family defines the unified scroll palette:
 - **Dark spine**: `--blend-void` (#07090f) → `--blend-deep` (#0d1117) → `--blend-mid` (#141920) → `--blend-surface` (#1c2230)

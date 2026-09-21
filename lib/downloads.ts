@@ -50,7 +50,7 @@ function toLongForm(compact: string): string {
 
 async function fetchBadgeCount(url: string): Promise<string | null> {
     try {
-        const res = await fetch(url, { next: { revalidate: REVALIDATE } });
+        const res = await fetch(url, { next: { revalidate: REVALIDATE }, signal: AbortSignal.timeout(5000) });
         if (!res.ok) return null;
         const svg = await res.text();
         // The badge repeats each label twice (drop shadow, then visible text);
@@ -67,7 +67,7 @@ async function fetchBadgeCount(url: string): Promise<string | null> {
 
 async function fetchReleaseCount(): Promise<number | null> {
     try {
-        const res = await fetch(PYPI, { next: { revalidate: REVALIDATE } });
+        const res = await fetch(PYPI, { next: { revalidate: REVALIDATE }, signal: AbortSignal.timeout(5000) });
         if (!res.ok) return null;
         const data = (await res.json()) as { releases?: Record<string, unknown[]> };
         // Versions with no files are yanked or never uploaded; don't count them.

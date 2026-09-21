@@ -9,7 +9,7 @@ import { PEPY_URL, type PackageStats } from "@/lib/downloads";
 
 export function AboutSection({ stats }: { stats: PackageStats }) {
     return (
-        <section className="relative w-full pt-24 pb-32" style={{ background: 'linear-gradient(to bottom, #c8d4e0 0%, #f2efe9 100%)', marginBottom: '-1px' }} data-theme="light">
+        <section className="relative w-full pt-24 pb-32" style={{ background: 'linear-gradient(to bottom, var(--blend-mist) 0%, var(--blend-parchment) 100%)', marginBottom: '-1px' }} data-theme="light">
             <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 h-full flex flex-col md:flex-row gap-12 lg:gap-24">
 
                 {/* LEFT COLUMN - 60% */}
@@ -57,7 +57,7 @@ export function AboutSection({ stats }: { stats: PackageStats }) {
                 >
                     {/* Card container */}
                     <div className="w-full h-full max-w-[480px] rounded-xl overflow-hidden group shadow-lg">
-                        <div className="w-full h-full relative transition-transform duration-[600ms] cubic-bezier(0.25,0.1,0.25,1) group-hover:scale-[1.02]">
+                        <div className="w-full h-full relative transition-transform duration-[600ms] ease-[cubic-bezier(0.25,0.1,0.25,1)] group-hover:scale-[1.02]">
                             {/* No priority: this sits below the fold, so the default lazy
                                 load is correct. `fill` supplies absolute/inset-0/w-full/h-full
                                 itself, so only the object-fit classes remain. */}
