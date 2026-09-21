@@ -22,7 +22,11 @@ export function ParticleSection({ stats }: { stats: PackageStats }) {
     return (
         <section
             ref={containerRef}
-            className="relative w-full h-svh overflow-hidden"
+            // Same long-press problem as the contact canvas: this section is an
+            // interactive particle field, and holding a finger on it made iOS select
+            // the headline and raise the Copy / Search callout. Scoped to coarse
+            // pointers so the sentence stays selectable with a mouse.
+            className="relative w-full h-svh overflow-hidden pointer-coarse:select-none [-webkit-touch-callout:none]"
             style={{ background: 'linear-gradient(to bottom, #0d1117 0%, #1c2230 25%, #2e4560 50%, #7da0c0 72%, #c8d4e0 100%)', marginBottom: '-1px' }}
         >
             {/* Dark theme sentinel covers the top portion — keeps Navbar white text while dark bg is visible */}

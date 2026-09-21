@@ -24,7 +24,7 @@ export function ContactSection() {
             // the gesture iOS reads as "select text" — it was grabbing the CONNECT
             // label and raising the Copy / Search callout mid-charge. Suppress both
             // for this section only; the rest of the site stays selectable.
-            className="relative w-full h-svh overflow-hidden select-none [-webkit-touch-callout:none]"
+            className="relative w-full h-svh overflow-hidden pointer-coarse:select-none [-webkit-touch-callout:none]"
             style={{ background: 'linear-gradient(to bottom, #07090f 0%, #0d1117 18%, #0e1928 42%, #0c1520 68%, #0d1117 100%)' }}
             data-theme="dark"
         >
