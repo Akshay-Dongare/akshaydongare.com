@@ -39,11 +39,18 @@ export function pageMetadata({
             siteName: "Akshay Dongare",
             locale: "en_US",
             type: "website",
+            // A page-level openGraph REPLACES the parent's rather than merging into it,
+            // so declaring one here silently dropped the root opengraph-image.tsx from
+            // every sub-page. They were shipping twitter:card=summary_large_image with
+            // no image to put in it, which degrades to a bare text card exactly on the
+            // two URLs a recruiter gets sent.
+            images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "Akshay Dongare, AI Platform Engineer" }],
         },
         twitter: {
             card: "summary_large_image",
             title: ogTitle,
             description,
+            images: ["/opengraph-image"],
         },
     };
 }
