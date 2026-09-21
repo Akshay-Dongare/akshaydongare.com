@@ -57,6 +57,42 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
+// Tells Google that the site, the GitHub account, the LinkedIn profile, the YouTube
+// channel and the Instagram account are ONE person. Without sameAs it sees five
+// unconnected entities and has to guess, which is why searching his name returns
+// scattered links rather than one cluster. Only claims that are true today: no
+// alumniOf, because the degree is not finished until December 2026, and no worksFor,
+// because the Airbnb engagement was a contract that has ended.
+const personJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: "Akshay Dongare",
+  url: "https://akshaydongare.com",
+  image: "https://akshaydongare.com/Akshay_Headshot.jpg",
+  jobTitle: "AI Platform Engineer",
+  email: "mailto:contact@akshaydongare.com",
+  homeLocation: {
+    "@type": "Place",
+    address: { "@type": "PostalAddress", addressLocality: "Raleigh", addressRegion: "NC", addressCountry: "US" },
+  },
+  knowsAbout: ["LLM infrastructure", "AI platform engineering", "LangChain", "LiteLLM", "Python", "Distributed systems"],
+  sameAs: [
+    "https://github.com/Akshay-Dongare",
+    "https://www.linkedin.com/in/akshay-dongare/",
+    "https://www.youtube.com/@akshay-dongare",
+    "https://www.instagram.com/akshaydongare.ai/",
+  ],
+};
+
+// Lets Google show "Akshay Dongare" as the site name in results instead of the
+// bare domain.
+const siteJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "Akshay Dongare",
+  url: "https://akshaydongare.com",
+};
+
 // Runs before first paint so neither a repeat visitor nor someone with reduced motion
 // ever sees a frame of the mask.
 const bootSkipScript = `try{if(sessionStorage.getItem('bootPlayed')||matchMedia('(prefers-reduced-motion: reduce)').matches)document.documentElement.classList.add('skip-boot')}catch(e){}`;
@@ -70,6 +106,14 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: bootSkipScript }} />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(siteJsonLd) }}
+        />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
