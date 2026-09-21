@@ -83,20 +83,20 @@ export function Navbar() {
     return (
         <>
             <nav
-                className={`fixed top-0 left-0 w-full z-[110] transition-colors duration-300 ease-in-out ${bgClass}`}
+                className={`fixed top-0 left-0 w-full z-[110] pointer-events-none transition-colors duration-300 ease-in-out ${bgClass}`}
                 data-nav-theme={theme}
             >
                 <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 h-[80px] flex items-center justify-between">
 
                     {/* LOGO - Left */}
-                    <Link href="/" className="flex items-center cursor-none" onClick={() => setIsMobileMenuOpen(false)}>
+                    <Link href="/" className="flex items-center cursor-none pointer-events-auto" onClick={() => setIsMobileMenuOpen(false)}>
                         <span className={`font-mono text-sm font-medium tracking-[0.1em] ${isMobileMenuOpen ? "text-white" : textColorClass} transition-colors duration-300`}>
                             [ AD ]
                         </span>
                     </Link>
 
                     {/* DESKTOP NAV - Center */}
-                    <div className="hidden md:flex items-center gap-8">
+                    <div className="hidden md:flex items-center gap-8 pointer-events-auto">
                         {navLinks.map((link) => (
                             <Link
                                 key={link.name}
@@ -109,7 +109,7 @@ export function Navbar() {
                     </div>
 
                     {/* DESKTOP CTA - Right */}
-                    <div className="hidden md:block">
+                    <div className="hidden md:block pointer-events-auto">
                         <PillButton href="/contact" theme={theme}>
                             Connect with me
                         </PillButton>
@@ -117,7 +117,7 @@ export function Navbar() {
 
                     {/* MOBILE TOGGLE - Right */}
                     <button
-                        className={`md:hidden -m-3 p-3 font-mono text-sm uppercase tracking-widest cursor-none ${isMobileMenuOpen ? 'text-white' : textColorClass}`}
+                        className={`md:hidden -m-3 p-3 pointer-events-auto font-mono text-sm uppercase tracking-widest cursor-none ${isMobileMenuOpen ? 'text-white' : textColorClass}`}
                         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                     >
                         {isMobileMenuOpen ? "CLOSE" : "MENU"}

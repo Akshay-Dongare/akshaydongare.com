@@ -27,7 +27,7 @@ export function ContactSection() {
             <div className="absolute inset-0 z-10 p-6 md:p-12 lg:p-20 pt-[clamp(5rem,10vw,10rem)] pb-12 flex flex-col justify-between pointer-events-none">
 
                 {/* Top Area */}
-                <div className="relative w-full max-w-[1400px] mx-auto flex flex-col gap-8 lg:flex-row lg:justify-between lg:items-start">
+                <div className="relative w-full max-w-[1400px] mx-auto flex flex-col gap-8 lg:gap-0 lg:flex-row lg:justify-between lg:items-start">
 
                     <motion.h2
                         className="text-display-xl text-white max-w-[800px] leading-[1.05]"
@@ -39,7 +39,7 @@ export function ContactSection() {
                         Tell me what you&apos;re building.
                     </motion.h2>
 
-                    <div className="flex flex-col lg:items-end gap-1 pointer-events-auto">
+                    <div className="flex flex-col items-start lg:items-end gap-1 pointer-events-auto">
                         <Link
                             href="/contact"
                             className="group flex items-center gap-2 cursor-none text-label text-white min-h-[44px] py-3"

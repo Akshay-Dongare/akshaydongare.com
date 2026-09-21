@@ -153,6 +153,16 @@ function MorphingPointCloud({ color, shared }: { color: string; shared: React.Mu
         const s = stateRef.current;
         const sh = shared.current;
 
+        // CameraFit pulls the camera back on portrait aspects, which would bring the
+        // fixed floor into frame and end every phone shatter in a visible flat pile.
+        // Derive it from the live camera so particles always fall just out of shot.
+        // Read fov/position directly, NOT useThree().viewport — R3F only recomputes
+        // that in setSize, so CameraFit's imperative setZ leaves it stale for exactly
+        // the aspects that matter here.
+        const cam = state.camera as THREE.PerspectiveCamera;
+        const halfH = Math.tan(THREE.MathUtils.degToRad(cam.fov / 2)) * cam.position.z;
+        const floorY = -Math.max(-SHATTER_FLOOR, halfH + 1);
+
         const mouseX = (mouse.x * viewport.width) / 2;
         const mouseY = (mouse.y * viewport.height) / 2;
         const time = state.clock.getElapsedTime();
@@ -238,8 +248,8 @@ function MorphingPointCloud({ color, shared }: { color: string; shared: React.Mu
                 posArr[i3 + 2] += velocities[i3 + 2] * dtScale;
 
                 // Floor
-                if (posArr[i3 + 1] < SHATTER_FLOOR) {
-                    posArr[i3 + 1] = SHATTER_FLOOR;
+                if (posArr[i3 + 1] < floorY) {
+                    posArr[i3 + 1] = floorY;
                     velocities[i3 + 1] = Math.abs(velocities[i3 + 1]) * FLOOR_BOUNCE;
                     velocities[i3]     *= 0.85;
                     velocities[i3 + 2] *= 0.85;

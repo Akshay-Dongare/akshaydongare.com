@@ -142,12 +142,12 @@ export function CodeSection() {
                     style={{ y: codeY }}
                     className="w-full md:w-1/2"
                 >
-                    <pre className="font-mono text-[0.75rem] leading-relaxed whitespace-pre overflow-x-auto overscroll-x-contain pointer-events-auto -mx-6 px-6 md:mx-0 md:px-0" style={{ textShadow: "0 0 12px rgba(255,255,255,0.08)" }}>
+                    <pre className="font-mono text-[0.75rem] leading-relaxed whitespace-pre max-md:overflow-x-auto max-md:overscroll-x-contain max-md:pointer-events-auto max-md:-mx-6 max-md:px-6" style={{ textShadow: "0 0 12px rgba(255,255,255,0.08)" }}>
                         <code className="block w-max"><DiffLines source={DIFF} /></code>
                     </pre>
 
                     {/* Second hunk of the same PR, not a repeat of the first */}
-                    <pre className="font-mono text-[0.75rem] leading-relaxed whitespace-pre mt-12 overflow-x-auto overscroll-x-contain pointer-events-auto -mx-6 px-6 md:mx-0 md:px-0" style={{ textShadow: "0 0 12px rgba(255,255,255,0.08)" }}>
+                    <pre className="font-mono text-[0.75rem] leading-relaxed whitespace-pre mt-12 max-md:overflow-x-auto max-md:overscroll-x-contain max-md:pointer-events-auto max-md:-mx-6 max-md:px-6" style={{ textShadow: "0 0 12px rgba(255,255,255,0.08)" }}>
                         <code className="block w-max"><DiffLines source={TEST} /></code>
                     </pre>
                 </motion.div>

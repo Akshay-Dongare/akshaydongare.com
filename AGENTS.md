@@ -77,7 +77,10 @@ The old `--color-cream`, `--color-steel`, etc. tokens are still defined in `glob
 
 ### Blended Scroll Journey (Home Page)
 
-The homepage (`app/page.tsx`) assembles 7 sections. Each section uses `style={{ background: 'linear-gradient(...)' }}` with end-colors matched to the next section's start-color. All `h-screen` sections carry `marginBottom: '-1px'` to prevent sub-pixel rendering gaps.
+The homepage (`app/page.tsx`) assembles 7 sections. Each section uses `style={{ background: 'linear-gradient(...)' }}` with end-colors matched to the next section's start-color. All full-viewport sections use `h-svh` (not `h-screen`/`100vh`, which on mobile is taller
+than the visible area and pushes bottom-anchored content under the collapsing URL bar;
+not `dvh` either, which would re-animate section height as that bar moves). They carry
+`marginBottom: '-1px'` to prevent sub-pixel rendering gaps.
 
 ```
 HeroSection       void → deep                        (dark)
