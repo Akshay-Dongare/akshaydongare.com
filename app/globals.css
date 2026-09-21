@@ -65,12 +65,21 @@
   --border-on-light: rgba(13,17,23,0.10);
 }
 
-html {
-  scroll-behavior: smooth;
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
 }
 
 html.skip-boot .boot-mask {
   display: none !important;
+}
+
+/* Fallback for when the pre-paint script in layout.tsx did not run. */
+@media (prefers-reduced-motion: reduce) {
+  .boot-mask {
+    display: none !important;
+  }
 }
 
 body {

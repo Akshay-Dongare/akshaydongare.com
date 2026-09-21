@@ -57,7 +57,9 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-const bootSkipScript = `try{if(sessionStorage.getItem('bootPlayed'))document.documentElement.classList.add('skip-boot')}catch(e){}`;
+// Runs before first paint so neither a repeat visitor nor someone with reduced motion
+// ever sees a frame of the mask.
+const bootSkipScript = `try{if(sessionStorage.getItem('bootPlayed')||matchMedia('(prefers-reduced-motion: reduce)').matches)document.documentElement.classList.add('skip-boot')}catch(e){}`;
 
 export default function RootLayout({
   children,

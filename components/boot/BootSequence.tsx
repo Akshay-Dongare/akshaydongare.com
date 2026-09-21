@@ -4,7 +4,9 @@ import React, { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 
 const MIN_HOLD_MS = 900;
-const SAFETY_TIMEOUT_MS = 4500;
+// Backstop only. The reveal fires two frames after hydration, so this should never
+// be reached; it exists so a dropped frame cannot strand the mask on screen.
+const SAFETY_TIMEOUT_MS = 1200;
 
 export function BootSequence({ children }: { children: React.ReactNode }) {
     const [maskMounted, setMaskMounted] = useState(true);
@@ -15,10 +17,15 @@ export function BootSequence({ children }: { children: React.ReactNode }) {
     const ruleRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        if (sessionStorage.getItem("bootPlayed")) {
-            // Deliberate: sessionStorage does not exist during SSR, so whether the boot
-            // animation already played this session can only be known after mount. This is a
-            // one-shot skip, not a render loop. ContactSection.tsx disables the same rule.
+        // Two opaque full-viewport panels sliding apart is large-area motion, the class
+        // W3C's SC 2.3.3 intent text names as a vestibular trigger. Skip it outright
+        // rather than shortening or cross-fading it — the reduced state is no animation
+        // at all, with the page rendered as if the reveal had already finished.
+        const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        if (prefersReducedMotion || sessionStorage.getItem("bootPlayed")) {
+            // Deliberate: neither sessionStorage nor matchMedia exists during SSR, so this
+            // can only be decided after mount. A one-shot skip, not a render loop.
+            // ContactSection.tsx disables the same rule for the same reason.
             // eslint-disable-next-line react-hooks/set-state-in-effect
             setMaskMounted(false);
             return;
@@ -84,20 +91,15 @@ export function BootSequence({ children }: { children: React.ReactNode }) {
             window.setTimeout(beginReveal, remaining);
         };
 
-        const onLoad = () => {
-            requestAnimationFrame(() => requestAnimationFrame(trigger));
-        };
-
-        if (document.readyState === "complete") {
-            onLoad();
-        } else {
-            window.addEventListener("load", onLoad, { once: true });
-            safety = setTimeout(trigger, SAFETY_TIMEOUT_MS);
-        }
+        // Two frames after hydration is first paint of real content, which is all the
+        // reveal actually waits on. The safety timer is now a backstop for a dropped
+        // frame, not a resource budget.
+        const raf1 = requestAnimationFrame(() => requestAnimationFrame(trigger));
+        safety = setTimeout(trigger, SAFETY_TIMEOUT_MS);
 
         return () => {
+            cancelAnimationFrame(raf1);
             if (safety) clearTimeout(safety);
-            window.removeEventListener("load", onLoad);
         };
     }, []);
 
