@@ -8,8 +8,8 @@ const buildProjects = (stats: PackageStats) => [
     {
         id: "proj-1",
         label: "LANGCHAIN-LITELLM",
-        metric: "1M installs every month",
-        desc: `Creator and lead maintainer of LangChain's official LiteLLM integration. A project I started on my own that now lives and ships inside the langchain-ai organization. One Python interface to 100+ model providers, plus router-backed load balancing, embeddings and OCR loading. ${stats.long} downloads to date, and around a million every month.`,
+        metric: `${stats.monthlyCompact} installs every month`,
+        desc: `Creator and lead maintainer of LangChain's official LiteLLM integration. A project I started on my own that now lives and ships inside the langchain-ai organization. One Python interface to 100+ model providers, plus router-backed load balancing, embeddings and OCR loading. ${stats.long} downloads to date, and around ${stats.monthlyLong} every month.`,
         theme: "from-[#1c2230] to-[#07090f]"
     },
     {

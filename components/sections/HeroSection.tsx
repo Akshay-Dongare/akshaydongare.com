@@ -3,9 +3,9 @@
 import React, { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import Link from "next/link";
-import { PEPY_URL } from "@/lib/downloads";
+import { PEPY_URL, type PackageStats } from "@/lib/downloads";
 
-export function HeroSection({ downloads }: { downloads: string }) {
+export function HeroSection({ stats }: { stats: PackageStats }) {
     const containerRef = useRef<HTMLDivElement>(null);
     const { scrollYProgress } = useScroll({
         target: containerRef,
@@ -110,10 +110,10 @@ export function HeroSection({ downloads }: { downloads: string }) {
                         rel="noopener noreferrer"
                         className="block text-[1.05rem] font-mono text-white/90 hover:text-white tracking-[0.04em] uppercase text-right leading-none mb-2 pointer-events-auto cursor-none transition-colors"
                     >
-                        {downloads} downloads
+                        {stats.compact} downloads
                     </Link>
                     <span className="text-[0.62rem] font-mono text-white/60 tracking-[0.15em] uppercase leading-relaxed text-right">
-                        1M+ EVERY MONTH.<br />
+                        {stats.monthlyCompact}+ EVERY MONTH.<br />
                         MAINTAINED IN THE LANGCHAIN ORG.<br />
                         RUNNING IN PRODUCTION.
                     </span>

@@ -10,35 +10,42 @@
 // "N downloads across M releases" — making one live and leaving the other
 // hardcoded would be worse than leaving both alone.
 
-const BADGE = "https://static.pepy.tech/badge/langchain-litellm";
+const BADGE_TOTAL = "https://static.pepy.tech/badge/langchain-litellm";
+const BADGE_MONTH = "https://static.pepy.tech/badge/langchain-litellm/month";
 const PYPI = "https://pypi.org/pypi/langchain-litellm/json";
 const REVALIDATE = 21600; // 6h
 
 export const PEPY_URL = "https://pepy.tech/project/langchain-litellm";
 
 export interface PackageStats {
-    /** Compact form for labels and chips, e.g. "15M". */
+    /** All-time, compact, for labels and chips: "15M". */
     compact: string;
-    /** Long form for prose, e.g. "15 million". */
+    /** All-time, long, for prose: "15 million". */
     long: string;
-    /** Number of released versions on PyPI. */
+    /** Last 30 days, compact: "1M". */
+    monthlyCompact: string;
+    /** Last 30 days, long: "1 million". */
+    monthlyLong: string;
+    /** Released versions on PyPI. */
     releases: number;
 }
 
 /** Used whenever a fetch fails, so nothing ever renders blank where a figure belongs. */
-const FALLBACK: PackageStats = { compact: "15M", long: "15 million", releases: 27 };
+const FALLBACK = { compact: "15M", monthlyCompact: "1M", releases: 27 };
 
 const SCALE: Record<string, string> = { K: "thousand", M: "million", B: "billion" };
 
 /** "15M" -> "15 million". Leaves anything unrecognised alone. */
 function toLongForm(compact: string): string {
-    const m = compact.match(/^([\d.]+)([KMB])$/);
-    return m ? `${m[1]} ${SCALE[m[2]]}` : compact;
+    // pepy is inconsistent about case: the total badge says "15M", the weekly
+    // one says "181k". Match either so a format shift does not silently fall back.
+    const m = compact.match(/^([\d.]+)([KMBkmb])$/);
+    return m ? `${m[1]} ${SCALE[m[2].toUpperCase()]}` : compact;
 }
 
-async function fetchDownloads(): Promise<string | null> {
+async function fetchBadgeCount(url: string): Promise<string | null> {
     try {
-        const res = await fetch(BADGE, { next: { revalidate: REVALIDATE } });
+        const res = await fetch(url, { next: { revalidate: REVALIDATE } });
         if (!res.ok) return null;
         const svg = await res.text();
         // The badge repeats each label twice (drop shadow, then visible text);
@@ -47,7 +54,7 @@ async function fetchDownloads(): Promise<string | null> {
         const value = texts[texts.length - 1];
         // Only accept something shaped like a count, so a pepy error page can
         // never end up rendered as a statistic.
-        return /^\d[\d.]*[KMB]?$/.test(value ?? "") ? value : null;
+        return /^\d[\d.]*[KMBkmb]?$/.test(value ?? "") ? value.toUpperCase() : null;
     } catch {
         return null;
     }
@@ -67,11 +74,18 @@ async function fetchReleaseCount(): Promise<number | null> {
 }
 
 export async function getPackageStats(): Promise<PackageStats> {
-    const [downloads, releases] = await Promise.all([fetchDownloads(), fetchReleaseCount()]);
-    const compact = downloads ?? FALLBACK.compact;
+    const [total, monthly, releases] = await Promise.all([
+        fetchBadgeCount(BADGE_TOTAL),
+        fetchBadgeCount(BADGE_MONTH),
+        fetchReleaseCount(),
+    ]);
+    const compact = total ?? FALLBACK.compact;
+    const monthlyCompact = monthly ?? FALLBACK.monthlyCompact;
     return {
         compact,
         long: toLongForm(compact),
+        monthlyCompact,
+        monthlyLong: toLongForm(monthlyCompact),
         releases: releases ?? FALLBACK.releases,
     };
 }

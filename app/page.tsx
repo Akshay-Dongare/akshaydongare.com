@@ -12,8 +12,8 @@ export default async function Home() {
 
   return (
     <>
-      <HeroSection downloads={stats.compact} />
-      <ParticleSection />
+      <HeroSection stats={stats} />
+      <ParticleSection stats={stats} />
       <AboutSection stats={stats} />
       <WorkSection stats={stats} />
       <MissionSection />

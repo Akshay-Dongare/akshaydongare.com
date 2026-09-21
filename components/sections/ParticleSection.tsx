@@ -3,8 +3,9 @@
 import React, { useRef, useState, useEffect } from "react";
 import { motion, useInView } from "framer-motion";
 import { ParticleField } from "@/components/particles/ParticleField";
+import type { PackageStats } from "@/lib/downloads";
 
-export function ParticleSection() {
+export function ParticleSection({ stats }: { stats: PackageStats }) {
     const containerRef = useRef<HTMLDivElement>(null);
     const isInView = useInView(containerRef, { once: false, margin: "100px 0px 100px 0px" });
     const [shouldRenderParticles, setShouldRenderParticles] = useState(false);
@@ -40,7 +41,7 @@ export function ParticleSection() {
                         className="text-display-xl text-white max-w-[800px] leading-[1.05]"
                         style={{ textShadow: '0 2px 24px rgba(7,9,15,0.5)' }}
                     >
-                        A million installs a month means someone else&apos;s production depends on your defaults.
+                        {stats.monthlyLong} installs a month means someone else&apos;s production depends on your defaults.
                     </h2>
                 </motion.div>
             </div>
