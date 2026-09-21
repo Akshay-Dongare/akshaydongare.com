@@ -169,3 +169,17 @@ There is currently no writing section. `app/writing/` was removed because its th
 ### Sub-Pages
 
 `/about`, `/work`, `/contact`, `/privacy`, `/colophon` are standalone App Router pages. All use the unified dark obsidian canvas (`linear-gradient(#0d1117 → #07090f)`, `data-theme="dark"`). Text tokens: `text-white/90` headings, `text-white/65–70` body, `text-white/50–55` muted. **Do not go below `/50` on the dark canvas** — `/45` measures 4.54:1 and `/35` measures 3.19:1, which fails WCAG 2.2 SC 1.4.3 AA for text under 24px. Borders: `border-white/[0.08]`, hover `border-white/20–25`.
+
+All five carry `.masthead-glow` (defined in `app/globals.css`), a still, soft blue
+bloom across the top 62vh that echoes the homepage nebula without running a second
+simulation. **Do not turn this back into a starfield.** It was one, and it read as
+dust on the screen: holding text at 4.5:1 caps a white dot at alpha 0.1367, which is
+1.39:1 of local contrast, and low-contrast hard-edged specks scattered evenly are
+what dust and sensor noise look like. The overlap rule the cap required made it worse
+by forcing blue noise, which is more uniform than random where a real sky is clumped.
+A broad gradient is more visible than a 1px dot at the *same* peak alpha, because
+contrast sensitivity peaks at low spatial frequency, and it cannot read as dust
+because dust is high-frequency. Colour also buys headroom: the cap is a luminance
+limit, so `#6b9fd4` tolerates 0.2329 where white tolerates 0.1367. The two layers
+composite to 0.1545, putting the brightest pixel at RGB(25,33,43) with `white/50` at
+5.05:1. Raising either alpha is what breaks the page, not the geometry.

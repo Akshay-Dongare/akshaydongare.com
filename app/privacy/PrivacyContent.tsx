@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 export function PrivacyContent() {
     return (
         <div
-            className="star-masthead w-full min-h-screen pt-32 pb-24"
+            className="masthead-glow w-full min-h-screen pt-32 pb-24"
             style={{ background: 'linear-gradient(to bottom, #0d1117 0%, #07090f 100%)' }}
             data-theme="dark"
         >
