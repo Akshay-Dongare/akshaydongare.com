@@ -58,7 +58,7 @@ export function AboutContent({ stats }: { stats: PackageStats }) {
                             href={PEPY_URL}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-white/85 hover:underline hover:underline-offset-4 hover:decoration-white/40 hover:text-white/70 transition-colors cursor-none"
+                            className="text-white/85 underline underline-offset-4 decoration-white/20 hover:text-white/55 transition-colors cursor-none"
                         >
                             {stats.long} downloads
                         </Link>
@@ -121,8 +121,8 @@ export function AboutContent({ stats }: { stats: PackageStats }) {
                             { year: "2022", text: "Signature-forgery detection with CycleGAN, YOLOv5 and VGG16 transfer learning" },
                             { year: "2022", text: "TinyML internship: pruning and INT8 quantization for edge inference" },
                         ].map((item, i) => (
-                            <div key={i} className="flex border-t border-white/[0.08] py-6 items-baseline">
-                                <div className="w-24 font-mono text-[0.8rem] text-white/50">{item.year}</div>
+                            <div key={i} className="flex flex-col md:flex-row border-t border-white/[0.08] py-6 items-start md:items-baseline">
+                                <div className="w-auto md:w-24 mb-1 md:mb-0 font-mono text-[0.8rem] text-white/50">{item.year}</div>
                                 <div className="flex-1 text-[1rem] text-white/70">{item.text}</div>
                             </div>
                         ))}

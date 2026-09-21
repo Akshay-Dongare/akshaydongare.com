@@ -117,7 +117,7 @@ export function WorkContent({ stats }: { stats: PackageStats }) {
                             >
                                 <div className="flex justify-between items-start mb-6">
                                     <h2 className="text-display-m tracking-tight text-white/90">{proj.title}</h2>
-                                    <span className="font-mono text-white/60 text-xl opacity-0 -translate-x-4 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-300">
+                                    <span className="hidden md:inline font-mono text-white/60 text-xl md:opacity-0 md:-translate-x-4 md:group-hover:translate-x-0 md:group-hover:opacity-100 transition-all duration-300">
                                         [ → ]
                                     </span>
                                 </div>

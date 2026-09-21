@@ -35,6 +35,10 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     // Required for the generated opengraph-image to resolve to an absolute URL.
     metadataBase: new URL("https://akshaydongare.com"),
+    // Collapses query-string variants onto the clean URL, so /?x=1 and
+    // /?utm_source=linkedin are indexed as the page itself rather than as
+    // duplicates. "./" resolves per route, so /about canonicalises to /about.
+    alternates: { canonical: "./" },
     title: TITLE,
     description,
     openGraph: {

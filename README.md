@@ -42,8 +42,9 @@ which sections are load-bearing and why.
 rather than typed. `lib/downloads.ts` reads the totals from pepy's badge SVG
 (their JSON API needs a key; the badge does not) and the release count from PyPI's
 public JSON, then hands back both a compact form for labels and a long form for
-prose. Revalidated every six hours, because pepy caches the badge for twelve and
-polling harder would refetch an identical response.
+prose. Revalidated hourly, so a new figure is picked up within an hour of pepy
+publishing it; pepy itself caches the badge for twelve, so polling harder
+would only refetch an identical response.
 
 **An Open Graph card generated at build time.** `app/opengraph-image.tsx` renders
 the share card from the same values and design tokens as the site, so it cannot

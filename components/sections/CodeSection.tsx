@@ -92,7 +92,7 @@ function DiffLines({ source }: { source: string }) {
                     : line.startsWith("-")
                         ? "text-[#e08b94]"
                         : line.startsWith("#")
-                            ? "text-white/35"
+                            ? "text-white/50"
                             : "text-white/55";
                 return (
                     <div key={i} className={cls}>
@@ -119,7 +119,7 @@ export function CodeSection() {
     return (
         <section
             ref={containerRef}
-            className="relative w-full h-screen overflow-hidden"
+            className="relative w-full h-svh overflow-hidden"
             style={{ background: 'linear-gradient(135deg, #07090f 0%, #0d1117 60%, #07090f 100%)', marginBottom: '-1px' }}
             data-theme="dark"
         >
@@ -140,15 +140,15 @@ export function CodeSection() {
 
                 <motion.div
                     style={{ y: codeY }}
-                    className="w-full md:w-1/2 opacity-75"
+                    className="w-full md:w-1/2"
                 >
-                    <pre className="font-mono text-[0.75rem] leading-relaxed whitespace-pre" style={{ textShadow: "0 0 12px rgba(255,255,255,0.08)" }}>
-                        <code><DiffLines source={DIFF} /></code>
+                    <pre className="font-mono text-[0.75rem] leading-relaxed whitespace-pre overflow-x-auto overscroll-x-contain pointer-events-auto -mx-6 px-6 md:mx-0 md:px-0" style={{ textShadow: "0 0 12px rgba(255,255,255,0.08)" }}>
+                        <code className="block w-max"><DiffLines source={DIFF} /></code>
                     </pre>
 
                     {/* Second hunk of the same PR, not a repeat of the first */}
-                    <pre className="font-mono text-[0.75rem] leading-relaxed whitespace-pre mt-12" style={{ textShadow: "0 0 12px rgba(255,255,255,0.08)" }}>
-                        <code><DiffLines source={TEST} /></code>
+                    <pre className="font-mono text-[0.75rem] leading-relaxed whitespace-pre mt-12 overflow-x-auto overscroll-x-contain pointer-events-auto -mx-6 px-6 md:mx-0 md:px-0" style={{ textShadow: "0 0 12px rgba(255,255,255,0.08)" }}>
+                        <code className="block w-max"><DiffLines source={TEST} /></code>
                     </pre>
                 </motion.div>
 

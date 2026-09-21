@@ -17,7 +17,7 @@ export function MissionSection() {
     return (
         <section
             ref={containerRef}
-            className="relative w-full h-screen overflow-hidden"
+            className="relative w-full h-svh overflow-hidden"
             style={{ background: 'linear-gradient(to bottom, #0d1117 0%, #07090f 100%)', marginBottom: '-1px' }}
             data-theme="dark"
         >
@@ -31,7 +31,7 @@ export function MissionSection() {
             <div className="relative w-full h-full max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 pt-[clamp(5rem,10vw,10rem)] pb-12 flex flex-col justify-between z-10">
 
                 {/* Top block */}
-                <div className="flex justify-between items-start mt-12 md:mt-24">
+                <div className="flex flex-col md:flex-row justify-between items-start gap-10 md:gap-0 mt-12 md:mt-24">
                     <motion.div
                         initial={{ opacity: 0, x: -20 }}
                         whileInView={{ opacity: 1, x: 0 }}
@@ -49,12 +49,12 @@ export function MissionSection() {
                         whileInView={{ opacity: 1 }}
                         viewport={{ once: true }}
                         transition={{ duration: 0.35, delay: 0.08 }}
-                        className="hidden md:flex flex-col items-end gap-2 text-right"
+                        className="flex flex-col items-start md:items-end gap-2 text-left md:text-right"
                     >
                         <span className="text-label text-white/50">APPROACH</span>
                         <button
                             onClick={() => setIsExpanded(!isExpanded)}
-                            className="group flex flex-col items-end cursor-none"
+                            className="group flex flex-col items-start md:items-end cursor-none py-[0.875rem] -my-[0.875rem]"
                         >
                             <span className="text-label text-white/80 group-hover:text-white transition-colors flex items-center gap-2">
                                 LEARN MORE <span className="text-white/50 group-hover:text-white transition-colors">[ {isExpanded ? "-" : "+"} ]</span>

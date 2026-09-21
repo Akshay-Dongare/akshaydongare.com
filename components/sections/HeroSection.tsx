@@ -20,7 +20,7 @@ export function HeroSection({ stats }: { stats: PackageStats }) {
     return (
         <section
             ref={containerRef}
-            className="relative w-full h-screen overflow-hidden"
+            className="relative w-full h-svh overflow-hidden"
             style={{ background: 'linear-gradient(to bottom, #07090f 0%, #0d1117 100%)', marginBottom: '-1px' }}
             data-theme="dark"
         >

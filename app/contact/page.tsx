@@ -54,7 +54,7 @@ export default function ContactPage() {
                                     {link.label}
                                 </span>
 
-                                <span className="font-mono text-white/60 opacity-0 -translate-x-8 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-[400ms] cubic-bezier(0.25,0.1,0.25,1)">
+                                <span className="hidden md:block font-mono text-white/60 opacity-0 -translate-x-8 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-[400ms] cubic-bezier(0.25,0.1,0.25,1)">
                                     [ → ]
                                 </span>
                             </Link>

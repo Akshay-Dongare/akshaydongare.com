@@ -54,9 +54,11 @@ export function Navbar() {
     ];
 
     const textColorClass = theme === "dark" ? "text-white" : "text-[var(--color-charcoal)]";
-    const bgClass = isScrolled
-        ? (theme === "dark" ? "bg-[rgba(7,9,15,0.72)] backdrop-blur-md" : "bg-[rgba(242,239,233,0.88)] backdrop-blur-md")
-        : "bg-transparent";
+    const bgClass = isMobileMenuOpen
+        ? "bg-transparent"
+        : isScrolled
+            ? (theme === "dark" ? "bg-[rgba(7,9,15,0.72)] backdrop-blur-md" : "bg-[rgba(242,239,233,0.88)] backdrop-blur-md")
+            : "bg-transparent";
 
     // Prevent scrolling when mobile menu is open
     useEffect(() => {
@@ -67,17 +69,28 @@ export function Navbar() {
         }
     }, [isMobileMenuOpen]);
 
+    // Escape dismisses the menu. Without this the only exits were the four
+    // nav links, since the panel used to paint over its own close button.
+    useEffect(() => {
+        if (!isMobileMenuOpen) return;
+        const onKey = (e: KeyboardEvent) => {
+            if (e.key === "Escape") setIsMobileMenuOpen(false);
+        };
+        window.addEventListener("keydown", onKey);
+        return () => window.removeEventListener("keydown", onKey);
+    }, [isMobileMenuOpen]);
+
     return (
         <>
             <nav
-                className={`fixed top-0 left-0 w-full z-[100] transition-colors duration-300 ease-in-out ${bgClass}`}
+                className={`fixed top-0 left-0 w-full z-[110] transition-colors duration-300 ease-in-out ${bgClass}`}
                 data-nav-theme={theme}
             >
                 <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 h-[80px] flex items-center justify-between">
 
                     {/* LOGO - Left */}
-                    <Link href="/" className="flex items-center cursor-none z-[110]" onClick={() => setIsMobileMenuOpen(false)}>
-                        <span className={`font-mono text-sm font-medium tracking-[0.1em] ${textColorClass} transition-colors duration-300`}>
+                    <Link href="/" className="flex items-center cursor-none" onClick={() => setIsMobileMenuOpen(false)}>
+                        <span className={`font-mono text-sm font-medium tracking-[0.1em] ${isMobileMenuOpen ? "text-white" : textColorClass} transition-colors duration-300`}>
                             [ AD ]
                         </span>
                     </Link>
@@ -104,7 +117,7 @@ export function Navbar() {
 
                     {/* MOBILE TOGGLE - Right */}
                     <button
-                        className={`md:hidden z-[110] font-mono text-sm uppercase tracking-widest cursor-none ${isMobileMenuOpen ? 'text-white' : textColorClass}`}
+                        className={`md:hidden -m-3 p-3 font-mono text-sm uppercase tracking-widest cursor-none ${isMobileMenuOpen ? 'text-white' : textColorClass}`}
                         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                     >
                         {isMobileMenuOpen ? "CLOSE" : "MENU"}
@@ -122,8 +135,9 @@ export function Navbar() {
                         transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
                         className="fixed inset-0 z-[105] flex flex-col justify-center px-8"
                         style={{ background: '#07090f' }}
+                        onClick={() => setIsMobileMenuOpen(false)}
                     >
-                        <div className="flex flex-col gap-6">
+                        <div className="flex flex-col gap-6" onClick={(e) => e.stopPropagation()}>
                             {navLinks.map((link, i) => (
                                 <motion.div
                                     key={link.name}

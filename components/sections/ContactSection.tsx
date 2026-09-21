@@ -20,14 +20,14 @@ export function ContactSection() {
     return (
         <section
             ref={containerRef}
-            className="relative w-full h-screen overflow-hidden"
+            className="relative w-full h-svh overflow-hidden"
             style={{ background: 'linear-gradient(to bottom, #07090f 0%, #0d1117 18%, #0e1928 42%, #0c1520 68%, #0d1117 100%)' }}
             data-theme="dark"
         >
             <div className="absolute inset-0 z-10 p-6 md:p-12 lg:p-20 pt-[clamp(5rem,10vw,10rem)] pb-12 flex flex-col justify-between pointer-events-none">
 
                 {/* Top Area */}
-                <div className="relative w-full max-w-[1400px] mx-auto flex justify-between items-start">
+                <div className="relative w-full max-w-[1400px] mx-auto flex flex-col gap-8 lg:flex-row lg:justify-between lg:items-start">
 
                     <motion.h2
                         className="text-display-xl text-white max-w-[800px] leading-[1.05]"
@@ -39,10 +39,10 @@ export function ContactSection() {
                         Tell me what you&apos;re building.
                     </motion.h2>
 
-                    <div className="hidden lg:flex flex-col items-end gap-1 pointer-events-auto">
+                    <div className="flex flex-col lg:items-end gap-1 pointer-events-auto">
                         <Link
                             href="/contact"
-                            className="group flex items-center gap-2 cursor-none text-label text-white"
+                            className="group flex items-center gap-2 cursor-none text-label text-white min-h-[44px] py-3"
                         >
                             <span className="opacity-80 group-hover:opacity-100 transition-opacity">CONNECT</span>
                             <span className="opacity-60 group-hover:opacity-100 transition-opacity">[ → ]</span>

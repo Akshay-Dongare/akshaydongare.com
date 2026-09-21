@@ -22,7 +22,7 @@ export function PillButton({ href, onClick, children, theme = "light", className
 
     if (href) {
         return (
-            <Link href={href} className={`${baseClasses} ${themeClasses} ${className}`}>
+            <Link href={href} onClick={onClick} className={`${baseClasses} ${themeClasses} ${className}`}>
                 <span className="relative z-10">{children}</span>
             </Link>
         );

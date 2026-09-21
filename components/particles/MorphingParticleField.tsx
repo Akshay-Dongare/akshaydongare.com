@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useRef, useCallback, useEffect } from "react";
+import React, { useMemo, useRef, useCallback, useEffect, useLayoutEffect } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import { SHAPE_GENERATORS, SHAPE_COUNT } from "@/lib/shapeGenerators";
@@ -385,6 +385,18 @@ function ShapeWord({ shared }: { shared: React.MutableRefObject<SharedState> }) 
 }
 
 // ═════════════════════════════════════════════════════════════
+// Keeps the whole shape inside the frustum in portrait. Desktop aspects are
+// >= 0.9, which clamps to the original z = 10, so nothing changes there.
+function CameraFit() {
+    const { camera, size } = useThree();
+    useLayoutEffect(() => {
+        const cam = camera as THREE.PerspectiveCamera;
+        cam.position.setZ(Math.max(10, 9.0 / (size.width / size.height)));
+        cam.updateProjectionMatrix();
+    }, [camera, size]);
+    return null;
+}
+
 //  Main Export
 // ═════════════════════════════════════════════════════════════
 export function MorphingParticleField({ color = "#ffffff", className = "" }: { color?: string; className?: string }) {
@@ -394,21 +406,60 @@ export function MorphingParticleField({ color = "#ffffff", className = "" }: { c
     useEffect(() => {
         const el = wrapperRef.current;
         if (!el) return;
-        const handler = (e: MouseEvent) => {
+
+        const aim = (clientX: number, clientY: number) => {
             const rect = el.getBoundingClientRect();
-            shared.current.cursorX = e.clientX - rect.left;
-            shared.current.cursorY = e.clientY - rect.top;
+            shared.current.cursorX = clientX - rect.left;
+            shared.current.cursorY = clientY - rect.top;
             shared.current.pointerActive = true;
         };
-        // Arming only once a pointer genuinely moves keeps the shape intact on
-        // touch devices, and on desktop when the section is reached by scrolling
-        // without nudging the cursor.
+
+        // After a tap, browsers replay a synthetic mouse sequence. A touchscreen
+        // laptop also reports (hover: hover), so it cannot be branched away --
+        // instead ignore mouse events that land inside the replay window, or the
+        // shape latches on and re-shatters at nobody.
+        let lastTouch = 0;
+        const REPLAY_WINDOW = 700;
+
+        // Arming only once a pointer genuinely moves keeps the shape intact when
+        // the section is reached by scrolling without nudging the cursor.
+        const move = (e: MouseEvent) => {
+            if (performance.now() - lastTouch < REPLAY_WINDOW) return;
+            aim(e.clientX, e.clientY);
+        };
         const leave = () => { shared.current.pointerActive = false; };
-        el.addEventListener("mousemove", handler);
+
+        // Touch: press and hold on the shape to charge it, the direct analogue
+        // of resting the cursor there. Lifting disarms.
+        const down = (e: PointerEvent) => {
+            if (e.pointerType === "mouse") return;
+            lastTouch = performance.now();
+            aim(e.clientX, e.clientY);
+        };
+        const drag = (e: PointerEvent) => {
+            if (e.pointerType === "mouse") return;
+            lastTouch = performance.now();
+            aim(e.clientX, e.clientY);
+        };
+        const lift = (e: PointerEvent) => {
+            if (e.pointerType === "mouse") return;
+            lastTouch = performance.now();
+            shared.current.pointerActive = false;
+        };
+
+        el.addEventListener("mousemove", move);
         el.addEventListener("mouseleave", leave);
+        el.addEventListener("pointerdown", down, { passive: true });
+        el.addEventListener("pointermove", drag, { passive: true });
+        el.addEventListener("pointerup", lift, { passive: true });
+        el.addEventListener("pointercancel", lift, { passive: true });
         return () => {
-            el.removeEventListener("mousemove", handler);
+            el.removeEventListener("mousemove", move);
             el.removeEventListener("mouseleave", leave);
+            el.removeEventListener("pointerdown", down);
+            el.removeEventListener("pointermove", drag);
+            el.removeEventListener("pointerup", lift);
+            el.removeEventListener("pointercancel", lift);
         };
     }, []);
 
@@ -421,6 +472,7 @@ export function MorphingParticleField({ color = "#ffffff", className = "" }: { c
                     gl={{ alpha: true, antialias: false, powerPreference: "high-performance" }}
                     dpr={[1, 1.5]}
                 >
+                    <CameraFit />
                     <MorphingPointCloud color={color} shared={shared} />
                 </Canvas>
             </div>

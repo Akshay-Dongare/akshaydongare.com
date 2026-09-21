@@ -61,7 +61,7 @@ export function Footer() {
                 </div>
 
                 {/* LOWER AREA - Logo Wordmark */}
-                <div className="flex flex-col md:flex-row items-end justify-between border-t border-white/[0.06] pt-8">
+                <div className="flex flex-col md:flex-row items-start md:items-end justify-between border-t border-white/[0.06] pt-8">
 
                     <div className="flex items-end mb-8 md:mb-0">
                         <h2 className="text-display-xl font-medium tracking-tight text-white/80 leading-none">
