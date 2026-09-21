@@ -5,11 +5,14 @@ import { AboutSection } from "@/components/sections/AboutSection";
 import { WorkSection } from "@/components/sections/WorkSection";
 import { CodeSection } from "@/components/sections/CodeSection";
 import { ContactSection } from "@/components/sections/ContactSection";
+import { getDownloadCount } from "@/lib/downloads";
 
-export default function Home() {
+export default async function Home() {
+  const downloads = await getDownloadCount();
+
   return (
     <>
-      <HeroSection />
+      <HeroSection downloads={downloads} />
       <ParticleSection />
       <AboutSection />
       <WorkSection />

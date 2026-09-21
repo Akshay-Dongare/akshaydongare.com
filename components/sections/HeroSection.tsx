@@ -2,8 +2,10 @@
 
 import React, { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
+import Link from "next/link";
+import { PEPY_URL } from "@/lib/downloads";
 
-export function HeroSection() {
+export function HeroSection({ downloads }: { downloads: string }) {
     const containerRef = useRef<HTMLDivElement>(null);
     const { scrollYProgress } = useScroll({
         target: containerRef,
@@ -102,9 +104,14 @@ export function HeroSection() {
                     viewport={{ once: true }}
                     transition={{ duration: 0.35, delay: 0.2 }}
                 >
-                    <span className="block text-[1.05rem] font-mono text-white/90 tracking-[0.04em] uppercase text-right leading-none mb-2">
-                        15M downloads
-                    </span>
+                    <Link
+                        href={PEPY_URL}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block text-[1.05rem] font-mono text-white/90 hover:text-white tracking-[0.04em] uppercase text-right leading-none mb-2 pointer-events-auto cursor-none transition-colors"
+                    >
+                        {downloads} downloads
+                    </Link>
                     <span className="text-[0.62rem] font-mono text-white/60 tracking-[0.15em] uppercase leading-relaxed text-right">
                         1M+ EVERY MONTH.<br />
                         MAINTAINED IN THE LANGCHAIN ORG.<br />

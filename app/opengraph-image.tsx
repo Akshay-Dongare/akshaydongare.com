@@ -1,4 +1,5 @@
 import { ImageResponse } from "next/og";
+import { getDownloadCount } from "@/lib/downloads";
 
 // Generated at build time rather than shipped as a binary, so the card cannot
 // drift from the design tokens the way a hand-exported PNG would.
@@ -22,14 +23,17 @@ async function loadGeist(): Promise<ArrayBuffer | null> {
     }
 }
 
-const CHIPS = [
-    "15M DOWNLOADS",
-    "1M+ EVERY MONTH",
-    "MAINTAINED IN THE LANGCHAIN ORG",
-];
+function chips(downloads: string) {
+    return [
+        `${downloads} DOWNLOADS`,
+        "1M+ EVERY MONTH",
+        "MAINTAINED IN THE LANGCHAIN ORG",
+    ];
+}
 
 export default async function OpengraphImage() {
-    const geist = await loadGeist();
+    const [geist, downloads] = await Promise.all([loadGeist(), getDownloadCount()]);
+    const CHIPS = chips(downloads);
 
     return new ImageResponse(
         (
