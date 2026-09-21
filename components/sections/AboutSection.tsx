@@ -25,12 +25,9 @@ export function AboutSection({ stats }: { stats: PackageStats }) {
                         I maintain langchain-litellm, LangChain&apos;s official interface to 100+ model providers, downloaded{" "}
                         <Link
                             href={PEPY_URL}
-                            target="_blank"
-                            rel="noopener noreferrer"
                             className="hover:underline hover:underline-offset-[6px] hover:decoration-[var(--color-charcoal)]/40 transition-colors cursor-none"
                         >
                             {stats.long} times
-                            <span className="sr-only"> (opens in a new tab)</span>
                         </Link>
                         {" "}and counting.
                     </motion.h2>

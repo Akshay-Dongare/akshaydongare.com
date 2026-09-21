@@ -52,30 +52,32 @@ The Navbar (`components/nav/Navbar.tsx`) adapts its text and background colors b
 
 **Key pattern for section components:** sections that span both dark and light backgrounds (e.g. `ParticleSection`, `WorkSection`) use invisible sentinel `<div>`s with the appropriate `data-theme` to cover only the relevant vertical portion of the section. This lets the Navbar correctly transition as the user scrolls through gradient bridges.
 
-### External Links — Evidence vs Destination
+### External Links
 
-Outbound links are split by what the reader is trying to do, and the two halves
-behave differently. Match the existing pattern rather than picking one.
+Every outbound link opens in place. No `target="_blank"` anywhere, including the
+citation links that back the download figures.
 
-**Evidence** — a link that substantiates a claim in the sentence around it: the
-pepy download figures, the langchain-litellm repo, the upstream PR searches.
-These keep `target="_blank" rel="noopener noreferrer"` so a reader checking the
-claim does not lose their place mid-sentence, and each one ends with
-`<span className="sr-only"> (opens in a new tab)</span>`. That span is what makes
-a forced new tab acceptable rather than a WCAG 3.2.5 failure, and it is used in
-preference to `aria-label` because several of these wrap interpolated values
-(`{stats.long}`) that an aria-label would have to duplicate and then drift from.
+This was researched rather than assumed, and the split it replaced (evidence
+links in a new tab, destinations in place) was wrong. NN/g's *Opening Links in
+New Browser Windows and Tabs* (2020) is explicit — "For the most part, always
+open links in the same browser tab or window" — and its mobile finding is the
+exact complaint this site hit: "Mobile users were more annoyed when links opened
+in new tabs, as they couldn't use the Back button to return to the previous
+screen." A reader who genuinely wants a second tab long-presses or Cmd-clicks;
+forcing one removes their choice and buys them nothing.
 
-**Destination** — a link the reader follows to go somewhere and stay: the
-project cards on `/work`, the GitHub/LinkedIn rows on `/contact`, the source
-link on `/colophon`, the footer's social links. These carry no `target`, so Back
-returns, and bfcache restores scroll and Framer's `once: true` animation state
-without a remount.
+Two site-specific reasons it is clearly right here. Five of the nine former
+`_blank` links resolve to the *same* pepy URL, two of them adjacent in the hero,
+so a curious phone reader could stack four tabs on one page before leaving the
+homepage. And Back is cheap: the site is bfcache-eligible (no `no-store` on the
+document, no `unload`/`beforeunload` handlers, no WebSocket or IndexedDB), so
+returning restores scroll and Framer's `once: true` animation state without a
+remount.
 
-If you add an outbound link, decide which it is. Every `target="_blank"` in the
-tree should be an evidence link carrying both `rel="noopener noreferrer"` and the
-sr-only span — one without the span is a bug. Everything else, including all the
-project cards, the footer socials and the contact rows, opens in place.
+Do not "fix" this by reintroducing `_blank` for citations. Note also that an
+unannounced new tab is *not* a WCAG failure at any enforceable level — SC 3.2.5
+Change on Request is AAA, and SC 3.2.1/3.2.2 govern focus and input, not link
+activation. This is a usability decision, not a conformance one.
 
 ### Branding
 
