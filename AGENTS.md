@@ -128,8 +128,8 @@ ParticleSection   deep → surface → mist              ← dark-to-light bridg
 AboutSection      mist → parchment                   (light)
 WorkSection       parchment → warm → mist → deep     ← light-to-dark bridge (8 stops, no visible stripe)
 MissionSection    deep → void                        (dark)
-CodeSection       micro-diagonal void                (dark)
-ContactSection    void → midnight blue accent → deep (dark, very subtle blue midpoint)
+CodeSection       void → deep → void                 (dark, diagonal lives in a masked layer)
+ContactSection    void → midnight blue accent → void (dark, very subtle blue midpoint)
 ```
 
 **Why this order.** `MissionSection` used to sit second, which put two full-viewport
@@ -137,6 +137,20 @@ statement sections (32 words between them) ahead of any evidence and pushed the 
 cards to ~4.3 screens down — past where attention has measurably decayed. Moving it
 below `WorkSection` lifts the proof to ~3.2 screens and reads better rhetorically:
 evidence first, thesis as the close.
+
+**Every joint is measured, and they are all 0.** Adjacent sections must agree on the
+colour at their shared edge; a mismatch shows up as a hard line across the full width,
+not as a soft difference. `CodeSection` was the last one to be fixed and shows why the
+rule needs stating. It carried a 135deg base and, on top of it, an OPAQUE
+`absolute inset-0` depth layer with a parallax `y`. Two separate faults came out of that:
+an angled gradient cannot have a uniform top *and* bottom edge, so its bottom-left sat 15
+blue levels above `ContactSection`'s opening void; and a translated `inset-0` layer drags
+its own top edge into view, which drew a hard line 20% down the section. The base is now
+vertical and void at both ends, the diagonal moved into a decorative layer inside a
+STATIC masked wrapper (the mask is anchored to the section, so the moving child cannot
+carry it away), and the child is bled 200px against 140px of travel so its edges are
+never inside the wrapper. If you add a section, check the joint rather than eyeballing
+it; the deltas above are all 0 and should stay that way.
 
 **The order and the gradients are coupled.** `ParticleSection` is the dark→light bridge
 and `WorkSection` is the light→dark bridge back, so the two light sections must sit

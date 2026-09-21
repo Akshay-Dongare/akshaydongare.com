@@ -120,26 +120,45 @@ export function CodeSection() {
     });
 
     const codeY = useTransform(scrollYProgress, [0, 1], ["0%", "-30%"]);
-    const imageY = useTransform(scrollYProgress, [0, 1], ["0%", "20%"]);
+    // Pixels, not percent. As a percentage this was 20% of the layer's OWN height, so
+    // sizing the bleed needed to hide its edges meant solving a percentage of a
+    // percentage. In px the guarantee is arithmetic: travel 140, bleed 200, never shows.
+    const imageY = useTransform(scrollYProgress, [0, 1], [0, 140]);
 
     return (
         <section
             ref={containerRef}
             className="relative w-full h-svh overflow-hidden"
-            style={{ background: 'linear-gradient(135deg, #07090f 0%, #0d1117 60%, #07090f 100%)', marginBottom: '-1px' }}
+            style={{ background: 'linear-gradient(to bottom, #07090f 0%, #0d1117 50%, #07090f 100%)', marginBottom: '-1px' }}
             data-theme="dark"
         >
-            {/* Background Image Container */}
-            <motion.div
-                className="absolute inset-0 w-full h-full"
-                style={{ y: imageY }}
+            {/* Static masked wrapper. The mask is anchored to the SECTION, not to the layer
+                that moves inside it, so the top and bottom 12% always resolve to the
+                section's own background, which begins and ends on --blend-void. That is
+                what makes both joints seamless: MissionSection ends on void above and
+                ContactSection opens on void below. */}
+            <div
+                className="absolute inset-0 overflow-hidden pointer-events-none"
+                style={{
+                    WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, #000 12%, #000 88%, transparent 100%)',
+                    maskImage: 'linear-gradient(to bottom, transparent 0%, #000 12%, #000 88%, transparent 100%)',
+                }}
             >
-                {/* Cinematic depth gradient */}
-                <div className="absolute inset-0" style={{ background: 'linear-gradient(to top right, #0d1a2e, #07090f, #0a0e15)' }} />
+                {/* Bled 200px past both edges against 140px of travel, so this layer's own
+                    edges are never inside the wrapper. Before, it was inset-0 and shifted
+                    down, which put its top edge 20% into the section as a hard line across
+                    the full width. */}
+                <motion.div
+                    className="absolute inset-x-0"
+                    style={{ y: imageY, top: '-200px', height: 'calc(100% + 400px)' }}
+                >
+                    {/* Cinematic depth gradient */}
+                    <div className="absolute inset-0" style={{ background: 'linear-gradient(to top right, #0d1a2e, #07090f, #0a0e15)' }} />
 
-                {/* Dark overlay */}
-                <div className="absolute inset-0 bg-[rgba(7,9,15,0.5)]" />
-            </motion.div>
+                    {/* Dark overlay */}
+                    <div className="absolute inset-0 bg-[rgba(7,9,15,0.5)]" />
+                </motion.div>
+            </div>
 
             {/* Code Overlay */}
             <div className="relative w-full h-full max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 pt-32 overflow-hidden z-10 pointer-events-none">
