@@ -35,7 +35,7 @@ neither re-renders the other.
 **A scroll journey with no visible seams.** The homepage is seven full-viewport
 sections whose gradients hand off to each other: dark, a bridge into light, two
 light sections, a bridge back. Each section's end colour is the next one's start
-colour, so reordering anything means re-deriving the seams. `CLAUDE.md` documents
+colour, so reordering anything means re-deriving the seams. `AGENTS.md` documents
 which sections are load-bearing and why.
 
 **Live package figures.** Every download and release count on the site is fetched
@@ -83,11 +83,12 @@ components/
 lib/                 particle geometry, shape generators, package stats
 ```
 
-`CLAUDE.md` holds the architectural notes: the colour token system, why the
+`AGENTS.md` holds the architectural notes: the colour token system, why the
 section order is what it is, and the constraints worth not breaking.
 
 ## Licence
 
-No licence is granted, so default copyright applies: all rights reserved. The
-code is here to be read, not redeployed. If you want to reuse a piece of it,
-ask and the answer is probably yes.
+Code is [MIT](LICENSE) — take what is useful.
+
+The written content, the photography and the visual design are not covered by
+that. Please do not redeploy this as your own site.
