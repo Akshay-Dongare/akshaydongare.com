@@ -25,7 +25,7 @@ export function ContactSection() {
             // label and raising the Copy / Search callout mid-charge. Suppress both
             // for this section only; the rest of the site stays selectable.
             className="relative w-full h-svh overflow-hidden pointer-coarse:select-none [-webkit-touch-callout:none]"
-            style={{ background: 'linear-gradient(to bottom, #07090f 0%, #0d1117 18%, #0e1928 42%, #0c1520 68%, #0d1117 100%)' }}
+            style={{ background: 'linear-gradient(to bottom, #07090f 0%, #0d1117 18%, #0e1928 42%, #0c1520 68%, #07090f 100%)' }}
             data-theme="dark"
         >
             <div className="absolute inset-0 z-10 p-6 md:p-12 lg:p-20 pt-[clamp(5rem,10vw,10rem)] pb-12 flex flex-col justify-between pointer-events-none">

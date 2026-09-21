@@ -21,7 +21,11 @@ export function Footer() {
     return (
         <footer
             className="w-full pt-24 pb-12 px-6 md:px-12 lg:px-20"
-            style={{ background: 'linear-gradient(to bottom, #0d1117 0%, #07090f 100%)' }}
+            // Opens on --blend-void because every page above it ends there, so the joint is
+            // a continuation rather than a 6-level step. The lift eases in below the seam
+            // instead of at it, and it returns to void at the very bottom so iOS
+            // rubber-band overscroll shows the same colour as body's background-color.
+            style={{ background: 'linear-gradient(to bottom, #07090f 0%, #0d1117 28%, #0d1117 62%, #07090f 100%)' }}
             data-theme="dark"
         >
             {/* Gradient top fade — replaces sharp border-t */}

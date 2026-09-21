@@ -143,7 +143,12 @@ and `WorkSection` is the light→dark bridge back, so the two light sections mus
 between them. Reordering anything across that arc means re-deriving the seam colours,
 or you get hard stripes.
 
-`Footer` continues the dark obsidian theme (gradient `#0d1117 → #07090f`).
+`Footer` continues the dark obsidian theme. Its gradient is
+`#07090f → #0d1117 (28–62%) → #07090f`, and the endpoints are load-bearing: every
+page above it ends on `--blend-void` `#07090f`, so opening on anything else puts a
+visible step across the full width of the joint. It closes on void too, so iOS
+rubber-band overscroll matches `body`'s `background-color`. If you change where a
+page's last section ends, change this to match.
 
 **Reveal timing.** Content fade-ins are capped at 350ms with delays under 200ms.
 NN/g found scroll-triggered reveals slower than 500ms cause users to skip the content
