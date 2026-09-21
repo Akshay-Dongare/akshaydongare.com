@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
 import Link from "next/link";
 
 // The /files view is the diff itself rather than the conversation, which is what
@@ -119,11 +119,15 @@ export function CodeSection() {
         offset: ["start end", "end start"],
     });
 
-    const codeY = useTransform(scrollYProgress, [0, 1], ["0%", "-30%"]);
+    // MotionConfig reducedMotion="user" covers animate/whileInView, but NOT a
+    // MotionValue driven by scroll: that is a computed value, not an animation, so
+    // Framer has nothing to opt out of. Collapsing the output range is the opt-out.
+    const reduced = !!useReducedMotion();
+    const codeY = useTransform(scrollYProgress, [0, 1], reduced ? ["0%", "0%"] : ["0%", "-30%"]);
     // Pixels, not percent. As a percentage this was 20% of the layer's OWN height, so
     // sizing the bleed needed to hide its edges meant solving a percentage of a
     // percentage. In px the guarantee is arithmetic: travel 140, bleed 200, never shows.
-    const imageY = useTransform(scrollYProgress, [0, 1], [0, 140]);
+    const imageY = useTransform(scrollYProgress, [0, 1], reduced ? [0, 0] : [0, 140]);
 
     return (
         <section

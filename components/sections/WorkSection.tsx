@@ -76,10 +76,22 @@ export function WorkSection({ stats }: { stats: PackageStats }) {
 
                                 <div className="relative md:absolute md:inset-0 p-6 flex flex-col justify-between gap-6 md:gap-0 z-10">
                                     <div className="flex flex-col items-start gap-3">
-                                        <div className="font-mono text-[0.65rem] tracking-widest text-white uppercase bg-[rgba(0,0,0,0.3)] backdrop-blur-md px-3 py-1.5 rounded-full self-start inline-flex items-center gap-2">
-                                            {project.label}
-                                            <span>[ {isActive ? "-" : "+"} ]</span>
-                                        </div>
+                                        <h3 className="font-mono text-[0.65rem] tracking-widest text-white uppercase bg-[rgba(0,0,0,0.3)] backdrop-blur-md px-3 py-1.5 rounded-full self-start inline-flex items-center gap-2">
+                                            {/* The control lives on the label rather than as an overlay
+                                                across the whole card, so selecting the description text
+                                                of an open card still works. The card div keeps its own
+                                                onClick for the large mouse target. */}
+                                            <button
+                                                type="button"
+                                                onClick={(e) => { e.stopPropagation(); setActiveId(project.id); }}
+                                                aria-expanded={isActive}
+                                                aria-controls={`${project.id}-panel`}
+                                                className="inline-flex items-center gap-2 cursor-none"
+                                            >
+                                                {project.label}
+                                                <span>[ {isActive ? "-" : "+"} ]</span>
+                                            </button>
+                                        </h3>
                                         {/* Visible while collapsed, so the section heading is
                                             answered at a glance rather than behind a click. */}
                                         <span className="font-mono text-[0.7rem] text-white/90 tracking-[0.06em] bg-[rgba(0,0,0,0.3)] backdrop-blur-md px-3 py-1 rounded-full">
@@ -94,6 +106,7 @@ export function WorkSection({ stats }: { stats: PackageStats }) {
                                                 animate={{ opacity: 1, y: 0 }}
                                                 exit={{ opacity: 0, y: 20 }}
                                                 transition={{ duration: 0.4, delay: 0.08 }}
+                                                id={`${project.id}-panel`}
                                                 className="bg-black/40 backdrop-blur-md p-6 rounded-lg max-w-full md:max-w-[80%]"
                                             >
                                                 <p className="text-[0.95rem] text-white/90 leading-relaxed font-sans">

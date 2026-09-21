@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { PillButton } from "@/components/ui/PillButton";
@@ -10,6 +10,8 @@ export function Navbar() {
     const [isScrolled, setIsScrolled] = useState(false);
     const [theme, setTheme] = useState<"light" | "dark">("dark"); // Default dark for hero sections
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const toggleRef = useRef<HTMLButtonElement>(null);
+    const panelRef = useRef<HTMLDivElement>(null);
     const pathname = usePathname();
 
     useEffect(() => {
@@ -67,6 +69,36 @@ export function Navbar() {
         } else {
             document.body.style.overflow = "";
         }
+    }, [isMobileMenuOpen]);
+
+    // The panel is a sibling of <main>, not a modal, so with it open the tab order ran
+    // straight on into the page behind it: links a sighted user cannot see and a keyboard
+    // user cannot get back out of. inert takes that subtree out of the tab order AND out
+    // of the accessibility tree with one attribute, which cannot drift out of sync with
+    // the panel's contents the way a hand-rolled focus trap does.
+    useEffect(() => {
+        if (!isMobileMenuOpen) return;
+        const main = document.querySelector("main");
+        const footer = document.querySelector("footer");
+        const toggle = toggleRef.current;
+        // Captured here rather than read in the cleanup: the panel unmounts as it closes,
+        // so the ref can be null by then, and it is the same node for the whole open state.
+        const panel = panelRef.current;
+
+        main?.setAttribute("inert", "");
+        footer?.setAttribute("inert", "");
+        panel?.querySelector<HTMLElement>("a, button")?.focus();
+
+        return () => {
+            main?.removeAttribute("inert");
+            footer?.removeAttribute("inert");
+            // Only reclaim focus if closing actually stranded it. Following a nav link
+            // should leave focus wherever the new page puts it, not yank it back here.
+            const active = document.activeElement;
+            if (!active || active === document.body || panel?.contains(active)) {
+                toggle?.focus();
+            }
+        };
     }, [isMobileMenuOpen]);
 
     // Escape dismisses the menu. Without this the only exits were the four
@@ -133,6 +165,9 @@ export function Navbar() {
 
                     {/* MOBILE TOGGLE - Right */}
                     <button
+                        ref={toggleRef}
+                        aria-expanded={isMobileMenuOpen}
+                        aria-controls="mobile-menu"
                         className={`md:hidden -m-3 p-3 pointer-events-auto font-mono text-sm uppercase tracking-widest cursor-none ${isMobileMenuOpen ? 'text-white' : textColorClass}`}
                         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                     >
@@ -149,6 +184,11 @@ export function Navbar() {
                         animate={{ opacity: 1, y: "0%" }}
                         exit={{ opacity: 0, y: "-100%" }}
                         transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
+                        ref={panelRef}
+                        id="mobile-menu"
+                        role="dialog"
+                        aria-modal="true"
+                        aria-label="Menu"
                         className="fixed inset-0 z-[105] flex flex-col justify-center px-8"
                         style={{ background: '#07090f' }}
                         onClick={() => setIsMobileMenuOpen(false)}

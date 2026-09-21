@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
 import Link from "next/link";
 import { PEPY_URL, type PackageStats } from "@/lib/downloads";
 
@@ -12,10 +12,14 @@ export function HeroSection({ stats }: { stats: PackageStats }) {
         offset: ["start start", "end start"],
     });
 
+    // MotionConfig reducedMotion="user" covers animate/whileInView, but NOT a
+    // MotionValue driven by scroll: that is a computed value, not an animation, so
+    // Framer has nothing to opt out of. Collapsing the output range is the opt-out.
+    const reduced = !!useReducedMotion();
     // Parallax effect moves the image slightly slower than scroll
-    const y = useTransform(scrollYProgress, [0, 1], ["0%", "40%"]);
+    const y = useTransform(scrollYProgress, [0, 1], reduced ? ["0%", "0%"] : ["0%", "40%"]);
     // Subtle scale up on scroll
-    const scale = useTransform(scrollYProgress, [0, 1], [1, 1.04]);
+    const scale = useTransform(scrollYProgress, [0, 1], reduced ? [1, 1] : [1, 1.04]);
 
     return (
         <section

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { motion, useSpring } from "framer-motion";
+import { motion, useSpring, MotionConfig } from "framer-motion";
 
 interface CursorContextType {
     setHoverState: (state: boolean) => void;
@@ -86,7 +86,13 @@ export function CursorProvider({ children }: { children: React.ReactNode }) {
 
     return (
         <CursorContext.Provider value={{ setHoverState: setIsHovering }}>
-            {children}
+            {/* One switch for every Framer Motion animation on the site. Only the two WebGL
+                fields honoured prefers-reduced-motion before this; every reveal, every
+                whileInView slide, every layout animation and every scroll-linked parallax
+                ran regardless. reducedMotion="user" disables transform and layout animation
+                while leaving opacity alone, so content still fades in and simply does not
+                move, which is the outcome SC 2.3.3 asks for. */}
+            <MotionConfig reducedMotion="user">{children}</MotionConfig>
             {isReady && (
                 <motion.div
                     className="fixed top-0 left-0 pointer-events-none z-[9999] rounded-full mix-blend-difference"

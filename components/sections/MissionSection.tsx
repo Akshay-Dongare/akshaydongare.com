@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef, useState } from "react";
-import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
+import { motion, useScroll, useTransform, useReducedMotion, AnimatePresence } from "framer-motion";
 
 export function MissionSection() {
     const containerRef = useRef<HTMLDivElement>(null);
@@ -10,7 +10,11 @@ export function MissionSection() {
         offset: ["start start", "end start"],
     });
 
-    const y = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
+    // MotionConfig reducedMotion="user" covers animate/whileInView, but NOT a
+    // MotionValue driven by scroll: that is a computed value, not an animation, so
+    // Framer has nothing to opt out of. Collapsing the output range is the opt-out.
+    const reduced = !!useReducedMotion();
+    const y = useTransform(scrollYProgress, [0, 1], reduced ? ["0%", "0%"] : ["0%", "30%"]);
 
     const [isExpanded, setIsExpanded] = useState(false);
 
@@ -54,28 +58,37 @@ export function MissionSection() {
                         <span className="text-label text-white/50">APPROACH</span>
                         <button
                             onClick={() => setIsExpanded(!isExpanded)}
+                            aria-expanded={isExpanded}
+                            aria-controls="mission-approach-panel"
                             className="group flex flex-col items-start md:items-end cursor-none py-[0.875rem] -my-[0.875rem]"
                         >
                             <span className="text-label text-white/80 group-hover:text-white transition-colors flex items-center gap-2">
                                 LEARN MORE <span className="text-white/50 group-hover:text-white transition-colors">[ {isExpanded ? "-" : "+"} ]</span>
                             </span>
-
-                            <AnimatePresence>
-                                {isExpanded && (
-                                    <motion.div
-                                        initial={{ height: 0, opacity: 0 }}
-                                        animate={{ height: "auto", opacity: 1 }}
-                                        exit={{ height: 0, opacity: 0 }}
-                                        transition={{ duration: 0.3, ease: "easeInOut" }}
-                                        className="overflow-hidden mt-4 text-left max-w-[300px]"
-                                    >
-                                        <p className="text-[0.85rem] text-white/70 font-sans leading-relaxed pt-2 border-t border-white/10">
-                                            Provider routing, auth, retries, concurrency. The parts nobody demos are the parts that page you at 3am. That layer is what I work on, and I work on it in the open, because infrastructure this many teams depend on should be inspectable.
-                                        </p>
-                                    </motion.div>
-                                )}
-                            </AnimatePresence>
                         </button>
+
+                        {/* The panel used to sit INSIDE the button, which folded the entire
+                            paragraph into the button's accessible name: a screen reader read
+                            out "LEARN MORE [ - ] Provider routing, auth, retries, concurrency,
+                            the parts nobody demos..." as the name of one control. It is a
+                            sibling now, tied to the button by aria-controls, so the name is
+                            just "LEARN MORE" and the prose is read as prose. */}
+                        <AnimatePresence>
+                            {isExpanded && (
+                                <motion.div
+                                    id="mission-approach-panel"
+                                    initial={{ height: 0, opacity: 0 }}
+                                    animate={{ height: "auto", opacity: 1 }}
+                                    exit={{ height: 0, opacity: 0 }}
+                                    transition={{ duration: 0.3, ease: "easeInOut" }}
+                                    className="overflow-hidden mt-4 text-left max-w-[300px]"
+                                >
+                                    <p className="text-[0.85rem] text-white/70 font-sans leading-relaxed pt-2 border-t border-white/10">
+                                        Provider routing, auth, retries, concurrency. The parts nobody demos are the parts that page you at 3am. That layer is what I work on, and I work on it in the open, because infrastructure this many teams depend on should be inspectable.
+                                    </p>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
                     </motion.div>
                 </div>
 
