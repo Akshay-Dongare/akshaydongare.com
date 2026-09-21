@@ -3,7 +3,17 @@
 import React, { useRef, useState, useEffect } from "react";
 import { motion, useInView } from "framer-motion";
 import Link from "next/link";
-import { MorphingParticleField } from "@/components/particles/MorphingParticleField";
+import dynamic from "next/dynamic";
+
+// three.js + R3F is ~935KB parsed. Statically imported, it sat in this route's initial
+// script set, so the boot mask could not lift and the LCP headline could not paint until
+// a quarter-megabyte of WebGL engine had downloaded and compiled, for a canvas nobody had
+// scrolled to yet. ssr:false changes no behaviour: the mount is already gated behind
+// shouldRenderParticles, which starts false and only flips once the section is near.
+const MorphingParticleField = dynamic(
+    () => import("@/components/particles/MorphingParticleField").then((m) => m.MorphingParticleField),
+    { ssr: false }
+);
 
 export function ContactSection() {
     const containerRef = useRef<HTMLDivElement>(null);
@@ -57,7 +67,7 @@ export function ContactSection() {
             </div>
 
             {shouldRenderParticles && (
-                <MorphingParticleField color="#ffffff" className="opacity-70 mix-blend-plus-lighter" />
+                <MorphingParticleField color="#ffffff" className="opacity-70 mix-blend-plus-lighter" active={isInView} />
             )}
         </section>
     );

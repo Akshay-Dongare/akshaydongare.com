@@ -511,7 +511,7 @@ function CameraFit() {
 
 //  Main Export
 // ═════════════════════════════════════════════════════════════
-export function MorphingParticleField({ color = "#ffffff", className = "" }: { color?: string; className?: string }) {
+export function MorphingParticleField({ color = "#ffffff", className = "", active = true }: { color?: string; className?: string; active?: boolean }) {
     // Reduced motion: render the field once and then stop, rather than removing it.
     // The particles are this section's visual content, so a still frame keeps the
     // composition while the movement — which is the part that triggers vestibular
@@ -591,7 +591,11 @@ export function MorphingParticleField({ color = "#ffffff", className = "" }: { c
                     camera={{ position: [0, 0, 10], fov: 50 }}
                     gl={{ alpha: true, antialias: false, powerPreference: "high-performance" }}
                     dpr={[1, 1.5]}
-                    frameloop={reduced ? "demand" : "always"}
+                    // "never" stops the render loop without tearing down the GL context, the
+                    // geometry or the simulation state, so scrolling back costs nothing to
+                    // resume. Before this the canvas kept running at 60fps for the rest of the
+                    // visit once it had been seen once, six screens away from the viewport.
+                    frameloop={reduced ? "demand" : active ? "always" : "never"}
                 >
                     <CameraFit />
                     <MorphingPointCloud color={color} shared={shared} reduced={reduced} />

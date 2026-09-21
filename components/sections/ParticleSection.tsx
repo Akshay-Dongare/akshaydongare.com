@@ -2,7 +2,17 @@
 
 import React, { useRef, useState, useEffect } from "react";
 import { motion, useInView } from "framer-motion";
-import { ParticleField } from "@/components/particles/ParticleField";
+import dynamic from "next/dynamic";
+
+// three.js + R3F is ~935KB parsed. Statically imported, it sat in this route's initial
+// script set, so the boot mask could not lift and the LCP headline could not paint until
+// a quarter-megabyte of WebGL engine had downloaded and compiled, for a canvas nobody had
+// scrolled to yet. ssr:false changes no behaviour: the mount is already gated behind
+// shouldRenderParticles, which starts false and only flips once the section is near.
+const ParticleField = dynamic(
+    () => import("@/components/particles/ParticleField").then((m) => m.ParticleField),
+    { ssr: false }
+);
 import Link from "next/link";
 import { PEPY_URL, type PackageStats } from "@/lib/downloads";
 
@@ -60,7 +70,7 @@ export function ParticleSection({ stats }: { stats: PackageStats }) {
             </div>
 
             {shouldRenderParticles && (
-                <ParticleField color="#8da3b5" />
+                <ParticleField color="#8da3b5" active={isInView} />
             )}
         </section>
     );
