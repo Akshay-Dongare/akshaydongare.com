@@ -13,7 +13,7 @@ const LINKS = [
 export function ContactContent() {
     return (
         <div
-            className="w-full min-h-screen pt-32 pb-24 flex flex-col items-center justify-center"
+            className="star-masthead w-full min-h-screen pt-32 pb-24 flex flex-col items-center justify-center"
             style={{ background: 'linear-gradient(to bottom, #0d1117 0%, #07090f 100%)' }}
             data-theme="dark"
         >
