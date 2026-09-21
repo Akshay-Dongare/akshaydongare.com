@@ -56,7 +56,7 @@ export function WorkSection({ stats }: { stats: PackageStats }) {
                 </motion.div>
 
                 {/* Horizontal Accordion row */}
-                <div className="flex flex-col md:flex-row gap-4 h-[500px] w-full items-stretch justify-center">
+                <div className="flex flex-col md:flex-row gap-4 h-auto md:h-[500px] w-full items-stretch justify-center">
                     {PROJECTS.map((project) => {
                         const isActive = activeId === project.id;
 
@@ -65,7 +65,7 @@ export function WorkSection({ stats }: { stats: PackageStats }) {
                                 key={project.id}
                                 layout
                                 onClick={() => setActiveId(project.id)}
-                                className={`relative rounded-xl overflow-hidden cursor-none flex-shrink-0 group ${isActive ? "w-full md:w-[45%]" : "w-full md:w-[25%] opacity-70 hover:opacity-100"
+                                className={`relative rounded-xl overflow-hidden cursor-none flex-shrink-0 group w-full md:h-full ${isActive ? "h-[440px] md:w-[45%]" : "h-[116px] md:w-[25%] opacity-70 hover:opacity-100"
                                     }`}
                                 transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
                             >

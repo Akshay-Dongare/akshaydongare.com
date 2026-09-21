@@ -28,6 +28,10 @@ interface SharedState {
     cursorOverShape: boolean;
     cursorX: number;
     cursorY: number;
+    /** False until a real mousemove lands. R3F's `mouse` starts at (0,0),
+        which is the centre of the viewport and therefore on top of the shape,
+        so without this the charge begins before any input exists. */
+    pointerActive: boolean;
     reformStartedAt: number;
     reformShapeIdx: number;
     showWord: boolean;
@@ -36,7 +40,7 @@ interface SharedState {
 function createSharedState(): SharedState {
     return {
         hoverProgress: 0, isShattered: false, cursorOverShape: false,
-        cursorX: 0, cursorY: 0,
+        cursorX: 0, cursorY: 0, pointerActive: false,
         reformStartedAt: 0, reformShapeIdx: 0, showWord: false,
     };
 }
@@ -167,7 +171,7 @@ function MorphingPointCloud({ color, shared }: { color: string; shared: React.Mu
 
         const cdx = mouseX - shapeCX;
         const cdy = mouseY - shapeCY;
-        const cursorIsOverShape = !s.isRebuilding && (Math.sqrt(cdx * cdx + cdy * cdy) < CURSOR_DETECT_RADIUS);
+        const cursorIsOverShape = sh.pointerActive && !s.isRebuilding && (Math.sqrt(cdx * cdx + cdy * cdy) < CURSOR_DETECT_RADIUS);
 
         sh.cursorOverShape = cursorIsOverShape;
         sh.isShattered = s.isShattered;
@@ -394,9 +398,18 @@ export function MorphingParticleField({ color = "#ffffff", className = "" }: { c
             const rect = el.getBoundingClientRect();
             shared.current.cursorX = e.clientX - rect.left;
             shared.current.cursorY = e.clientY - rect.top;
+            shared.current.pointerActive = true;
         };
+        // Arming only once a pointer genuinely moves keeps the shape intact on
+        // touch devices, and on desktop when the section is reached by scrolling
+        // without nudging the cursor.
+        const leave = () => { shared.current.pointerActive = false; };
         el.addEventListener("mousemove", handler);
-        return () => el.removeEventListener("mousemove", handler);
+        el.addEventListener("mouseleave", leave);
+        return () => {
+            el.removeEventListener("mousemove", handler);
+            el.removeEventListener("mouseleave", leave);
+        };
     }, []);
 
     return (
