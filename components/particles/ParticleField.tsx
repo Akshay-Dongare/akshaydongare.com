@@ -51,6 +51,24 @@ const LIFT            = 0.22;    // z lift proportional to local wake magnitude
 const FIELD_EPS       = 2e-4;    // below this the field is zeroed and the whole system sleeps
 
 // ── The particle tracker ───────────────────────────────────────────────────
+// ── Ambient source ─────────────────────────────────────────────────────────
+// A phone never moves a pointer, and R3F parks `mouse` at (0,0) when nothing has.
+// The previous model let that phantom cursor push the nebula's bright centre forever;
+// excluding touch fixed the stuck push and left the field perceptually still on mobile,
+// where the only motion left was a 0.022-unit breath, roughly two pixels. This restores
+// the life without reintroducing a fixed point: a source that wanders a slow Lissajous
+// path, so it is never parked anywhere, feeding exactly the same deposit code a real
+// cursor feeds. It also covers a desktop before its first mouse move, and after the
+// pointer leaves the canvas.
+const AMBIENT_OMEGA = 0.38;      // rad/sec on the x term; y runs at 0.73x for an open path
+const AMBIENT_RX    = 0.30;      // share of the world box half-width the path sweeps
+const AMBIENT_RY    = 0.22;
+const AMBIENT_REACH = 0.32;      // share of MAX_DISPLACE the ambient wake pulls. Pinned rather
+                                 // than taken from the speed curve, because that curve ties
+                                 // amplitude to gesture energy, which is right for a hand and
+                                 // wrong for a source that is slow on purpose: it would have
+                                 // given 7px on a phone against the 1.9px of breathing alone.
+
 const FOLLOW_TAU = 0.10;         // seconds; scaled per particle over [0.70, 1.40]
 const MAX_DT     = 0.05;         // same 3-frame clamp the old dtScale had
 
@@ -333,7 +351,23 @@ function PointCloud({ color = "#8da3b5", reduced = false }: { color?: string; re
         prev.current.y = mouseY;
         prev.current.valid = true;
 
-        if (present.current) {
+        // One source feeds the deposit below, real or ambient. Velocity for the ambient
+        // case is computed analytically from the path at `time` and `time - dt` rather
+        // than from prev.current, so handing control back to a real pointer cannot read a
+        // stale position and register as one enormous single-frame jump.
+        let srcX = mouseX, srcY = mouseY, srcVX = mvx, srcVY = mvy;
+        const ambient = !present.current;
+        if (ambient) {
+            const ax = (t: number) => Math.sin(t * AMBIENT_OMEGA) * halfW * AMBIENT_RX;
+            const ay = (t: number) => Math.sin(t * AMBIENT_OMEGA * 0.73 + 1.3) * halfH * AMBIENT_RY;
+            srcX = ax(time);
+            srcY = ay(time);
+            srcVX = srcX - ax(time - dt);
+            srcVY = srcY - ay(time - dt);
+        }
+
+        {
+            const mouseX = srcX, mouseY = srcY, mvx = srcVX, mvy = srcVY;
             const pathLen = Math.sqrt(mvx * mvx + mvy * mvy);
             const speed   = pathLen / dt;                 // world units per SECOND — frame-rate free
 
@@ -350,7 +384,9 @@ function PointCloud({ color = "#8da3b5", reduced = false }: { color?: string; re
                 radW  = -INWARD;        // drapes toward the hand, never away from it
                 // Saturating demand: fast gestures pull further, but never past MAX_DISPLACE,
                 // so there is no accumulation runaway and no clamp discontinuity.
-                reach = MAX_DISPLACE * speed / (speed + SPEED_HALF);
+                reach = ambient
+                    ? MAX_DISPLACE * AMBIENT_REACH
+                    : MAX_DISPLACE * speed / (speed + SPEED_HALF);
                 // A fast flick can cross more than a radius in one frame; substep so it
                 // lays a continuous ribbon instead of a row of separate dots.
                 steps = 1 + Math.floor(pathLen / (INFLUENCE_RADIUS * 0.7));
