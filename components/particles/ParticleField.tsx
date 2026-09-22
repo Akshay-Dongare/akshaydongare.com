@@ -40,12 +40,19 @@ const FIELD_DIFFUSION = 0.13;    // 5-point blur, per SECOND at 60fps. Scaled by
                                  // 0.25, and MAX_DT * 60 * this would reach 0.39.
 const DIFFUSION_HALO  = 5;       // cells of headroom around a splat for the bloom to spread into
 const MAX_DISPLACE    = 1.00;    // world units the field can pull the silk at full speed
-const SPEED_HALF      = 7.0;     // world units/sec at which the wake reaches half of MAX_DISPLACE
+const SPEED_HALF      = 4.5;     // world units/sec at which the speed term reaches half its range.
+                                 // Was 7.0, which meant an ordinary unhurried drag sat near the
+                                 // bottom of the curve and read as barely responsive.
 const DEPOSIT_TAU     = 0.055;   // seconds for the field to reach the cursor's demand
 const TRAIL_OFFSET    = 0.55;    // splat centre sits this far behind the hand → comet, not disc
 const DRAG_ALONG      = 0.45;    // share of the wake that follows the cursor's heading
 const INWARD          = 0.22;    // silk drapes toward the hand — same 0.22 as before
-const IDLE_REACH      = 0.10;    // resting-cursor breathing amplitude
+const IDLE_FLOOR      = 0.40;    // amplitude every input gets before speed is considered, so a
+                                 // resting cursor, a drifting ambient source and a finger between
+                                 // gestures all read alike. This is the single number that makes
+                                 // desktop and mobile feel the same; the speed term only adds.
+const PRESS_KICK      = 0.30;    // extra reach on pointerdown, so a click or tap visibly lands
+const PRESS_TAU       = 0.30;    // seconds for that kick to fall to 1/e
 const IDLE_SPEED      = 0.30;    // world units/sec below which the cursor counts as at rest
 const LIFT            = 0.22;    // z lift proportional to local wake magnitude
 const FIELD_EPS       = 2e-4;    // below this the field is zeroed and the whole system sleeps
@@ -63,11 +70,6 @@ const FIELD_EPS       = 2e-4;    // below this the field is zeroed and the whole
 const AMBIENT_OMEGA = 0.38;      // rad/sec on the x term; y runs at 0.73x for an open path
 const AMBIENT_RX    = 0.30;      // share of the world box half-width the path sweeps
 const AMBIENT_RY    = 0.22;
-const AMBIENT_REACH = 0.32;      // share of MAX_DISPLACE the ambient wake pulls. Pinned rather
-                                 // than taken from the speed curve, because that curve ties
-                                 // amplitude to gesture energy, which is right for a hand and
-                                 // wrong for a source that is slow on purpose: it would have
-                                 // given 7px on a phone against the 1.9px of breathing alone.
 
 const FOLLOW_TAU = 0.10;         // seconds; scaled per particle over [0.70, 1.40]
 const MAX_DT     = 0.05;         // same 3-frame clamp the old dtScale had
@@ -135,30 +137,20 @@ function PointCloud({ color = "#8da3b5", reduced = false }: { color?: string; re
     const bounds  = useRef({ x0: 0, x1: 0, y0: 0, y1: 0, live: false });
     const prev    = useRef({ x: 0, y: 0, valid: false });
     const present = useRef(false);
-    // Whether the DEVICE can hover at all, which is not the same question as whether a
-    // pointer happens to be over the canvas right now. On a desktop the pointer is absent
-    // most of the time, because the reader is scrolling rather than hovering, and the
-    // field resting then is correct and is what it did before. Ambient is for devices that
-    // can never produce a pointer at all.
-    const canHover = useRef(true);
     // The ambient path is rebased onto wherever the source last was, so handing over
     // between a finger and the drift continues from that point rather than teleporting.
     const amb     = useRef({ active: false, t0: 0, x0: 0, y0: 0 });
     const lastSrc = useRef({ x: 0, y: 0 });
+    // A decaying impulse so a click or a tap visibly lands. Without it a press does nothing
+    // at all on desktop, because a stationary cursor produces no path length and therefore
+    // no speed term, and the only thing separating a click from a hover is the event.
+    const press   = useRef(0);
 
     // Pointer presence. Without this, R3F's `mouse` sits at (0,0) — the bright nucleus —
     // on any device that never moves a pointer, and the old resting-cursor push was
     // applied there forever. Touch is excluded outright, so a phone gets no wake, no grid
     // pass and no field sampling at all. `valid` is cleared on leave so that re-entering
     // the canvas somewhere else cannot register as one enormous single-frame cursor jump.
-    useEffect(() => {
-        const mq = window.matchMedia("(hover: hover) and (pointer: fine)");
-        const sync = () => { canHover.current = mq.matches; };
-        sync();
-        mq.addEventListener("change", sync);
-        return () => mq.removeEventListener("change", sync);
-    }, []);
-
     useEffect(() => {
         const el = gl.domElement;
         // enter discards the stale position so the first frame back measures no travel;
@@ -169,6 +161,11 @@ function PointCloud({ color = "#8da3b5", reduced = false }: { color?: string; re
             present.current = true;
             prev.current.valid = false;
         };
+        const down = () => {
+            present.current = true;
+            prev.current.valid = false;
+            press.current = 1;
+        };
         const move = () => {
             present.current = true;
         };
@@ -176,14 +173,14 @@ function PointCloud({ color = "#8da3b5", reduced = false }: { color?: string; re
             present.current = false;
             prev.current.valid = false;
         };
-        el.addEventListener("pointerdown", enter, { passive: true });
+        el.addEventListener("pointerdown", down, { passive: true });
         el.addEventListener("pointerup", leave, { passive: true });
         el.addEventListener("pointerenter", enter, { passive: true });
         el.addEventListener("pointermove", move, { passive: true });
         el.addEventListener("pointerleave", leave, { passive: true });
         el.addEventListener("pointercancel", leave, { passive: true });
         return () => {
-            el.removeEventListener("pointerdown", enter);
+            el.removeEventListener("pointerdown", down);
             el.removeEventListener("pointerup", leave);
             el.removeEventListener("pointerenter", enter);
             el.removeEventListener("pointermove", move);
@@ -376,7 +373,14 @@ function PointCloud({ color = "#8da3b5", reduced = false }: { color?: string; re
         // than from prev.current, so handing control back to a real pointer cannot read a
         // stale position and register as one enormous single-frame jump.
         let srcX = mouseX, srcY = mouseY, srcVX = mvx, srcVY = mvy;
-        const ambient = !present.current && !canHover.current;
+        // Ambient runs on every device now. It was gated to non-hover devices only because
+        // an untethered path teleported the source when `present` flipped, which on desktop
+        // happens constantly as the cursor crosses the canvas edge. Rebasing fixed that, so
+        // the gate was only still suppressing desktop idle motion.
+        const ambient = !present.current;
+        press.current *= Math.exp(-dt / PRESS_TAU);
+        if (press.current < 1e-3) press.current = 0;
+
         const ax = (t: number) => Math.sin(t * AMBIENT_OMEGA) * halfW * AMBIENT_RX;
         const ay = (t: number) => Math.sin(t * AMBIENT_OMEGA * 0.73 + 1.3) * halfH * AMBIENT_RY;
         if (ambient) {
@@ -419,9 +423,12 @@ function PointCloud({ color = "#8da3b5", reduced = false }: { color?: string; re
                 radW  = -INWARD;        // drapes toward the hand, never away from it
                 // Saturating demand: fast gestures pull further, but never past MAX_DISPLACE,
                 // so there is no accumulation runaway and no clamp discontinuity.
-                reach = ambient
-                    ? MAX_DISPLACE * AMBIENT_REACH
-                    : MAX_DISPLACE * speed / (speed + SPEED_HALF);
+                // Floor plus a saturating speed term. Moving is therefore always at least
+                // as strong as resting, which the old two-branch version could not promise:
+                // ambient sat at a pinned 0.32 while a slow drag computed 0.12, so drifting
+                // looked livelier than dragging.
+                reach = IDLE_FLOOR + (MAX_DISPLACE - IDLE_FLOOR) * speed / (speed + SPEED_HALF)
+                      + PRESS_KICK * press.current;
                 // A fast flick can cross more than a radius in one frame; substep so it
                 // lays a continuous ribbon instead of a row of separate dots.
                 steps = 1 + Math.floor(pathLen / (INFLUENCE_RADIUS * 0.7));
@@ -431,7 +438,8 @@ function PointCloud({ color = "#8da3b5", reduced = false }: { color?: string; re
                 tanW  = 0;
                 dragW = 0;
                 radW  = 1;              // resting hand: a barely-there radial breath, as before
-                reach = IDLE_REACH * (0.55 + 0.45 * Math.sin(time * 0.9));
+                reach = IDLE_FLOOR * (0.82 + 0.18 * Math.sin(time * 0.9))
+                      + PRESS_KICK * press.current;
                 steps = 1;
                 blend = 1 - Math.exp(-dt / (DEPOSIT_TAU * 6));
             }
