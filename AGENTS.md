@@ -228,12 +228,33 @@ The two systems are intentionally different in character: the first is a quiet, 
 
 **`aSize` geometry attribute:** `generateParticleSizes()` in `particleData.ts` produces 70% fine grain `[0.75, 1.0]` and 30% structural nodes `[1.5, 2.5]`. Node probability is correlated with the `densityWave` formula so large particles land on the bright strands — not in void zones. In the vertex shader: `gl_PointSize = max(3.0, 45.0 * aSize / (-mvPos.z))`.
 
-**Interaction model — a wake field, not a force on each particle.** The cursor never
-touches a particle. It deposits into a coarse 64×40 displacement grid, and every particle
-reads that grid and glides toward `base + wake`. The character is unchanged and still
-protected: tangential silk flow around the cursor path, a 0.22 inward drape toward the
-hand, a trail offset behind the cursor so it reads as a comet rather than a disc, never
-repulsion.
+**Interaction model — a wake field, not a force on each particle.** Nothing touches a
+particle. Sources deposit into a coarse 64×40 displacement grid, and every particle reads
+that grid and glides toward `base + wake`. The character is unchanged and still protected:
+tangential silk flow around the source path, a 0.22 inward drape toward it, a trail offset
+so it reads as a comet rather than a disc, never repulsion.
+
+**There are always TWO sources, and the drift is never one of the optional ones.** Source 0
+is an ambient drift on a slow Lissajous path and it runs unconditionally, on every device,
+whether or not anything is hovering. Source 1 is the pointer and exists only while one is
+over the canvas. Both deposit into the same field every frame, so a hand DISTORTS the
+current rather than replacing it.
+
+Do not collapse these back into one source selected by a condition. Every jerk, teleport
+and platform mismatch this file has had came from exactly that: a single source handed back
+and forth between the drift and the cursor. `present` flips whenever the cursor crosses the
+canvas edge, which on a desktop is constantly, and each flip moved the wake source by up to
+6.7 world units, about 650px, in one frame. Two independent sources make the handover
+impossible rather than smoothed, which is why the rebasing, the last-source tracking and the
+`(hover: hover)` device gate that previously patched around it are all gone.
+
+**One amplitude law, or the platforms drift apart.** `reach = IDLE_FLOOR + (MAX_DISPLACE -
+IDLE_FLOOR) × speed/(speed + SPEED_HALF)`, clamped to `MAX_DISPLACE`, plus a decaying
+`PRESS_KICK` that belongs to the pointer alone. The floor is what a resting cursor, the
+drift and a finger between gestures all receive, so moving is always at least as strong as
+resting by construction. They were once computed separately, and ambient at a pinned 0.32
+against a slow drag at 0.12 meant the untouched field looked livelier than a dragged one.
+`IDLE_FLOOR` is the single dial for overall liveliness and it moves both platforms together.
 
 Two properties follow from the structure rather than from tuning, and both are load-bearing:
 
