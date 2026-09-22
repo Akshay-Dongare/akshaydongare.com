@@ -35,7 +35,7 @@ export function WorkSection({ stats }: { stats: PackageStats }) {
     return (
         <section
             className="relative w-full min-h-screen py-32 overflow-hidden"
-            style={{ background: 'linear-gradient(to bottom, var(--blend-parchment) 0%, var(--blend-warm) 42%, var(--blend-mist) 56%, #8fa8ba 66%, #507086 74%, #283848 82%, #131e2a 90%, var(--blend-deep) 100%)', marginBottom: '-1px' }}
+            style={{ background: 'linear-gradient(to bottom, var(--blend-parchment) 0%, var(--blend-warm) 42%, var(--blend-mist) 56%, #8fa8ba 66%, #507086 74%, #283848 82%, #131e2a 90%, #101821 92.5%, #0e141b 95%, #0d1218 97.5%, var(--blend-deep) 100%)', marginBottom: '-1px' }}
         >
             {/* Dark theme sentinel for the bottom portion — shifts Navbar back to white text */}
             <div className="absolute bottom-0 left-0 w-full h-[32%] pointer-events-none" data-theme="dark" />

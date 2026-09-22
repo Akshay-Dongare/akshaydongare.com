@@ -173,11 +173,14 @@ boundary. ParticleSection now eases into that ramp over five extra stops, which 
 worst crease down to 3.0x. It cannot go much lower: the first stop has to move at least
 one 8-bit level, and over 4.2% of the section that is already 3.1 levels per 100px.
 
-Two joints still carry a visible-in-principle slope break, both left alone deliberately:
-WorkSection to MissionSection at 15.7x and ParticleSection to AboutSection at 6.0x. Both
-run steep-into-flat rather than flat-into-steep, which reads far more softly, and both sit
-where the surrounding luminance is low enough that the absolute rates are small. Revisit
-them only if someone actually sees a line.
+Those two were fixed afterwards as well, with the mirror of the same trick. Hero into
+ParticleSection is flat-into-steep, so the fix eases the START of the steep side.
+ParticleSection into AboutSection (was 6.0x) and WorkSection into MissionSection (was
+15.7x) are steep-into-flat, so the fix eases the END of it: extra stops across the final
+segment following 1-(1-t)^k, which decelerates the rate into the boundary instead of
+stopping it dead. Every joint on the home page now sits at 3.3x or below with a step of 0,
+and the worst one is Hero into ParticleSection at 3.0x, which is floored by 8-bit colour
+rather than by the curve.
 
 **Every joint is measured, and they are all 0.** Adjacent sections must agree on the
 colour at their shared edge; a mismatch shows up as a hard line across the full width,
