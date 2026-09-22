@@ -17,21 +17,6 @@ function FooterLink({ href, label }: FooterLinkProps) {
     );
 }
 
-// One rule, used for both separators. They used to be authored independently: the upper
-// one faded out at its ends, the lower one was a plain border-t that stopped dead at the
-// content column. That is why the lower one read as the harder line even though both sit
-// at the same 0.06 alpha and measure 1.13 and 1.14 contrast against the footer behind
-// them. The brightness was never the problem, the termination was.
-function HairlineRule({ className = "" }: { className?: string }) {
-    return (
-        <div
-            aria-hidden="true"
-            className={`w-full h-px ${className}`}
-            style={{ background: 'linear-gradient(to right, transparent, rgba(255,255,255,0.06), transparent)' }}
-        />
-    );
-}
-
 export function Footer() {
     return (
         <footer
@@ -43,8 +28,6 @@ export function Footer() {
             style={{ background: 'linear-gradient(to bottom, var(--blend-void) 0%, var(--blend-deep) 28%, var(--blend-deep) 62%, var(--blend-void) 100%)' }}
             data-theme="dark"
         >
-            <HairlineRule className="mb-24" />
-
             <div className="max-w-[1400px] mx-auto">
 
                 {/* UPPER AREA - Grid */}
@@ -78,9 +61,15 @@ export function Footer() {
 
                 </div>
 
-                {/* LOWER AREA - Logo Wordmark */}
-                <HairlineRule />
-                <div className="flex flex-col md:flex-row items-start md:items-end justify-between pt-8">
+                {/* LOWER AREA - Logo Wordmark.
+                    No rule above it on purpose. Two 1px hairlines used to sit in this
+                    footer and both kept getting noticed, which is the one thing structural
+                    furniture must never do. A 1px line is the highest-frequency mark you
+                    can draw, so dimming it makes a fainter line rather than a softer one.
+                    The gaps already separate these zones unambiguously, so the rules were
+                    restating what the layout had said. This gap doubles to 64px to carry
+                    the separation that the rule used to. */}
+                <div className="flex flex-col md:flex-row items-start md:items-end justify-between pt-16">
 
                     <div className="flex items-end mb-8 md:mb-0">
                         <h2 className="text-display-xl font-medium tracking-tight text-white/80 leading-none">
