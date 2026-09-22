@@ -17,6 +17,21 @@ function FooterLink({ href, label }: FooterLinkProps) {
     );
 }
 
+// One rule, used for both separators. They used to be authored independently: the upper
+// one faded out at its ends, the lower one was a plain border-t that stopped dead at the
+// content column. That is why the lower one read as the harder line even though both sit
+// at the same 0.06 alpha and measure 1.13 and 1.14 contrast against the footer behind
+// them. The brightness was never the problem, the termination was.
+function HairlineRule({ className = "" }: { className?: string }) {
+    return (
+        <div
+            aria-hidden="true"
+            className={`w-full h-px ${className}`}
+            style={{ background: 'linear-gradient(to right, transparent, rgba(255,255,255,0.06), transparent)' }}
+        />
+    );
+}
+
 export function Footer() {
     return (
         <footer
@@ -28,8 +43,7 @@ export function Footer() {
             style={{ background: 'linear-gradient(to bottom, var(--blend-void) 0%, var(--blend-deep) 28%, var(--blend-deep) 62%, var(--blend-void) 100%)' }}
             data-theme="dark"
         >
-            {/* Gradient top fade — replaces sharp border-t */}
-            <div className="w-full h-px mb-24" style={{ background: 'linear-gradient(to right, transparent, rgba(255,255,255,0.06), transparent)' }} />
+            <HairlineRule className="mb-24" />
 
             <div className="max-w-[1400px] mx-auto">
 
@@ -65,7 +79,8 @@ export function Footer() {
                 </div>
 
                 {/* LOWER AREA - Logo Wordmark */}
-                <div className="flex flex-col md:flex-row items-start md:items-end justify-between border-t border-white/[0.06] pt-8">
+                <HairlineRule />
+                <div className="flex flex-col md:flex-row items-start md:items-end justify-between pt-8">
 
                     <div className="flex items-end mb-8 md:mb-0">
                         <h2 className="text-display-xl font-medium tracking-tight text-white/80 leading-none">
