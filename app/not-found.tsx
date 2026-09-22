@@ -13,7 +13,7 @@ import Link from "next/link";
 
 const DESTINATIONS = [
     { href: "/", label: "Home", note: "Start at the top" },
-    { href: "/work", label: "Selected Work", note: "langchain-litellm, Airbnb, ISO, Harvard" },
+    { href: "/work", label: "Work", note: "langchain-litellm, Airbnb, ISO, Harvard" },
     { href: "/about", label: "About", note: "What I work on, and what I am looking for" },
     { href: "/contact", label: "Contact", note: "Email, GitHub, LinkedIn" },
 ];

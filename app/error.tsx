@@ -64,7 +64,7 @@ export default function Error({
                 <nav aria-label="Go somewhere that works" className="border-t border-white/[0.08]">
                     {[
                         { href: "/", label: "Home" },
-                        { href: "/work", label: "Selected Work" },
+                        { href: "/work", label: "Work" },
                         { href: "/contact", label: "Contact" },
                     ].map((d) => (
                         <Link

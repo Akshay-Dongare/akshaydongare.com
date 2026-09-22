@@ -109,7 +109,7 @@ export function AboutContent({ stats }: { stats: PackageStats }) {
                         I build in the open. Infrastructure this many teams depend on should be inspectable, and the parts that fail in production are rarely the parts anyone demos.
                     </p>
 
-                    <h2 className="text-display-m font-medium mb-6 mt-16 text-white/90">Selected timeline</h2>
+                    <h2 className="text-display-m font-medium mb-6 mt-16 text-white/90">Timeline</h2>
 
                     <div className="flex flex-col border-b border-white/[0.08]">
                         {[
