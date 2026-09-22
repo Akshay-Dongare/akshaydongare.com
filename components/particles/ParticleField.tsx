@@ -137,10 +137,6 @@ function PointCloud({ color = "#8da3b5", reduced = false }: { color?: string; re
     const bounds  = useRef({ x0: 0, x1: 0, y0: 0, y1: 0, live: false });
     const prev    = useRef({ x: 0, y: 0, valid: false });
     const present = useRef(false);
-    // The ambient path is rebased onto wherever the source last was, so handing over
-    // between a finger and the drift continues from that point rather than teleporting.
-    const amb     = useRef({ active: false, t0: 0, x0: 0, y0: 0 });
-    const lastSrc = useRef({ x: 0, y: 0 });
     // A decaying impulse so a click or a tap visibly lands. Without it a press does nothing
     // at all on desktop, because a stationary cursor produces no path length and therefore
     // no speed term, and the only thing separating a click from a hover is the event.
@@ -355,58 +351,41 @@ function PointCloud({ color = "#8da3b5", reduced = false }: { color?: string; re
         }
 
         // ── 2. The cursor lays down new wake ────────────────────────────────
-        const mouseX = (mouse.x * viewport.width)  / 2;
-        const mouseY = (mouse.y * viewport.height) / 2;
+        const mouseXReal = (mouse.x * viewport.width)  / 2;
+        const mouseYReal = (mouse.y * viewport.height) / 2;
 
-        let mvx = 0;
-        let mvy = 0;
+        let mvxReal = 0;
+        let mvyReal = 0;
         if (prev.current.valid) {
-            mvx = mouseX - prev.current.x;
-            mvy = mouseY - prev.current.y;
+            mvxReal = mouseXReal - prev.current.x;
+            mvyReal = mouseYReal - prev.current.y;
         }
-        prev.current.x = mouseX;
-        prev.current.y = mouseY;
+        prev.current.x = mouseXReal;
+        prev.current.y = mouseYReal;
         prev.current.valid = true;
 
-        // One source feeds the deposit below, real or ambient. Velocity for the ambient
-        // case is computed analytically from the path at `time` and `time - dt` rather
-        // than from prev.current, so handing control back to a real pointer cannot read a
-        // stale position and register as one enormous single-frame jump.
-        let srcX = mouseX, srcY = mouseY, srcVX = mvx, srcVY = mvy;
-        // Ambient runs on every device now. It was gated to non-hover devices only because
-        // an untethered path teleported the source when `present` flipped, which on desktop
-        // happens constantly as the cursor crosses the canvas edge. Rebasing fixed that, so
-        // the gate was only still suppressing desktop idle motion.
-        const ambient = !present.current;
         press.current *= Math.exp(-dt / PRESS_TAU);
         if (press.current < 1e-3) press.current = 0;
 
+        // TWO sources, both deposited every frame. The drift is the field's own life and it
+        // never stops; a hand does not replace it, it disturbs it. Source 0 is the drift,
+        // source 1 is the pointer and exists only while one is over the canvas.
+        //
+        // This also deletes a whole class of bug. Every jerk and teleport in this file came
+        // from handing a single source back and forth between the drift and the cursor, so
+        // the path needed rebasing onto wherever control changed hands. With the drift
+        // running continuously there is no handover left to smooth: the ambient path is
+        // evaluated absolutely again, and the rebasing machinery is gone.
         const ax = (t: number) => Math.sin(t * AMBIENT_OMEGA) * halfW * AMBIENT_RX;
         const ay = (t: number) => Math.sin(t * AMBIENT_OMEGA * 0.73 + 1.3) * halfH * AMBIENT_RY;
-        if (ambient) {
-            const a = amb.current;
-            if (!a.active) {
-                a.active = true; a.t0 = time;
-                a.x0 = lastSrc.current.x; a.y0 = lastSrc.current.y;
-            }
-            const lx = halfW - GRID_MARGIN, ly = halfH - GRID_MARGIN;
-            const rx = a.x0 + (ax(time) - ax(a.t0));
-            const ry = a.y0 + (ay(time) - ay(a.t0));
-            srcX = rx < -lx ? -lx : rx > lx ? lx : rx;
-            srcY = ry < -ly ? -ly : ry > ly ? ly : ry;
-            srcVX = ax(time) - ax(time - dt);
-            srcVY = ay(time) - ay(time - dt);
-        } else {
-            amb.current.active = false;
-        }
-        lastSrc.current.x = srcX;
-        lastSrc.current.y = srcY;
+        const nSources = present.current ? 2 : 1;
 
-        // Restored gate. Without it a desktop ran the ambient drift whenever the cursor was
-        // not over the canvas, which is most of the time while reading, and a pinned 0.32
-        // reach wandering slowly reads as exactly the wobble the wake field replaced.
-        if (present.current || ambient) {
-            const mouseX = srcX, mouseY = srcY, mvx = srcVX, mvy = srcVY;
+        for (let si = 0; si < nSources; si++) {
+            const isPointer = si === 1;
+            const mouseX = isPointer ? mouseXReal : ax(time);
+            const mouseY = isPointer ? mouseYReal : ay(time);
+            const mvx    = isPointer ? mvxReal    : ax(time) - ax(time - dt);
+            const mvy    = isPointer ? mvyReal    : ay(time) - ay(time - dt);
             const pathLen = Math.sqrt(mvx * mvx + mvy * mvy);
             const speed   = pathLen / dt;                 // world units per SECOND — frame-rate free
 
@@ -428,7 +407,7 @@ function PointCloud({ color = "#8da3b5", reduced = false }: { color?: string; re
                 // ambient sat at a pinned 0.32 while a slow drag computed 0.12, so drifting
                 // looked livelier than dragging.
                 reach = IDLE_FLOOR + (MAX_DISPLACE - IDLE_FLOOR) * speed / (speed + SPEED_HALF)
-                      + PRESS_KICK * press.current;
+                      + (isPointer ? PRESS_KICK * press.current : 0);
                 // A fast flick can cross more than a radius in one frame; substep so it
                 // lays a continuous ribbon instead of a row of separate dots.
                 steps = 1 + Math.floor(pathLen / (INFLUENCE_RADIUS * 0.7));
@@ -439,10 +418,16 @@ function PointCloud({ color = "#8da3b5", reduced = false }: { color?: string; re
                 dragW = 0;
                 radW  = 1;              // resting hand: a barely-there radial breath, as before
                 reach = IDLE_FLOOR * (0.82 + 0.18 * Math.sin(time * 0.9))
-                      + PRESS_KICK * press.current;
+                      + (isPointer ? PRESS_KICK * press.current : 0);
                 steps = 1;
                 blend = 1 - Math.exp(-dt / (DEPOSIT_TAU * 6));
             }
+
+            // The press kick is added on top of a curve that already approaches MAX_DISPLACE,
+            // so a click during a fast drag could ask for 1.3 and make MAX_DISPLACE a lie.
+            // Clamp it: the kick then does its work where it is actually wanted, on a
+            // stationary press, and cannot stack into something the cap was meant to prevent.
+            if (reach > MAX_DISPLACE) reach = MAX_DISPLACE;
 
             const R2 = INFLUENCE_RADIUS * INFLUENCE_RADIUS;
 
