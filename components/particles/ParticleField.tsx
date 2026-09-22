@@ -135,6 +135,16 @@ function PointCloud({ color = "#8da3b5", reduced = false }: { color?: string; re
     const bounds  = useRef({ x0: 0, x1: 0, y0: 0, y1: 0, live: false });
     const prev    = useRef({ x: 0, y: 0, valid: false });
     const present = useRef(false);
+    // Whether the DEVICE can hover at all, which is not the same question as whether a
+    // pointer happens to be over the canvas right now. On a desktop the pointer is absent
+    // most of the time, because the reader is scrolling rather than hovering, and the
+    // field resting then is correct and is what it did before. Ambient is for devices that
+    // can never produce a pointer at all.
+    const canHover = useRef(true);
+    // The ambient path is rebased onto wherever the source last was, so handing over
+    // between a finger and the drift continues from that point rather than teleporting.
+    const amb     = useRef({ active: false, t0: 0, x0: 0, y0: 0 });
+    const lastSrc = useRef({ x: 0, y: 0 });
 
     // Pointer presence. Without this, R3F's `mouse` sits at (0,0) — the bright nucleus —
     // on any device that never moves a pointer, and the old resting-cursor push was
@@ -142,29 +152,39 @@ function PointCloud({ color = "#8da3b5", reduced = false }: { color?: string; re
     // pass and no field sampling at all. `valid` is cleared on leave so that re-entering
     // the canvas somewhere else cannot register as one enormous single-frame cursor jump.
     useEffect(() => {
+        const mq = window.matchMedia("(hover: hover) and (pointer: fine)");
+        const sync = () => { canHover.current = mq.matches; };
+        sync();
+        mq.addEventListener("change", sync);
+        return () => mq.removeEventListener("change", sync);
+    }, []);
+
+    useEffect(() => {
         const el = gl.domElement;
         // enter discards the stale position so the first frame back measures no travel;
         // move only marks presence — it must NOT touch `valid`, or every frame would
         // start from a fresh sample, the cursor would read as motionless, and the swirl
         // would never fire at all.
-        const enter = (e: PointerEvent) => {
-            if (e.pointerType === "touch") return;
+        const enter = () => {
             present.current = true;
             prev.current.valid = false;
         };
-        const move = (e: PointerEvent) => {
-            if (e.pointerType === "touch") return;
+        const move = () => {
             present.current = true;
         };
         const leave = () => {
             present.current = false;
             prev.current.valid = false;
         };
+        el.addEventListener("pointerdown", enter, { passive: true });
+        el.addEventListener("pointerup", leave, { passive: true });
         el.addEventListener("pointerenter", enter, { passive: true });
         el.addEventListener("pointermove", move, { passive: true });
         el.addEventListener("pointerleave", leave, { passive: true });
         el.addEventListener("pointercancel", leave, { passive: true });
         return () => {
+            el.removeEventListener("pointerdown", enter);
+            el.removeEventListener("pointerup", leave);
             el.removeEventListener("pointerenter", enter);
             el.removeEventListener("pointermove", move);
             el.removeEventListener("pointerleave", leave);
@@ -356,17 +376,32 @@ function PointCloud({ color = "#8da3b5", reduced = false }: { color?: string; re
         // than from prev.current, so handing control back to a real pointer cannot read a
         // stale position and register as one enormous single-frame jump.
         let srcX = mouseX, srcY = mouseY, srcVX = mvx, srcVY = mvy;
-        const ambient = !present.current;
+        const ambient = !present.current && !canHover.current;
+        const ax = (t: number) => Math.sin(t * AMBIENT_OMEGA) * halfW * AMBIENT_RX;
+        const ay = (t: number) => Math.sin(t * AMBIENT_OMEGA * 0.73 + 1.3) * halfH * AMBIENT_RY;
         if (ambient) {
-            const ax = (t: number) => Math.sin(t * AMBIENT_OMEGA) * halfW * AMBIENT_RX;
-            const ay = (t: number) => Math.sin(t * AMBIENT_OMEGA * 0.73 + 1.3) * halfH * AMBIENT_RY;
-            srcX = ax(time);
-            srcY = ay(time);
-            srcVX = srcX - ax(time - dt);
-            srcVY = srcY - ay(time - dt);
+            const a = amb.current;
+            if (!a.active) {
+                a.active = true; a.t0 = time;
+                a.x0 = lastSrc.current.x; a.y0 = lastSrc.current.y;
+            }
+            const lx = halfW - GRID_MARGIN, ly = halfH - GRID_MARGIN;
+            const rx = a.x0 + (ax(time) - ax(a.t0));
+            const ry = a.y0 + (ay(time) - ay(a.t0));
+            srcX = rx < -lx ? -lx : rx > lx ? lx : rx;
+            srcY = ry < -ly ? -ly : ry > ly ? ly : ry;
+            srcVX = ax(time) - ax(time - dt);
+            srcVY = ay(time) - ay(time - dt);
+        } else {
+            amb.current.active = false;
         }
+        lastSrc.current.x = srcX;
+        lastSrc.current.y = srcY;
 
-        {
+        // Restored gate. Without it a desktop ran the ambient drift whenever the cursor was
+        // not over the canvas, which is most of the time while reading, and a pinned 0.32
+        // reach wandering slowly reads as exactly the wobble the wake field replaced.
+        if (present.current || ambient) {
             const mouseX = srcX, mouseY = srcY, mvx = srcVX, mvy = srcVY;
             const pathLen = Math.sqrt(mvx * mvx + mvy * mvy);
             const speed   = pathLen / dt;                 // world units per SECOND — frame-rate free
