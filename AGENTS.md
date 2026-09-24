@@ -101,6 +101,14 @@ Google builds the result from the server HTML, so these hold it to what a recrui
   its main content changes and at no other time; a date that moves on every deploy is ignored.
 - **Old URLs.** `/projects` and `/social` from the previous site 308 to `/work` and `/contact`
   in `next.config.ts`. `/blog` has no equivalent and stays a 404.
+- **First-screen reveals run on mount.** Google renders in a tall viewport, and every `h-svh`
+  section stretches with it: at 412x5000 the hero is 5000px and its h1 sits at y 4708, outside
+  a `whileInView` margin, so it stayed at the server-rendered `opacity:0`. Anything on the first
+  screen uses `animate`, never `whileInView`.
+- **Not-found.** `/_not-found` carries `X-Robots-Tag: noindex`. Requested directly it answers
+  200, and every real 404 names it as canonical through the root layout's `./`.
+- **Site name.** The WebSite JSON-LD pairs `name: "Akshay Dongare"` with the domain as
+  `alternateName`, Google's documented fallback when it is not confident in the name.
 
 ### Branding
 
