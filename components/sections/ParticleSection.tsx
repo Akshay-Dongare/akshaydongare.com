@@ -15,11 +15,16 @@ const ParticleField = dynamic(
 );
 import Link from "next/link";
 import { PEPY_URL, type PackageStats } from "@/lib/downloads";
+import { useMode } from "@/lib/mode";
+
+// Olive #7c8c4b on screen: the field's colour path darkens its input, so this is that colour pre-lightened.
+const LIGHT_NEBULA = "#b9c494";
 
 export function ParticleSection({ stats }: { stats: PackageStats }) {
     const containerRef = useRef<HTMLDivElement>(null);
     const isInView = useInView(containerRef, { once: false, margin: "100px 0px 100px 0px" });
     const [shouldRenderParticles, setShouldRenderParticles] = useState(false);
+    const light = useMode() === "light";
 
     // Only render WebGL canvas when near viewport for performance
     useEffect(() => {
@@ -73,9 +78,8 @@ export function ParticleSection({ stats }: { stats: PackageStats }) {
                 </motion.div>
             </div>
 
-            {/* The mask fades light mode's large sprites in, so the canvas top cannot cut them flat at the Hero joint. */}
             {shouldRenderParticles && (
-                <ParticleField color="#8da3b5" active={isInView} className="light:[mask-image:linear-gradient(to_bottom,transparent,#000_15%)] light:[-webkit-mask-image:linear-gradient(to_bottom,transparent,#000_15%)]" />
+                <ParticleField color={light ? LIGHT_NEBULA : "#8da3b5"} blend={light ? "normal" : "add"} active={isInView} />
             )}
         </section>
     );

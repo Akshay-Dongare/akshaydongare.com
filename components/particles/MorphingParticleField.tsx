@@ -5,16 +5,6 @@ import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { useReducedMotion } from "framer-motion";
 import * as THREE from "three";
 import { SHAPE_GENERATORS, SHAPE_COUNT } from "@/lib/shapeGenerators";
-import { useMode, type Mode } from "@/lib/mode";
-
-// Light mode lays pigment; white only reads as light against a dark ground. Deep enough that a lone dot is a mark, not a speck.
-const LIGHT_EMBER = "#a8532b";
-
-// The shader has no colorspace_fragment, so hand it the sRGB bytes as if they were linear.
-function displayColor(hex: string) {
-    const n = parseInt(hex.slice(1), 16);
-    return new THREE.Color().setRGB(((n >> 16) & 255) / 255, ((n >> 8) & 255) / 255, (n & 255) / 255, THREE.LinearSRGBColorSpace);
-}
 
 const PARTICLE_COUNT = 8000;
 const MORPH_DURATION = 2.5;
@@ -97,9 +87,8 @@ function createSharedState(): SharedState {
 // ═════════════════════════════════════════════════════════════
 //  WebGL Point Cloud
 // ═════════════════════════════════════════════════════════════
-function MorphingPointCloud({ color, shared, reduced = false, mode = "light" }: { color: string; shared: React.MutableRefObject<SharedState>; reduced?: boolean; mode?: Mode }) {
+function MorphingPointCloud({ color, shared, reduced = false }: { color: string; shared: React.MutableRefObject<SharedState>; reduced?: boolean }) {
     const pointsRef = useRef<THREE.Points>(null);
-    const gl = useThree((state) => state.gl);
 
     const stateRef = useRef({
         currentShapeIdx: 0,
@@ -163,38 +152,22 @@ function MorphingPointCloud({ color, shared, reduced = false, mode = "light" }: 
     }, [positions]);
 
     // ── Bigger, thicker dots ────────────────────────────────
-    // Dark keeps its exact colour path; light uses the true ember and CSS-pixel dot sizes.
-    const light = mode === "light";
     const material = useMemo(() => {
         return new THREE.ShaderMaterial({
             transparent: true,
             depthWrite: false,
             uniforms: {
-                uColor: { value: light ? displayColor(LIGHT_EMBER) : new THREE.Color(color) },
+                uColor: { value: new THREE.Color(color) },
                 uGlobalOpacity: { value: 0.92 },
-                uPixelRatio: { value: light ? gl.getPixelRatio() : 1.0 },
-                // Light only: the ~5% ambient scatter reads as dust on paper, so it shrinks away toward the edges.
-                uVignette: { value: light ? 1.0 : 0.0 },
             },
             vertexShader: `
                 attribute float opacity;
                 varying float vOpacity;
-                uniform float uPixelRatio;
-                uniform float uVignette;
                 void main() {
                     vOpacity = opacity;
                     vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
-                    gl_PointSize = max(5.0, 18.0 * (1.0 / -mvPosition.z)) * uPixelRatio;
+                    gl_PointSize = max(5.0, 18.0 * (1.0 / -mvPosition.z));
                     gl_Position = projectionMatrix * mvPosition;
-                    // Radius in half-heights of the shorter side, so the fade is round on any aspect;
-                    // a perspective projection already carries the aspect as P[1][1] / P[0][0].
-                    float aspect = projectionMatrix[1][1] / projectionMatrix[0][0];
-                    vec2 ndc = gl_Position.xy / gl_Position.w;
-                    float r = length(ndc * vec2(aspect, 1.0)) / min(aspect, 1.0);
-                    // Shrink the outer scatter rather than fade it: a faded hard dot is exactly a low-contrast speck.
-                    float vig = mix(1.0, 1.0 - smoothstep(0.6, 1.0, r), uVignette);
-                    gl_PointSize *= vig;
-                    vOpacity *= smoothstep(0.15, 0.4, vig);
                 }
             `,
             fragmentShader: `
@@ -209,7 +182,7 @@ function MorphingPointCloud({ color, shared, reduced = false, mode = "light" }: 
                 }
             `,
         });
-    }, [color, light, gl]);
+    }, [color]);
     // A mode switch builds a new material; free the old one's GPU program.
     useEffect(() => () => material.dispose(), [material]);
 
@@ -547,7 +520,6 @@ export function MorphingParticleField({ color = "#ffffff", className = "", activ
     // symptoms — goes away entirely. frameloop "demand" draws on mount and then only
     // when something invalidates, so there is no ongoing CPU, GPU or battery cost.
     const reduced = !!useReducedMotion();
-    const mode = useMode();
     const shared = useRef<SharedState>(createSharedState());
     const wrapperRef = useRef<HTMLDivElement>(null);
 
@@ -628,7 +600,7 @@ export function MorphingParticleField({ color = "#ffffff", className = "", activ
                     frameloop={reduced ? "demand" : active ? "always" : "never"}
                 >
                     <CameraFit />
-                    <MorphingPointCloud color={color} shared={shared} reduced={reduced} mode={mode} />
+                    <MorphingPointCloud color={color} shared={shared} reduced={reduced} />
                 </Canvas>
             </div>
 

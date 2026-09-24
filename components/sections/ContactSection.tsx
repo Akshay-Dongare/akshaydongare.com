@@ -4,6 +4,10 @@ import React, { useRef, useState, useEffect } from "react";
 import { motion, useInView } from "framer-motion";
 import Link from "next/link";
 import dynamic from "next/dynamic";
+import { useMode } from "@/lib/mode";
+
+// Terracotta #a8532b on screen: the field's colour path darkens its input, so this is that colour pre-lightened.
+const LIGHT_CLIMAX = "#d49b72";
 
 // three.js + R3F is ~935KB parsed. Statically imported, it sat in this route's initial
 // script set, so the boot mask could not lift and the LCP headline could not paint until
@@ -19,6 +23,7 @@ export function ContactSection() {
     const containerRef = useRef<HTMLDivElement>(null);
     const isInView = useInView(containerRef, { once: false, margin: "100px 0px 100px 0px" });
     const [shouldRenderParticles, setShouldRenderParticles] = useState(false);
+    const light = useMode() === "light";
 
     useEffect(() => {
         if (isInView) {
@@ -71,7 +76,7 @@ export function ContactSection() {
             </div>
 
             {shouldRenderParticles && (
-                <MorphingParticleField color="#ffffff" className="opacity-70 dark:mix-blend-plus-lighter" active={isInView} />
+                <MorphingParticleField color={light ? LIGHT_CLIMAX : "#ffffff"} className="opacity-70 dark:mix-blend-plus-lighter" active={isInView} />
             )}
         </section>
     );

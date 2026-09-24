@@ -5,16 +5,6 @@ import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { useReducedMotion } from "framer-motion";
 import * as THREE from "three";
 import { generateSilhouetteParticles, generateParticleSizes } from "@/lib/particleData";
-import { useMode, type Mode } from "@/lib/mode";
-
-// Light mode lays olive pigment instead of adding light, which only shows on a dark ground.
-const LIGHT_NEBULA = "#7c8c4b";
-
-// The shader has no colorspace_fragment, so hand it the sRGB bytes as if they were linear.
-function displayColor(hex: string) {
-    const n = parseInt(hex.slice(1), 16);
-    return new THREE.Color().setRGB(((n >> 16) & 255) / 255, ((n >> 8) & 255) / 255, (n & 255) / 255, THREE.LinearSRGBColorSpace);
-}
 
 // ── Model ──────────────────────────────────────────────────────────────────
 // The cursor does not touch particles. It writes into a coarse displacement
@@ -88,11 +78,9 @@ const MAX_DT     = 0.05;         // same 3-frame clamp the old dtScale had
 // very different values and the lag spread is even without needing Math.random().
 const GOLDEN = 0.6180339887498949;
 
-function PointCloud({ color = "#8da3b5", reduced = false, mode = "light" }: { color?: string; reduced?: boolean; mode?: Mode }) {
+function PointCloud({ color = "#8da3b5", reduced = false, blend = "add" }: { color?: string; reduced?: boolean; blend?: "add" | "normal" }) {
     const pointsRef = useRef<THREE.Points>(null);
     const { mouse, viewport, gl } = useThree();
-    // Phones pack the same field into a narrower frame, so strands overlap into patches: halve the pigment there.
-    const narrow = useThree((state) => state.size.width < 768);
 
     const [positions, originalPositions] = useMemo(() => {
         const raw = generateSilhouetteParticles(PARTICLE_COUNT);
@@ -208,32 +196,24 @@ function PointCloud({ color = "#8da3b5", reduced = false, mode = "light" }: { co
     // Soft Gaussian circles via GLSL + additive blending = holographic ghost glow.
     // On the dark top of the Particle section, particles accumulate into bright clusters
     // where the silhouette is dense; on the light bottom they fade gracefully.
-    // Dark is untouched, down to the linear conversion it has always had. Light is Normal
-    // blending, so the page shows pigment*A + paper*(1-A) and can never go darker than the
-    // pigment; sizes are scaled into CSS pixels so a Retina screen is not a quarter as dense.
-    const light = mode === "light";
     const material = useMemo(() => new THREE.ShaderMaterial({
         transparent: true,
         depthWrite:  false,
-        blending:    light ? THREE.NormalBlending : THREE.AdditiveBlending,
+        // Light mode lays the same particles as colour instead: added light cannot darken paper.
+        blending:    blend === "normal" ? THREE.NormalBlending : THREE.AdditiveBlending,
         uniforms: {
-            uColor:         { value: light ? displayColor(LIGHT_NEBULA) : new THREE.Color(color) },
-            uGlobalOpacity: { value: light ? (narrow ? 0.03 : 0.06) : 0.62 },
-            uSizeScale:     { value: light ? 5.0 : 1.0 },
-            uPixelRatio:    { value: light ? gl.getPixelRatio() : 1.0 },
-            uSoftRim:       { value: light ? 1.0 : 0.0 },
+            uColor:         { value: new THREE.Color(color) },
+            uGlobalOpacity: { value: 0.62 },
         },
         vertexShader: `
             attribute float aOpacity;
             attribute float aSize;
             varying   float vOpacity;
             varying   float vFade;
-            uniform   float uSizeScale;
-            uniform   float uPixelRatio;
             void main() {
                 vOpacity      = aOpacity;
                 vec4 mvPos    = modelViewMatrix * vec4(position, 1.0);
-                gl_PointSize  = max(3.0, 45.0 * aSize / (-mvPos.z)) * uSizeScale * uPixelRatio;
+                gl_PointSize  = max(3.0, 45.0 * aSize / (-mvPos.z));
                 gl_Position   = projectionMatrix * mvPos;
 
                 // Additive blending adds light to whatever is behind it, so it only
@@ -252,7 +232,6 @@ function PointCloud({ color = "#8da3b5", reduced = false, mode = "light" }: { co
         fragmentShader: `
             uniform vec3  uColor;
             uniform float uGlobalOpacity;
-            uniform float uSoftRim;
             varying float vOpacity;
             varying float vFade;
             void main() {
@@ -260,13 +239,11 @@ function PointCloud({ color = "#8da3b5", reduced = false, mode = "light" }: { co
                 if (d > 0.5) discard;
                 // Gaussian falloff — a soft glowing dot, not a hard disc
                 float alpha  = exp(-d * d * 9.0) * vOpacity * uGlobalOpacity * vFade;
-                // At 5x size the Gaussian is still at 10% on the rim; take it to zero before the discard.
-                alpha       *= mix(1.0, smoothstep(0.5, 0.3, d), uSoftRim);
                 if (alpha < 0.002) discard;
                 gl_FragColor = vec4(uColor, alpha);
             }
         `,
-    }), [color, light, gl, narrow]);
+    }), [color, blend]);
     // A mode switch builds a new material; free the old one's GPU program.
     useEffect(() => () => material.dispose(), [material]);
 
@@ -604,14 +581,13 @@ function PointCloud({ color = "#8da3b5", reduced = false, mode = "light" }: { co
     return <points ref={pointsRef} geometry={geometry} material={material} />;
 }
 
-export function ParticleField({ color = "#8da3b5", className = "", active = true }: { color?: string; className?: string; active?: boolean }) {
+export function ParticleField({ color = "#8da3b5", className = "", active = true, blend = "add" }: { color?: string; className?: string; active?: boolean; blend?: "add" | "normal" }) {
     // Reduced motion: render the field once and then stop, rather than removing it.
     // The particles are this section's visual content, so a still frame keeps the
     // composition while the movement — which is the part that triggers vestibular
     // symptoms — goes away entirely. frameloop "demand" draws on mount and then only
     // when something invalidates, so there is no ongoing CPU, GPU or battery cost.
     const reduced = !!useReducedMotion();
-    const mode = useMode();
     return (
         <div className={`w-full h-full pointer-events-auto absolute inset-0 z-0 ${className}`}>
             <Canvas
@@ -624,7 +600,7 @@ export function ParticleField({ color = "#8da3b5", className = "", active = true
                     // visit once it had been seen once, six screens away from the viewport.
                     frameloop={reduced ? "demand" : active ? "always" : "never"}
             >
-                <PointCloud color={color} reduced={reduced} mode={mode} />
+                <PointCloud color={color} reduced={reduced} blend={blend} />
             </Canvas>
         </div>
     );
