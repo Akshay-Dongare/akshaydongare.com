@@ -51,12 +51,14 @@ BootSequence → CursorProvider → Navbar + <main> + Footer
 ```
 
 - **BootSequence** (`components/boot/BootSequence.tsx`): Plays a one-time iris-wipe animation on first visit (gated by `sessionStorage`). Renders children directly on repeat visits.
-- **CursorProvider** (`components/cursor/CustomCursor.tsx`): Replaces the native cursor with a hyper-minimal 5px white dot using `mix-blend-mode: difference` — inverts against any background so it stays legible on dark or light sections. Scales to 8px on hover via a 150ms spring. Tracking uses raw DOM events mixed with React context at 60fps. Native `cursor: none` is set globally in `globals.css`.
+- **CursorProvider** (`components/cursor/CustomCursor.tsx`): Replaces the native cursor with a hyper-minimal 5px dot whose colour and blend come from `--cursor-color` and `--cursor-blend`: white with `mix-blend-mode: difference` in dark, a solid ink dot in light, where difference falls under 3:1 over the particle pigment. Scales to 8px on hover via a 150ms spring. Tracking uses raw DOM events mixed with React context at 60fps. Native `cursor: none` is set globally in `globals.css`.
 - **`app/template.tsx`**: Wraps every route in a `PageTransition` fade/slide — this is the Next.js `template.tsx` (re-mounts on every navigation, unlike `layout.tsx`).
 
 ### Navbar Dark/Light Theme Detection
 
-The Navbar (`components/nav/Navbar.tsx`) adapts its text and background colors based on the content scrolled behind it. It queries all `[data-theme="dark"]` DOM elements on every scroll event and checks if any overlap `y=60px` (the navbar height).
+In light mode the Navbar skips all of this and stays ink, because every light ground clears 9:1 for it; the sentinels below only matter in dark mode. The switcher (`components/nav/ModeToggle.tsx`) sits beside the CTA on desktop and beside MENU on phones.
+
+In dark mode the Navbar (`components/nav/Navbar.tsx`) adapts its text and background colors based on the content scrolled behind it. It queries all `[data-theme="dark"]` DOM elements on every scroll event and checks if any overlap `y=60px` (the navbar height).
 
 **Key pattern for section components:** sections that span both dark and light backgrounds (e.g. `ParticleSection`, `WorkSection`) use invisible sentinel `<div>`s with the appropriate `data-theme` to cover only the relevant vertical portion of the section. This lets the Navbar correctly transition as the user scrolls through gradient bridges.
 
@@ -135,6 +137,52 @@ and an accurate `sizes`. Do not revert either to a plain `<img>`: the source is
   in a rounded container. Carries `priority` because it is that page's LCP
   element, and `sizes="320px"` because the box is capped by `max-w-[320px]`.
 
+### Modes
+
+Light, "Daylight Folio", is the default; dark is the original "Deep Obsidian" site behind a
+Light / Dark switcher. `<html data-mode>` carries the mode, and a pre-paint script in
+`app/layout.tsx` applies a stored choice from `localStorage` so a dark visitor never sees a light
+frame. `lib/mode.ts` holds the hook and the setters, and syncs other tabs through the `storage`
+event. Keep the attribute off `data-theme`: the Navbar reads `[data-theme="dark"]` as section
+sentinels. Anything that must be right before or during hydration reads the attribute, not the
+hook, because the hook reports the server's "light" until hydration ends: the Navbar starts at a
+null state rendered as `text-fg-100`, which CSS resolves per mode. The root layout owns the
+theme-color meta; viewport metadata would be re-inserted as light on every navigation.
+
+**Every colour is a token with two values.** `:root, [data-mode="light"]` holds light and
+`[data-mode="dark"]` holds dark, and each dark value is the exact string the component used to
+inline, so dark mode renders as it did before the switcher existed. Section backgrounds are
+`var(--spine-*)`, the parallax layers `var(--depth-*)`, the Work cards `var(--card-*)`. The card
+tokens say `to bottom in oklab` because that is what Tailwind's `bg-gradient-to-b` emitted. The one
+intended dark difference is `color-scheme: dark`, so native scrollbars match the page.
+
+**Text never uses white or black utilities.** `text-fg-NN` replaces `text-white/NN`: in dark it
+is the same `color-mix` Tailwind emits for `text-white/NN`, in light a solid ink by role (NN 85
+and up `#1a1c13`, 65 to 80 `#272a1e`, 50 to 60 `#3d422c`). `text-lbl-NN` is the same on
+`.text-label` call sites and turns rust `#6b2a11` in light. Ink at partial alpha cannot stand in
+for these: `#1a1c13` at 0.5 on sage measures 3.04:1. Borders and underlines use `line-NN`, light
+grounds in dark mode use `on-paper`.
+
+**The light spine has no dark ground anywhere.** Every background pixel stays at luminance 0.51 or
+above, so ink clears 9.2:1 everywhere. The journey moves by hue: cream, sage, apricot, sand, an
+olive pool behind the Work cards, paper, and an apricot blush under Contact. All joints are step 0.
+Rust labels and muted ink are for grounds at 0.676 or above, so CONNECT, which sits over the
+climax, uses `fg`.
+
+**The particle fields lay pigment in light mode.** Additive light only shows on dark, so the light
+path uses Normal blending, which composites to pigment*A + paper*(1-A) and can never go darker than
+the pigment. The shaders have no `colorspace_fragment`, so the light colours go in through
+`setRGB(..., LinearSRGBColorSpace)`; `new THREE.Color(hex)` would render the olive as drab
+`#334312`. The nebula is `#7c8c4b` with points x5 in CSS pixels: at x2.8 lone particles showed
+as specks, and at x5 only overlapping strands build up into a watercolour wash, with ink at 9.2:1
+over its darkest pixel. It runs at 0.06, halved under 768px where the narrower frame merges strands
+into stain-like patches, with each sprite's rim taken to zero and a CSS mask fading the canvas in
+at the top so the sprites are never cut flat at the Hero joint. The climax is `#a8532b`, deep
+enough that a lone dot reads as a mark, and from 0.6 half-heights, just outside every shape
+(they sit within about 0.5), the ambient scatter shrinks
+rather than fades, because a faded hard dot is precisely a low-contrast speck. Dark keeps its
+exact uniforms and colour path.
+
 ### Color System — "Deep Obsidian" Tokens
 
 All design tokens live in `app/globals.css` under `:root`. **Do not add colors to
@@ -173,6 +221,8 @@ the light `mist → parchment` gradient, `AboutSection`'s "MORE ABOUT ME" measur
 utility needs a default colour, give it to the call sites instead.
 
 ### Blended Scroll Journey (Home Page)
+
+Everything below describes the dark spine; the light spine and its rules are under Modes.
 
 The homepage (`app/page.tsx`) assembles 7 sections. Each section uses `style={{ background: 'linear-gradient(...)' }}` with end-colors matched to the next section's start-color. All full-viewport sections use `h-svh` (not `h-screen`/`100vh`, which on mobile is taller
 than the visible area and pushes bottom-anchored content under the collapsing URL bar;
@@ -226,7 +276,8 @@ vertical and void at both ends, the diagonal moved into a decorative layer insid
 STATIC masked wrapper (the mask is anchored to the section, so the moving child cannot
 carry it away), and the child is bled 200px against 140px of travel so its edges are
 never inside the wrapper. If you add a section, check the joint rather than eyeballing
-it; the deltas above are all 0 and should stay that way.
+it; the deltas above are all 0 and should stay that way. The code overlay also fades out over its last 15%, in both
+modes, because on a phone the diff runs past the section and the Contact joint sliced its glyphs.
 
 **The order and the gradients are coupled.** `ParticleSection` is the dark→light bridge
 and `WorkSection` is the light→dark bridge back, so the two light sections must sit
@@ -344,7 +395,7 @@ There is currently no writing section. `app/writing/` was removed because its th
 
 ### Sub-Pages
 
-`/about`, `/work`, `/contact`, `/privacy`, `/colophon` are standalone App Router pages. All use the unified dark obsidian canvas (`linear-gradient(#0d1117 → #07090f)`, `data-theme="dark"`). Text tokens: `text-white/90` headings, `text-white/65–70` body, `text-white/50–55` muted. **Do not go below `/50` on the dark canvas** — `/45` measures 4.54:1 and `/35` measures 3.19:1, which fails WCAG 2.2 SC 1.4.3 AA for text under 24px. Borders: `border-white/[0.08]`, hover `border-white/20–25`.
+`/about`, `/work`, `/contact`, `/privacy`, `/colophon` are standalone App Router pages. All use `var(--spine-page)`: cream to paper in light, the dark obsidian canvas (`#0d1117 → #07090f`) in dark. Text tokens: `text-fg-90` headings, `text-fg-65–70` body, `text-fg-50–55` muted. **Do not go below `fg-50`**: in dark, white/45 measures 4.49:1 on void and white/35 3.19:1, which fails WCAG 2.2 SC 1.4.3 AA for text under 24px. Borders: `border-line-8`, hover `border-line-20`.
 
 All five carry `.masthead-glow` (defined in `app/globals.css`), a still, soft blue
 bloom across the top 62vh that echoes the homepage nebula without running a second
@@ -357,5 +408,6 @@ A broad gradient is more visible than a 1px dot at the *same* peak alpha, becaus
 contrast sensitivity peaks at low spatial frequency, and it cannot read as dust
 because dust is high-frequency. Colour also buys headroom: the cap is a luminance
 limit, so `#6b9fd4` tolerates 0.2329 where white tolerates 0.1367. The two layers
-composite to 0.1545, putting the brightest pixel at RGB(25,33,43) with `white/50` at
-5.05:1. Raising either alpha is what breaks the page, not the geometry.
+composite to 0.1545, putting the brightest pixel at RGB(29,39,51) with `white/50` at
+4.88:1. Raising either alpha is what breaks the page, not the geometry. In light mode the same
+two layers are ember and olive (`--masthead-glow`), and muted ink holds 7.5:1 at their darkest.
