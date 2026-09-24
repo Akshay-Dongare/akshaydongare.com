@@ -1,36 +1,45 @@
 "use client";
 
-import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import React from "react";
+import { motion } from "framer-motion";
+import Link from "next/link";
 import type { PackageStats } from "@/lib/downloads";
 
+// All four are open at once: a recruiter gives the page seconds, and a name behind a click
+// is a name they never read. The full account of each lives on /work.
 const buildProjects = (stats: PackageStats) => [
     {
-        id: "proj-1",
-        label: "LANGCHAIN-LITELLM",
-        metric: `${stats.monthlyCompact} installs every month`,
-        desc: `Creator and lead maintainer of LangChain's official LiteLLM integration. A project I started on my own that now lives and ships inside the langchain-ai organization. One Python interface to 100+ model providers, plus router-backed load balancing, embeddings and OCR loading. ${stats.long} downloads to date, and around ${stats.monthlyLong} every month.`,
-        theme: "from-[#1c2230] to-[#07090f]"
-    },
-    {
-        id: "proj-2",
-        label: "AIRBNB · AI PLATFORM",
+        org: "Airbnb",
+        role: "AI Platform · contract",
+        line: "Made the internal LLM gateway about 28 services use safe to serve two providers in one process. Shipped as a version bump, so no consumer had to migrate.",
         metric: "28 services, zero migrations",
-        desc: "Contract engagement on the internal LLM gateway that roughly 28 services use to reach a model. It could not safely serve two providers in one process, because configuration lived in process-wide globals. I moved it to per-model registries resolved per request, so the concurrency guarantee is structural rather than something a lock defends. Shipped as a version bump, so not one consumer had to migrate. Test suite grew from 17 to 144.",
-        theme: "from-[#3a6288] to-[#0d1117]"
+        theme: "from-[#3a6288] to-[#0d1117]",
     },
     {
-        id: "proj-3",
-        label: "ISO · COMPANION",
-        metric: "Agentic graphs, official sources only",
-        desc: "Applied AI engineer on Companion, the assistant the International Organization for Standardization builds for its own standards work. I designed the agentic graph patterns it runs on, which is what let it scale without maintenance cost scaling with it, and ran the comparative evaluation behind its web search layer so answers come from official ISO sources rather than the open web. Started the architecture documentation and refactored the legacy codebase while I was in there.",
-        theme: "from-[#5b7fa6] to-[#1c2230]"
-    }
+        org: "LangChain",
+        role: "langchain-litellm · creator and lead maintainer",
+        line: "LangChain's official LiteLLM integration: one Python interface to 100+ model providers, developed inside the langchain-ai organization.",
+        metric: `${stats.compact} downloads, ${stats.monthlyCompact} a month`,
+        theme: "from-[#1c2230] to-[#07090f]",
+    },
+    {
+        org: "ISO",
+        role: "Companion · applied AI engineer",
+        line: "Designed the agentic graph patterns ISO's standards assistant runs on, and the evaluation that keeps its answers on official ISO sources.",
+        metric: "Official sources only",
+        theme: "from-[#3f5d7e] to-[#1c2230]",
+    },
+    {
+        org: "Harvard",
+        role: "GAMI · lead developer",
+        line: "A WhatsApp assistant answering blood donation questions in Kenya, with query rewriting and guardrails for personal data and prompt injection.",
+        metric: "Best Presentation, Spring 2025",
+        theme: "from-[#2e4560] to-[#0d1117]",
+    },
 ];
 
 export function WorkSection({ stats }: { stats: PackageStats }) {
     const PROJECTS = buildProjects(stats);
-    const [activeId, setActiveId] = useState<string>("proj-1");
 
     return (
         <section
@@ -42,9 +51,8 @@ export function WorkSection({ stats }: { stats: PackageStats }) {
 
             <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20">
 
-                {/* Top Header */}
                 <motion.div
-                    className="flex justify-end mb-24"
+                    className="flex justify-end mb-16 md:mb-20"
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
@@ -55,70 +63,37 @@ export function WorkSection({ stats }: { stats: PackageStats }) {
                     </h2>
                 </motion.div>
 
-                {/* Horizontal Accordion row */}
-                <div className="flex flex-col md:flex-row gap-4 h-auto md:h-[500px] w-full items-stretch justify-center">
-                    {PROJECTS.map((project) => {
-                        const isActive = activeId === project.id;
-
-                        return (
-                            <motion.div
-                                key={project.id}
-                                layout
-                                onClick={() => setActiveId(project.id)}
-                                className={`relative rounded-xl overflow-hidden cursor-none flex-shrink-0 group w-full md:h-full ${isActive ? "min-h-[440px] md:w-[45%]" : "min-h-[116px] md:w-[25%] opacity-70 hover:opacity-100"
-                                    }`}
-                                transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
-                            >
-                                {/* Background gradient */}
-                                <div className={`absolute inset-0 bg-gradient-to-b ${project.theme}`} />
-
-                                {!isActive && <div className="absolute inset-0 bg-[rgba(0,0,0,0.2)] backdrop-blur-sm" />}
-
-                                <div className="relative md:absolute md:inset-0 p-6 flex flex-col justify-between gap-6 md:gap-0 z-10">
-                                    <div className="flex flex-col items-start gap-3">
-                                        <h3 className="font-mono text-[0.65rem] tracking-widest text-white uppercase bg-[rgba(0,0,0,0.3)] backdrop-blur-md px-3 py-1.5 rounded-full self-start inline-flex items-center gap-2">
-                                            {/* The control lives on the label rather than as an overlay
-                                                across the whole card, so selecting the description text
-                                                of an open card still works. The card div keeps its own
-                                                onClick for the large mouse target. */}
-                                            <button
-                                                type="button"
-                                                onClick={(e) => { e.stopPropagation(); setActiveId(project.id); }}
-                                                aria-expanded={isActive}
-                                                aria-controls={`${project.id}-panel`}
-                                                className="inline-flex items-center gap-2 cursor-none"
-                                            >
-                                                {project.label}
-                                                <span>[ {isActive ? "-" : "+"} ]</span>
-                                            </button>
-                                        </h3>
-                                        {/* Visible while collapsed, so the section heading is
-                                            answered at a glance rather than behind a click. */}
-                                        <span className="font-mono text-[0.7rem] text-white/90 tracking-[0.06em] bg-[rgba(0,0,0,0.3)] backdrop-blur-md px-3 py-1 rounded-full">
-                                            {project.metric}
-                                        </span>
-                                    </div>
-
-                                    <AnimatePresence mode="wait">
-                                        {isActive && (
-                                            <motion.div
-                                                initial={{ opacity: 0, y: 20 }}
-                                                animate={{ opacity: 1, y: 0 }}
-                                                exit={{ opacity: 0, y: 20 }}
-                                                transition={{ duration: 0.4, delay: 0.08 }}
-                                                id={`${project.id}-panel`}
-                                                className="bg-black/40 backdrop-blur-md p-6 rounded-lg max-w-full md:max-w-[80%]"
-                                            >
-                                                <p className="text-[0.95rem] text-white/90 leading-relaxed font-sans">
-                                                    {project.desc}
-                                                </p>
-                                            </motion.div>
-                                        )}
-                                    </AnimatePresence>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {PROJECTS.map((project, i) => (
+                        <motion.article
+                            key={project.org}
+                            className="relative rounded-xl overflow-hidden"
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.35, delay: Math.min(i * 0.05, 0.15) }}
+                        >
+                            <div className={`absolute inset-0 bg-gradient-to-b ${project.theme}`} />
+                            <div className="relative h-full p-6 md:p-8 flex flex-col gap-5">
+                                <div className="flex flex-col gap-2">
+                                    <h3 className="text-display-m text-white leading-none">{project.org}</h3>
+                                    <p className="text-label text-white/80">{project.role}</p>
                                 </div>
-                            </motion.div>
-                        );
-                    })}
+                                <p className="text-body text-white/90 max-w-[46ch]">{project.line}</p>
+                                <p className="mt-auto self-start text-label text-white bg-black/30 px-3 py-1.5 rounded-full">
+                                    {project.metric}
+                                </p>
+                            </div>
+                        </motion.article>
+                    ))}
+                </div>
+
+                {/* Its own dark pill: the gradient behind this spot is light on desktop and dark on a phone. */}
+                <div className="mt-6 flex justify-end">
+                    <Link href="/work" className="group flex items-center gap-2 cursor-none text-label text-white bg-[var(--blend-deep)] hover:bg-[var(--blend-surface)] transition-colors px-4 py-2.5 rounded-full">
+                        <span>ALL WORK</span>
+                        <span className="shrink-0 whitespace-nowrap">[ → ]</span>
+                    </Link>
                 </div>
 
                 {/* Bottom Headline — sits on the dark portion of the gradient */}
@@ -129,9 +104,9 @@ export function WorkSection({ stats }: { stats: PackageStats }) {
                     viewport={{ once: true }}
                     transition={{ duration: 0.35 }}
                 >
-                    <h3 className="text-display-l text-white">
+                    <p className="text-display-l text-white">
                         Open source you can read. Production work you can check.
-                    </h3>
+                    </p>
                 </motion.div>
 
             </div>
