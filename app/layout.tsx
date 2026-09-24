@@ -24,9 +24,10 @@ const TITLE = "Akshay Dongare · AI Platform Engineer";
 export async function generateMetadata(): Promise<Metadata> {
   const stats = await getPackageStats();
 
+  // Name, employers, figure, in that order: phones cut near 110 characters and still show the first two.
   const description =
-    `I build the layer between applications and language models. Creator and lead maintainer of ` +
-    `langchain-litellm, LangChain's official LiteLLM integration, with ${stats.long} downloads and counting.`;
+    `Akshay Dongare, AI platform engineer. AI systems for Airbnb, ISO and Harvard. ` +
+    `Creator of LangChain's LiteLLM integration, with ${stats.long} downloads.`;
   // Shorter line for link previews, which truncate around 160-200 characters.
   const shareDescription =
     `Creator and lead maintainer of langchain-litellm, LangChain's official LiteLLM integration. ` +
