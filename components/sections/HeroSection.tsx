@@ -25,7 +25,7 @@ export function HeroSection({ stats }: { stats: PackageStats }) {
         <section
             ref={containerRef}
             className="relative w-full min-h-svh overflow-hidden"
-            style={{ background: 'linear-gradient(to bottom, var(--blend-void) 0%, var(--blend-deep) 100%)', marginBottom: '-1px' }}
+            style={{ background: 'var(--spine-hero)', marginBottom: '-1px' }}
             data-theme="dark"
         >
             {/* Static masked wrapper, anchored to the SECTION rather than to the thing that
@@ -52,7 +52,7 @@ export function HeroSection({ stats }: { stats: PackageStats }) {
                     style={{ y, scale, top: '-340px', height: 'calc(100% + 680px)' }}
                 >
                     {/* Micro-diagonal gradient for depth — imperceptible hue shift */}
-                    <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, var(--blend-void) 0%, var(--blend-deep) 55%, #0a0e15 100%)' }} />
+                    <div className="absolute inset-0" style={{ background: 'var(--depth-hero)' }} />
 
                 {/* The backdrop is a CSS gradient rather than a photograph, deliberately: it
                     costs no request and no layout shift. There used to be a second div here
@@ -75,30 +75,30 @@ export function HeroSection({ stats }: { stats: PackageStats }) {
                     transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1], delay: 0.08 }}
                 >
                     <div className="flex flex-col gap-1.5 mb-6">
-                        <span className="text-[0.95rem] font-mono text-white/90 tracking-[0.15em] uppercase">[ Akshay Dongare ]</span>
-                        <span className="text-label text-white/70">{"->"} ai platform engineer . llm infrastructure</span>
+                        <span className="text-[0.95rem] font-mono text-fg-90 tracking-[0.15em] uppercase">[ Akshay Dongare ]</span>
+                        <span className="text-label text-lbl-70">{"->"} ai platform engineer . llm infrastructure</span>
                     </div>
 
-                    <h1 className="text-display-xl text-white font-sans leading-[1.05] tracking-[-0.02em]">
+                    <h1 className="text-display-xl text-fg-100 font-sans leading-[1.05] tracking-[-0.02em]">
                         I build the layer between your application and the model, and I make it hold.
                     </h1>
 
                     {/* The first screen carries what a recruiter scans for in seconds: who, for whom, when. */}
                     <dl className="mt-7 grid grid-cols-[auto_1fr] gap-x-5 gap-y-2.5 items-baseline">
-                        <dt className="text-label text-white/60">AI systems for</dt>
-                        <dd className="text-[1.0625rem] md:text-[1.1875rem] font-medium text-white/90">Airbnb · ISO · Harvard</dd>
-                        <dt className="text-label text-white/60">Creator of</dt>
-                        <dd className="text-[1.0625rem] md:text-[1.1875rem] font-medium text-white/90">
+                        <dt className="text-label text-lbl-60">AI systems for</dt>
+                        <dd className="text-[1.0625rem] md:text-[1.1875rem] font-medium text-fg-90">Airbnb · ISO · Harvard</dd>
+                        <dt className="text-label text-lbl-60">Creator of</dt>
+                        <dd className="text-[1.0625rem] md:text-[1.1875rem] font-medium text-fg-90">
                             langchain-litellm,{" "}
                             <Link
                                 href={PEPY_URL}
-                                className="pointer-events-auto cursor-none hover:underline hover:underline-offset-4 hover:decoration-white/40"
+                                className="pointer-events-auto cursor-none hover:underline hover:underline-offset-4 hover:decoration-line-40"
                             >
                                 {stats.long} downloads
                             </Link>
                         </dd>
-                        <dt className="text-label text-white/60">Available</dt>
-                        <dd className="text-[1.0625rem] md:text-[1.1875rem] font-medium text-white/90">Full-time from 11 January 2027</dd>
+                        <dt className="text-label text-lbl-60">Available</dt>
+                        <dd className="text-[1.0625rem] md:text-[1.1875rem] font-medium text-fg-90">Full-time from 11 January 2027</dd>
                     </dl>
 
                     {/* Scroll cue. A full-viewport hero that ends on a clean edge reads as the
@@ -109,11 +109,11 @@ export function HeroSection({ stats }: { stats: PackageStats }) {
                         animate={{ opacity: 1 }}
                         transition={{ duration: 0.35, delay: 0.45 }}
                     >
-                        <span className="text-label text-white/55">
+                        <span className="text-label text-lbl-55">
                             Scroll
                         </span>
                         <motion.span
-                            className="text-[0.7rem] font-mono text-white/70 leading-none"
+                            className="text-[0.7rem] font-mono text-fg-70 leading-none"
                             animate={{ y: [0, 4, 0] }}
                             transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
                             aria-hidden="true"
@@ -130,7 +130,7 @@ export function HeroSection({ stats }: { stats: PackageStats }) {
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.35, delay: 0.16 }}
                 >
-                    <span className="text-label text-white/60 leading-relaxed">
+                    <span className="text-label text-lbl-60 leading-relaxed">
                         LLM GATEWAYS<br />
                         PROVIDER ROUTING<br />
                         AUTH &amp; CONCURRENCY

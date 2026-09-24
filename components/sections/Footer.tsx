@@ -10,9 +10,9 @@ interface FooterLinkProps {
 
 function FooterLink({ href, label }: FooterLinkProps) {
     return (
-        <Link href={href} className="group flex items-center gap-2 cursor-none text-label text-white/55 hover:text-white/90 transition-colors duration-200">
+        <Link href={href} className="group flex items-center gap-2 cursor-none text-label text-lbl-55 hover:text-lbl-90 light:hover:text-fg-100 transition-colors duration-200">
             <span>{label}</span>
-            <span className="shrink-0 whitespace-nowrap text-white/50 group-hover:text-white/90 transition-colors duration-200">[<span className="inline-block mx-1 font-mono">→</span>]</span>
+            <span className="shrink-0 whitespace-nowrap text-fg-50 group-hover:text-fg-90 transition-colors duration-200">[<span className="inline-block mx-1 font-mono">→</span>]</span>
         </Link>
     );
 }
@@ -25,7 +25,7 @@ export function Footer() {
             // a continuation rather than a 6-level step. The lift eases in below the seam
             // instead of at it, and it returns to void at the very bottom so iOS
             // rubber-band overscroll shows the same colour as body's background-color.
-            style={{ background: 'linear-gradient(to bottom, var(--blend-void) 0%, var(--blend-deep) 28%, var(--blend-deep) 62%, var(--blend-void) 100%)' }}
+            style={{ background: 'var(--spine-footer)' }}
             data-theme="dark"
         >
             {/* Link lists stitched into a snippet read as noise; Google honours this on div, not footer. */}
@@ -44,8 +44,8 @@ export function Footer() {
 
                     {/* Column 2: Tagline */}
                     <div className="flex flex-col text-label leading-relaxed lg:items-center">
-                        <p className="text-white/70">THE LAYER BETWEEN</p>
-                        <p className="text-white/70">APP AND MODEL</p>
+                        <p className="text-fg-70">THE LAYER BETWEEN</p>
+                        <p className="text-fg-70">APP AND MODEL</p>
                     </div>
 
                     {/* Column 3: Legal/Misc */}
@@ -73,12 +73,12 @@ export function Footer() {
                 <div className="flex flex-col md:flex-row items-start md:items-end justify-between pt-16">
 
                     <div className="flex items-end mb-8 md:mb-0">
-                        <h2 className="text-display-xl font-medium tracking-tight text-white/80 leading-none">
+                        <h2 className="text-display-xl font-medium tracking-tight text-fg-80 leading-none">
                             Akshay <br /> Dongare
                         </h2>
                     </div>
 
-                    <p className="text-label text-white/50">
+                    <p className="text-label text-lbl-50">
                         © {new Date().getFullYear()} AKSHAY DONGARE
                     </p>
 

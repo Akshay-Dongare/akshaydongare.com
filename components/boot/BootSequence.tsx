@@ -154,12 +154,12 @@ export function BootSequence({ children }: { children: React.ReactNode }) {
                 >
                     <div
                         ref={topRef}
-                        className="absolute inset-x-0 top-0 bg-black"
+                        className="absolute inset-x-0 top-0 bg-[var(--boot-panel)]"
                         style={{ height: "calc(50% + 1px)", willChange: "transform" }}
                     />
                     <div
                         ref={bottomRef}
-                        className="absolute inset-x-0 bottom-0 bg-black"
+                        className="absolute inset-x-0 bottom-0 bg-[var(--boot-panel)]"
                         style={{ height: "calc(50% + 1px)", willChange: "transform" }}
                     />
                     <div
@@ -168,7 +168,7 @@ export function BootSequence({ children }: { children: React.ReactNode }) {
                     >
                         <div
                             ref={brandRef}
-                            className="flex flex-col items-center gap-4 px-6 text-center font-mono text-white"
+                            className="flex flex-col items-center gap-4 px-6 text-center font-mono text-fg-100"
                             style={{ opacity: 0 }}
                         >
                             <span className="text-[0.85rem] tracking-[0.3em] uppercase">
@@ -176,10 +176,10 @@ export function BootSequence({ children }: { children: React.ReactNode }) {
                             </span>
                             <div
                                 ref={ruleRef}
-                                className="h-px w-24 bg-white/25 origin-center"
+                                className="h-px w-24 bg-line-25 origin-center"
                                 style={{ transform: "scaleX(0)" }}
                             />
-                            <span className="text-[0.6rem] tracking-[0.1em] md:text-[0.7rem] md:tracking-[0.18em] text-white/55 font-mono">
+                            <span className="text-[0.6rem] tracking-[0.1em] md:text-[0.7rem] md:tracking-[0.18em] text-fg-55 font-mono">
                                 {"->"} ai platform engineer . llm infrastructure
                             </span>
                         </div>

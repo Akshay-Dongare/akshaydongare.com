@@ -9,7 +9,7 @@ import { PEPY_URL, type PackageStats } from "@/lib/downloads";
 
 export function AboutSection({ stats }: { stats: PackageStats }) {
     return (
-        <section className="relative w-full pt-24 pb-32" style={{ background: 'linear-gradient(to bottom, var(--blend-mist) 0%, var(--blend-parchment) 100%)', marginBottom: '-1px' }} data-theme="light">
+        <section className="relative w-full pt-24 pb-32" style={{ background: 'var(--spine-about)', marginBottom: '-1px' }} data-theme="light">
             <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 h-full flex flex-col md:flex-row gap-12 lg:gap-24">
 
                 {/* LEFT COLUMN - 60% */}
@@ -20,12 +20,12 @@ export function AboutSection({ stats }: { stats: PackageStats }) {
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true, margin: "-10%" }}
                         transition={{ duration: 0.35 }}
-                        className="text-display-l text-[var(--color-charcoal)] mb-10 max-w-[720px] leading-tight"
+                        className="text-display-l text-on-paper mb-10 max-w-[720px] leading-tight"
                     >
                         I maintain langchain-litellm, LangChain&apos;s official interface to 100+ model providers, downloaded{" "}
                         <Link
                             href={PEPY_URL}
-                            className="hover:underline hover:underline-offset-[6px] hover:decoration-[var(--color-charcoal)]/40 transition-colors cursor-none"
+                            className="hover:underline hover:underline-offset-[6px] hover:decoration-on-paper/40 transition-colors cursor-none"
                         >
                             {stats.long} times
                         </Link>
@@ -39,7 +39,7 @@ export function AboutSection({ stats }: { stats: PackageStats }) {
                         transition={{ duration: 0.35, delay: 0.05 }}
                         className=""
                     >
-                        <Link href="/about" className="group flex items-center gap-2 cursor-none text-label text-[var(--color-charcoal)]">
+                        <Link href="/about" className="group flex items-center gap-2 cursor-none text-label text-on-paper">
                             <span className="opacity-80 group-hover:opacity-100 transition-opacity">MORE ABOUT ME</span>
                             <span className="shrink-0 whitespace-nowrap opacity-80 group-hover:opacity-100 transition-opacity">[ → ]</span>
                         </Link>

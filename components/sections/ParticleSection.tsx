@@ -41,7 +41,7 @@ export function ParticleSection({ stats }: { stats: PackageStats }) {
             // the headline and raise the Copy / Search callout. Scoped to coarse
             // pointers so the sentence stays selectable with a mouse.
             className="relative w-full h-svh overflow-hidden pointer-coarse:select-none [-webkit-touch-callout:none]"
-            style={{ background: 'linear-gradient(to bottom, var(--blend-deep) 0%, #0e1218 4.2%, #0f131a 8.3%, #11161e 12.5%, #141923 16.7%, #181d29 20.8%, var(--blend-surface) 25%, #2e4560 50%, #7da0c0 72%, #91aec8 76%, #a2b9d0 80%, #b0c3d6 84%, #bacada 88%, #c2d0dd 92%, #c6d3df 96%, var(--blend-mist) 100%)', marginBottom: '-1px' }}
+            style={{ background: 'var(--spine-particle)', marginBottom: '-1px' }}
         >
             {/* Dark theme sentinel covers the top portion — keeps Navbar white text while dark bg is visible */}
             <div className="absolute top-0 left-0 w-full h-[55%] pointer-events-none" data-theme="dark" />
@@ -57,14 +57,14 @@ export function ParticleSection({ stats }: { stats: PackageStats }) {
                     className="max-w-[1400px] mx-auto w-full"
                 >
                     <h2
-                        className="text-display-xl text-white max-w-[800px] leading-[1.05]"
-                        style={{ textShadow: '0 2px 24px rgba(7,9,15,0.5)' }}
+                        className="text-display-xl text-fg-100 max-w-[800px] leading-[1.05]"
+                        style={{ textShadow: 'var(--particle-halo)' }}
                     >
                         {/* The overlay is pointer-events-none so the mouse reaches the
                             particle field; the link has to opt back in explicitly. */}
                         <Link
                             href={PEPY_URL}
-                            className="pointer-events-auto cursor-none hover:underline hover:underline-offset-[10px] hover:decoration-white/40 transition-colors"
+                            className="pointer-events-auto cursor-none hover:underline hover:underline-offset-[10px] hover:decoration-line-40 transition-colors"
                         >
                             {stats.monthlyLong} installs
                         </Link>
@@ -73,8 +73,9 @@ export function ParticleSection({ stats }: { stats: PackageStats }) {
                 </motion.div>
             </div>
 
+            {/* The mask fades light mode's large sprites in, so the canvas top cannot cut them flat at the Hero joint. */}
             {shouldRenderParticles && (
-                <ParticleField color="#8da3b5" active={isInView} />
+                <ParticleField color="#8da3b5" active={isInView} className="light:[mask-image:linear-gradient(to_bottom,transparent,#000_15%)] light:[-webkit-mask-image:linear-gradient(to_bottom,transparent,#000_15%)]" />
             )}
         </section>
     );

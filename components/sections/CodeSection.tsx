@@ -94,12 +94,12 @@ function DiffLines({ source }: { source: string }) {
         <>
             {source.split("\n").map((line, i) => {
                 const cls = line.startsWith("+")
-                    ? "text-[#7fd0a3]"
+                    ? "text-diff-add"
                     : line.startsWith("-")
-                        ? "text-[#e08b94]"
+                        ? "text-diff-del"
                         : line.startsWith("#")
-                            ? "text-white/50"
-                            : "text-white/55";
+                            ? "text-fg-50"
+                            : "text-fg-55";
                 return (
                     <div key={i} className={cls}>
                         {line || "\u00A0"}
@@ -133,7 +133,7 @@ export function CodeSection() {
         <section
             ref={containerRef}
             className="relative w-full h-svh overflow-hidden"
-            style={{ background: 'linear-gradient(to bottom, var(--blend-void) 0%, var(--blend-deep) 50%, var(--blend-void) 100%)', marginBottom: '-1px' }}
+            style={{ background: 'var(--spine-code)', marginBottom: '-1px' }}
             data-theme="dark"
         >
             {/* Static masked wrapper. The mask is anchored to the SECTION, not to the layer
@@ -144,8 +144,8 @@ export function CodeSection() {
             <div
                 className="absolute inset-0 overflow-hidden pointer-events-none"
                 style={{
-                    WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, #000 12%, #000 88%, transparent 100%)',
-                    maskImage: 'linear-gradient(to bottom, transparent 0%, #000 12%, #000 88%, transparent 100%)',
+                    WebkitMaskImage: 'var(--code-mask)',
+                    maskImage: 'var(--code-mask)',
                 }}
             >
                 {/* Bled 200px past both edges against 140px of travel, so this layer's own
@@ -157,15 +157,19 @@ export function CodeSection() {
                     style={{ y: imageY, top: '-200px', height: 'calc(100% + 400px)' }}
                 >
                     {/* Cinematic depth gradient */}
-                    <div className="absolute inset-0" style={{ background: 'linear-gradient(to top right, #0d1a2e, var(--blend-void), #0a0e15)' }} />
+                    <div className="absolute inset-0" style={{ background: 'var(--depth-code)' }} />
 
                     {/* Dark overlay */}
-                    <div className="absolute inset-0 bg-[rgba(7,9,15,0.5)]" />
+                    <div className="absolute inset-0 bg-[var(--code-veil)]" />
                 </motion.div>
             </div>
 
             {/* Code Overlay */}
-            <div className="relative w-full h-full max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 pt-32 overflow-hidden z-10 pointer-events-none">
+            {/* On phones the diff runs past the section; fade it out rather than let the edge slice the glyphs. */}
+            <div
+                className="relative w-full h-full max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 pt-32 overflow-hidden z-10 pointer-events-none"
+                style={{ WebkitMaskImage: 'linear-gradient(to bottom, #000 85%, transparent 100%)', maskImage: 'linear-gradient(to bottom, #000 85%, transparent 100%)' }}
+            >
 
                 <motion.div
                     style={{ y: codeY }}
@@ -178,16 +182,16 @@ export function CodeSection() {
                     >
                         {/* Visible at rest rather than on hover: touch has no hover, and the
                             code has to look clickable before anyone taps it. */}
-                        <span className="mb-5 flex items-center gap-2 font-mono text-[0.62rem] tracking-[0.15em] uppercase text-white/55 group-hover:text-white/90 transition-colors">
+                        <span className="mb-5 flex items-center gap-2 text-label text-lbl-55 group-hover:text-lbl-90 light:group-hover:text-fg-100 transition-colors">
                             Read this diff on GitHub
-                            <span aria-hidden="true" className="shrink-0 whitespace-nowrap text-white/55 group-hover:text-white/90 transition-colors">[ &rarr; ]</span>
+                            <span aria-hidden="true" className="shrink-0 whitespace-nowrap text-fg-55 group-hover:text-fg-90 transition-colors">[ &rarr; ]</span>
                         </span>
-                    <pre className="font-mono text-[0.75rem] leading-relaxed whitespace-pre max-md:overflow-x-auto max-md:overscroll-x-contain max-md:pointer-events-auto max-md:-mx-6 max-md:px-6" style={{ textShadow: "0 0 12px rgba(255,255,255,0.08)" }}>
+                    <pre className="font-mono text-[0.75rem] leading-relaxed whitespace-pre max-md:overflow-x-auto max-md:overscroll-x-contain max-md:pointer-events-auto max-md:-mx-6 max-md:px-6" style={{ textShadow: "var(--code-glow)" }}>
                         <code className="block w-max"><DiffLines source={DIFF} /></code>
                     </pre>
 
                     {/* Second hunk of the same PR, not a repeat of the first */}
-                    <pre className="font-mono text-[0.75rem] leading-relaxed whitespace-pre mt-12 max-md:overflow-x-auto max-md:overscroll-x-contain max-md:pointer-events-auto max-md:-mx-6 max-md:px-6" style={{ textShadow: "0 0 12px rgba(255,255,255,0.08)" }}>
+                    <pre className="font-mono text-[0.75rem] leading-relaxed whitespace-pre mt-12 max-md:overflow-x-auto max-md:overscroll-x-contain max-md:pointer-events-auto max-md:-mx-6 max-md:px-6" style={{ textShadow: "var(--code-glow)" }}>
                         <code className="block w-max"><DiffLines source={TEST} /></code>
                     </pre>
                     </Link>
@@ -195,7 +199,7 @@ export function CodeSection() {
 
                 {/* Dramatic silhouette element lower right */}
                 <motion.div
-                    className="absolute bottom-[15%] right-[10%] w-[200px] h-[300px] opacity-40 mix-blend-screen"
+                    className="absolute bottom-[15%] right-[10%] w-[200px] h-[300px] opacity-40 mix-blend-screen light:hidden"
                     initial={{ opacity: 0 }}
                     whileInView={{ opacity: 0.4 }}
                     viewport={{ once: true }}

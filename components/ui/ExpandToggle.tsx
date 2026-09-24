@@ -20,7 +20,7 @@ export function ExpandToggle({
     color = "dark"
 }: ExpandToggleProps) {
     const { setHoverState } = useCursor();
-    const textColorClass = color === "light" ? "text-white" : "text-[var(--color-charcoal)]";
+    const textColorClass = color === "light" ? "text-fg-100" : "text-on-paper";
 
     return (
         <button

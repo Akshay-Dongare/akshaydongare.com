@@ -13,28 +13,28 @@ const buildProjects = (stats: PackageStats) => [
         role: "AI Platform · contract",
         line: "Made the internal LLM gateway about 28 services use safe to serve two providers in one process. Shipped as a version bump, so no consumer had to migrate.",
         metric: "28 services, zero migrations",
-        theme: "from-[#3a6288] to-[#0d1117]",
+        card: "var(--card-airbnb)",
     },
     {
         org: "LangChain",
         role: "langchain-litellm · creator and lead maintainer",
         line: "LangChain's official LiteLLM integration: one Python interface to 100+ model providers, developed inside the langchain-ai organization.",
         metric: `${stats.compact} downloads, ${stats.monthlyCompact} a month`,
-        theme: "from-[#1c2230] to-[#07090f]",
+        card: "var(--card-langchain)",
     },
     {
         org: "ISO",
         role: "Companion · applied AI engineer",
         line: "Designed the agentic graph patterns ISO's standards assistant runs on, and the evaluation that keeps its answers on official ISO sources.",
         metric: "Official sources only",
-        theme: "from-[#3f5d7e] to-[#1c2230]",
+        card: "var(--card-iso)",
     },
     {
         org: "Harvard",
         role: "GAMI · lead developer",
         line: "A WhatsApp assistant answering blood donation questions in Kenya, with query rewriting and guardrails for personal data and prompt injection.",
         metric: "Best Presentation, 2025",
-        theme: "from-[#2e4560] to-[#0d1117]",
+        card: "var(--card-harvard)",
     },
 ];
 
@@ -44,7 +44,7 @@ export function WorkSection({ stats }: { stats: PackageStats }) {
     return (
         <section
             className="relative w-full min-h-screen py-32 overflow-hidden"
-            style={{ background: 'linear-gradient(to bottom, var(--blend-parchment) 0%, var(--blend-warm) 42%, var(--blend-mist) 56%, #8fa8ba 66%, #507086 74%, #283848 82%, #131e2a 90%, #101821 92.5%, #0e141b 95%, #0d1218 97.5%, var(--blend-deep) 100%)', marginBottom: '-1px' }}
+            style={{ background: 'var(--spine-work)', marginBottom: '-1px' }}
         >
             {/* Dark theme sentinel for the bottom portion — shifts Navbar back to white text */}
             <div className="absolute bottom-0 left-0 w-full h-[32%] pointer-events-none" data-theme="dark" />
@@ -58,7 +58,7 @@ export function WorkSection({ stats }: { stats: PackageStats }) {
                     viewport={{ once: true }}
                     transition={{ duration: 0.35 }}
                 >
-                    <h2 className="text-display-l text-[var(--color-charcoal)] max-w-[600px] text-right leading-[1.05]">
+                    <h2 className="text-display-l text-on-paper max-w-[600px] text-right leading-[1.05]">
                         What I&apos;ve built, and what it holds up under
                     </h2>
                 </motion.div>
@@ -67,20 +67,20 @@ export function WorkSection({ stats }: { stats: PackageStats }) {
                     {PROJECTS.map((project, i) => (
                         <motion.article
                             key={project.org}
-                            className="relative rounded-xl overflow-hidden"
+                            className="relative rounded-xl overflow-hidden shadow-[var(--card-shadow)]"
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ duration: 0.35, delay: Math.min(i * 0.05, 0.15) }}
                         >
-                            <div className={`absolute inset-0 bg-gradient-to-b ${project.theme}`} />
+                            <div className="absolute inset-0" style={{ background: project.card }} />
                             <div className="relative h-full p-6 md:p-8 flex flex-col gap-5">
                                 <div className="flex flex-col gap-2">
-                                    <h3 className="text-display-m text-white leading-none">{project.org}</h3>
-                                    <p className="text-label text-white/80">{project.role}</p>
+                                    <h3 className="text-display-m text-fg-100 leading-none">{project.org}</h3>
+                                    <p className="text-label text-lbl-80">{project.role}</p>
                                 </div>
-                                <p className="text-body text-white/90 max-w-[46ch]">{project.line}</p>
-                                <p className="mt-auto self-start text-label text-white bg-black/30 px-3 py-1.5 rounded-full">
+                                <p className="text-body text-fg-90 max-w-[46ch]">{project.line}</p>
+                                <p className="mt-auto self-start text-label text-lbl-100 bg-chip px-3 py-1.5 rounded-full">
                                     {project.metric}
                                 </p>
                             </div>
@@ -90,7 +90,7 @@ export function WorkSection({ stats }: { stats: PackageStats }) {
 
                 {/* Its own dark pill: the gradient behind this spot is light on desktop and dark on a phone. */}
                 <div className="mt-6 flex justify-end">
-                    <Link href="/work" className="group flex items-center gap-2 cursor-none text-label text-white bg-[var(--blend-deep)] hover:bg-[var(--blend-surface)] transition-colors px-4 py-2.5 rounded-full">
+                    <Link href="/work" className="group flex items-center gap-2 cursor-none text-label text-pill-ink bg-pill hover:bg-pill-hover transition-colors px-4 py-2.5 rounded-full">
                         <span>ALL WORK</span>
                         <span className="shrink-0 whitespace-nowrap">[ → ]</span>
                     </Link>
@@ -104,7 +104,7 @@ export function WorkSection({ stats }: { stats: PackageStats }) {
                     viewport={{ once: true }}
                     transition={{ duration: 0.35 }}
                 >
-                    <p className="text-display-l text-white">
+                    <p className="text-display-l text-fg-100">
                         Open source you can read. Production work you can check.
                     </p>
                 </motion.div>

@@ -39,7 +39,7 @@ export function ContactSection() {
             // label and raising the Copy / Search callout mid-charge. Suppress both
             // for this section only; the rest of the site stays selectable.
             className="relative w-full h-svh overflow-hidden pointer-coarse:select-none [-webkit-touch-callout:none]"
-            style={{ background: 'linear-gradient(to bottom, var(--blend-void) 0%, var(--blend-deep) 18%, #0e1928 42%, #0c1520 68%, var(--blend-void) 100%)' }}
+            style={{ background: 'var(--spine-contact)' }}
             data-theme="dark"
         >
             <div className="absolute inset-0 z-10 p-6 md:p-12 lg:p-20 pt-[clamp(5rem,10vw,10rem)] pb-12 flex flex-col justify-between pointer-events-none">
@@ -48,7 +48,7 @@ export function ContactSection() {
                 <div className="relative w-full max-w-[1400px] mx-auto flex flex-col gap-8 lg:gap-0 lg:flex-row lg:justify-between lg:items-start">
 
                     <motion.h2
-                        className="text-display-xl text-white max-w-[800px] leading-[1.05]"
+                        className="text-display-xl text-fg-100 max-w-[800px] leading-[1.05]"
                         initial={{ opacity: 0, y: 30 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true, margin: "-10%" }}
@@ -60,10 +60,10 @@ export function ContactSection() {
                     <div className="flex flex-col items-start lg:items-end gap-1 pointer-events-auto">
                         <Link
                             href="/contact"
-                            className="group flex items-center gap-2 cursor-none text-label text-white min-h-[44px] py-3"
+                            className="group flex items-center gap-2 cursor-none text-label text-fg-100 min-h-[44px] py-3"
                         >
-                            <span className="opacity-80 group-hover:opacity-100 transition-opacity">CONNECT</span>
-                            <span className="shrink-0 whitespace-nowrap opacity-60 group-hover:opacity-100 transition-opacity">[ → ]</span>
+                            <span className="opacity-80 light:opacity-100 group-hover:opacity-100 transition-opacity">CONNECT</span>
+                            <span className="shrink-0 whitespace-nowrap opacity-60 light:opacity-100 group-hover:opacity-100 transition-opacity">[ → ]</span>
                         </Link>
 
                     </div>
@@ -71,7 +71,7 @@ export function ContactSection() {
             </div>
 
             {shouldRenderParticles && (
-                <MorphingParticleField color="#ffffff" className="opacity-70 mix-blend-plus-lighter" active={isInView} />
+                <MorphingParticleField color="#ffffff" className="opacity-70 dark:mix-blend-plus-lighter" active={isInView} />
             )}
         </section>
     );
