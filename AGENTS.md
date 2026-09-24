@@ -56,7 +56,7 @@ BootSequence → CursorProvider → Navbar + <main> + Footer
 
 ### Navbar Dark/Light Theme Detection
 
-In light mode the Navbar skips all of this and stays ink, because every light ground clears 9:1 for it; the sentinels below only matter in dark mode. The switcher (`components/nav/ModeToggle.tsx`) sits beside the CTA on desktop and beside MENU on phones.
+In light mode the Navbar skips all of this and stays ink, because every light ground clears 9:1 for it; the sentinels below only matter in dark mode. The switcher (`components/nav/ModeToggle.tsx`) is an icon-only `role="switch"`, a sun knob on an ink track in light and a moon knob on a paper track in dark, beside the CTA on desktop and beside MENU on phones. Its look reads `data-mode` through CSS variants, so it is right before hydration.
 
 In dark mode the Navbar (`components/nav/Navbar.tsx`) adapts its text and background colors based on the content scrolled behind it. It queries all `[data-theme="dark"]` DOM elements on every scroll event and checks if any overlap `y=60px` (the navbar height).
 
@@ -169,19 +169,13 @@ olive pool behind the Work cards, paper, and an apricot blush under Contact. All
 Rust labels and muted ink are for grounds at 0.676 or above, so CONNECT, which sits over the
 climax, uses `fg`.
 
-**The particle fields lay pigment in light mode.** Additive light only shows on dark, so the light
-path uses Normal blending, which composites to pigment*A + paper*(1-A) and can never go darker than
-the pigment. The shaders have no `colorspace_fragment`, so the light colours go in through
-`setRGB(..., LinearSRGBColorSpace)`; `new THREE.Color(hex)` would render the olive as drab
-`#334312`. The nebula is `#7c8c4b` with points x5 in CSS pixels: at x2.8 lone particles showed
-as specks, and at x5 only overlapping strands build up into a watercolour wash, with ink at 9.2:1
-over its darkest pixel. It runs at 0.06, halved under 768px where the narrower frame merges strands
-into stain-like patches, with each sprite's rim taken to zero and a CSS mask fading the canvas in
-at the top so the sprites are never cut flat at the Hero joint. The climax is `#a8532b`, deep
-enough that a lone dot reads as a mark, and from 0.6 half-heights, just outside every shape
-(they sit within about 0.5), the ambient scatter shrinks
-rather than fades, because a faded hard dot is precisely a low-contrast speck. Dark keeps its
-exact uniforms and colour path.
+**The particle fields are the dark code with a different colour.** Motion, count, size, opacity
+and falloff are identical in both modes; do not tune them per mode. The nebula switches only its
+blending, Normal instead of Additive, because added light cannot draw anything darker than paper
+and its dense cores would add up past the ink back toward white. The climax already blends
+normally, so only its colour changes. Both shaders darken their input colour on the way through,
+so the light colours are passed pre-lightened: `#b9c494` shows as olive `#7c8c4b`, and `#d49b72`
+as terracotta `#a8532b`.
 
 ### Color System — "Deep Obsidian" Tokens
 
