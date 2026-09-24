@@ -137,6 +137,19 @@ and an accurate `sizes`. Do not revert either to a plain `<img>`: the source is
   in a rounded container. Carries `priority` because it is that page's LCP
   element, and `sizes="320px"` because the box is capped by `max-w-[320px]`.
 
+**Organisation logos:** `components/ui/OrgLogo.tsx` puts each employer's official mark beside
+its name on the homepage Work cards, in brand colour, at the heading's cap height. They are
+decorative (`alt=""`, `aria-hidden`) because the name is the adjacent text, so a screen reader
+would otherwise say it twice.
+- Airbnb and LangChain are Simple Icons paths (CC0), inlined so CSS sets the fill per mode.
+  Airbnb's coral `#FF5A5F` holds in both. LangChain's published `#7FC8FF` washes out on paper,
+  so light mode uses its dark teal `#1C3C3C`.
+- `public/logos/iso.svg` is ISO's red square, unchanged. `public/logos/harvard-shield.svg` is
+  the shield alone, cropped from the Wikimedia lockup by `viewBox` with the wordmark path
+  removed, since the heading already says "Harvard University".
+- Both files go through `next/image`, which serves an `.svg` unoptimised on its own. That avoids
+  a `no-img-element` suppression; width and height there only set the aspect ratio.
+
 ### Modes
 
 Light, "Daylight Folio", is the default; dark is the original "Deep Obsidian" site behind a
