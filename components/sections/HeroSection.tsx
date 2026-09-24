@@ -24,7 +24,7 @@ export function HeroSection({ stats }: { stats: PackageStats }) {
     return (
         <section
             ref={containerRef}
-            className="relative w-full h-svh overflow-hidden"
+            className="relative w-full min-h-svh overflow-hidden"
             style={{ background: 'linear-gradient(to bottom, var(--blend-void) 0%, var(--blend-deep) 100%)', marginBottom: '-1px' }}
             data-theme="dark"
         >
@@ -63,35 +63,53 @@ export function HeroSection({ stats }: { stats: PackageStats }) {
                 </motion.div>
             </div>
 
-            {/* Content Container */}
-            <div className="relative w-full h-full max-w-[1400px] mx-auto z-10">
+            {/* min-h, and the text block in flow: on a short phone the content grows the hero instead of sliding under the nav. */}
+            <div className="relative w-full min-h-svh max-w-[1400px] mx-auto z-10 flex flex-col justify-end pt-24 pb-[clamp(2rem,5vw,4rem)] px-[clamp(1.5rem,5vw,3rem)]">
 
                 {/* Bottom Left Text Block. Every reveal here runs on mount, not in view: Google renders
                     in a tall viewport where h-svh stretches, and the h1 never entered it. */}
                 <motion.div
-                    className="absolute bottom-[clamp(2rem,5vw,4rem)] left-[clamp(1.5rem,5vw,3rem)] max-w-[640px]"
+                    className="relative max-w-[640px]"
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1], delay: 0.08 }}
                 >
-                    <div className="flex flex-col gap-1 mb-8">
-                        <span className="text-[0.62rem] font-mono text-white opacity-80 tracking-[0.15em] uppercase">[ Akshay Dongare ]</span>
-                        <span className="text-[0.62rem] font-mono text-white opacity-80 tracking-[0.15em] uppercase">{"->"} ai platform engineer . llm infrastructure</span>
+                    <div className="flex flex-col gap-1.5 mb-6">
+                        <span className="text-[0.95rem] font-mono text-white/90 tracking-[0.15em] uppercase">[ Akshay Dongare ]</span>
+                        <span className="text-label text-white/70">{"->"} ai platform engineer . llm infrastructure</span>
                     </div>
 
                     <h1 className="text-display-xl text-white font-sans leading-[1.05] tracking-[-0.02em]">
                         I build the layer between your application and the model, and I make it hold.
                     </h1>
 
+                    {/* The first screen carries what a recruiter scans for in seconds: who, for whom, when. */}
+                    <dl className="mt-7 grid grid-cols-[auto_1fr] gap-x-5 gap-y-2.5 items-baseline">
+                        <dt className="text-label text-white/60">AI systems for</dt>
+                        <dd className="text-[1.0625rem] md:text-[1.1875rem] font-medium text-white/90">Airbnb · ISO · Harvard</dd>
+                        <dt className="text-label text-white/60">Creator of</dt>
+                        <dd className="text-[1.0625rem] md:text-[1.1875rem] font-medium text-white/90">
+                            langchain-litellm,{" "}
+                            <Link
+                                href={PEPY_URL}
+                                className="pointer-events-auto cursor-none hover:underline hover:underline-offset-4 hover:decoration-white/40"
+                            >
+                                {stats.long} downloads
+                            </Link>
+                        </dd>
+                        <dt className="text-label text-white/60">Available</dt>
+                        <dd className="text-[1.0625rem] md:text-[1.1875rem] font-medium text-white/90">Full-time from 11 January 2027</dd>
+                    </dl>
+
                     {/* Scroll cue. A full-viewport hero that ends on a clean edge reads as the
                         end of the page ("illusion of completeness"), so say there is more. */}
                     <motion.div
-                        className="mt-10 flex items-center gap-3"
+                        className="mt-8 flex items-center gap-3 [@media(max-height:700px)]:hidden"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ duration: 0.35, delay: 0.45 }}
                     >
-                        <span className="text-[0.62rem] font-mono text-white/55 tracking-[0.15em] uppercase">
+                        <span className="text-label text-white/55">
                             Scroll
                         </span>
                         <motion.span
@@ -107,42 +125,18 @@ export function HeroSection({ stats }: { stats: PackageStats }) {
 
                 {/* Floating Labels (Right side) */}
                 <motion.div
-                    className="absolute bottom-[clamp(2rem,5vw,4rem)] right-[15%] hidden md:flex flex-col gap-1 w-[200px]"
+                    className="absolute bottom-[clamp(2rem,5vw,4rem)] right-[15%] hidden lg:flex flex-col gap-1 w-[200px]"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.35, delay: 0.16 }}
                 >
-                    <span className="text-[0.62rem] font-mono text-white opacity-60 tracking-[0.15em] uppercase leading-relaxed">
+                    <span className="text-label text-white/60 leading-relaxed">
                         LLM GATEWAYS<br />
                         PROVIDER ROUTING<br />
                         AUTH &amp; CONCURRENCY
                     </span>
                 </motion.div>
 
-                <motion.div
-                    className="absolute top-[60%] right-[30%] hidden lg:flex flex-col gap-1 w-[240px]"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.35, delay: 0.2 }}
-                >
-                    <Link
-                        href={PEPY_URL}
-                        className="block text-[1.05rem] font-mono text-white/90 hover:text-white tracking-[0.04em] uppercase text-right leading-none mb-2 pointer-events-auto cursor-none transition-colors hover:underline hover:underline-offset-4 hover:decoration-white/40"
-                    >
-                        {stats.compact} downloads
-                    </Link>
-                    <span className="text-[0.62rem] font-mono text-white/60 tracking-[0.15em] uppercase leading-relaxed text-right">
-                        <Link
-                            href={PEPY_URL}
-                            className="pointer-events-auto cursor-none hover:text-white/90 transition-colors hover:underline hover:underline-offset-4 hover:decoration-white/40"
-                        >
-                            {stats.monthlyCompact}+ every month.
-                        </Link>
-                        <br />
-                        MAINTAINED IN THE LANGCHAIN ORG.<br />
-                        RUNNING IN PRODUCTION.
-                    </span>
-                </motion.div>
 
             </div>
         </section>
