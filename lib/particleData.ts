@@ -8,8 +8,8 @@
 //   coreN+spiralN … -filamentN-1   → sinuous filaments  (28%)
 //   rest                            → cosmic dust        (12%)
 //
-// Only initial positions and sizes are defined here. The simulation loop
-// (spring, swirl, damping) and all GLSL / shader / blending code are untouched.
+// Defines initial positions and sizes only. The motion, shader and blending
+// live in components/particles/ParticleField.tsx.
 
 export function generateSilhouetteParticles(count: number = 5000): Float32Array {
     const positions = new Float32Array(count * 3);
