@@ -4,7 +4,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { PEPY_URL, type PackageStats } from "@/lib/downloads";
-import { GAMI_AWARD_POST, LANGCHAIN_ORG, LINKEDIN_EXPERIENCE } from "@/lib/links";
+import { GAMI_AWARD_POST, GAMI_SITE, LANGCHAIN_ORG, LINKEDIN_EXPERIENCE } from "@/lib/links";
 import { ScrollCue } from "@/components/ui/ScrollCue";
 
 // All four are open at once: a recruiter gives the page seconds, and a name behind a click
@@ -41,8 +41,13 @@ const buildProjects = (stats: PackageStats) => [
         pills: [{ label: "Grounded in ISO sources", href: LINKEDIN_EXPERIENCE, name: "Grounded in ISO sources: the ISO role on LinkedIn" }],
     },
     {
-        org: "Harvard",
-        role: "GAMI · lead developer",
+        org: "Harvard University",
+        role: (
+            <>
+                <Link href={GAMI_SITE} className="underline underline-offset-4 decoration-line-20 hover:text-fg-55 transition-colors cursor-none">Global Alliance for Medical Innovation</Link>
+                {" · lead developer"}
+            </>
+        ),
         line: "A WhatsApp assistant answering blood donation questions in Kenya, with query rewriting and guardrails for personal data and prompt injection.",
         card: "var(--card-harvard)",
         pills: [{ label: "Best Presentation, 2025", href: GAMI_AWARD_POST, name: "Best Presentation, 2025: the award post on LinkedIn" }],

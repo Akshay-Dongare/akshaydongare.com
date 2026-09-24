@@ -26,7 +26,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
   // Name, employers, figure, in that order: phones cut near 110 characters and still show the first two.
   const description =
-    `Akshay Dongare, AI platform engineer. AI systems for Airbnb, ISO and Harvard. ` +
+    `Akshay Dongare, AI platform engineer. AI systems for Airbnb, ISO and Harvard University. ` +
     `Creator of LangChain's LiteLLM integration, with ${stats.long} downloads.`;
   // Shorter line for link previews, which truncate around 160-200 characters.
   const shareDescription =

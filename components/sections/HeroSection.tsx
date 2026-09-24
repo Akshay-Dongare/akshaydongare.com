@@ -87,7 +87,7 @@ export function HeroSection({ stats }: { stats: PackageStats }) {
                     {/* The first screen carries what a recruiter scans for in seconds: who, for whom, when. */}
                     <dl className="mt-7 grid grid-cols-[auto_1fr] gap-x-5 gap-y-2.5 items-baseline">
                         <dt className="text-label text-lbl-60">AI systems for</dt>
-                        <dd className="text-[1.0625rem] md:text-[1.1875rem] font-medium text-fg-90">Airbnb · ISO · Harvard</dd>
+                        <dd className="text-[1.0625rem] md:text-[1.1875rem] font-medium text-fg-90">Airbnb · ISO · Harvard University</dd>
                         <dt className="text-label text-lbl-60">Creator of</dt>
                         <dd className="text-[1.0625rem] md:text-[1.1875rem] font-medium text-fg-90">
                             langchain-litellm,{" "}

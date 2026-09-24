@@ -8,5 +8,7 @@ export const LITELLM_REPO = "https://github.com/langchain-ai/langchain-litellm";
 
 export const LANGCHAIN_ORG = "https://github.com/langchain-ai";
 
+export const GAMI_SITE = "https://www.harvardgami.com/";
+
 // Best Presentation at the GAMI 2025 Symposium, with the share-tracking query string removed.
 export const GAMI_AWARD_POST = "https://www.linkedin.com/posts/akshay-dongare_globalhealth-innovation-ai-activity-7330802917735555072-Y2Er";

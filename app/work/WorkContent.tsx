@@ -20,8 +20,8 @@ const buildProjects = (stats: PackageStats) => [
         link: LINKEDIN_EXPERIENCE
     },
     {
-        title: "Harvard · Kenya Blood Donation Assistant",
-        desc: "Lead developer on a WhatsApp assistant that answers blood donation questions for users in Kenya, built under the Global Alliance for Medical Innovation at Harvard. Most people do not phrase a medical question the way a clinical document answers it, so the pipeline rewrites a query before it searches. I worked on that retrieval path, added guardrails for personal data and prompt injection, and ran a red-team pass covering injection, data exposure and medical accuracy before the system went to closed beta. Won Best Presentation at the Spring 2025 showcase.",
+        title: "Harvard University · Kenya Blood Donation Assistant",
+        desc: "Lead developer on a WhatsApp assistant that answers blood donation questions for users in Kenya, built under the Global Alliance for Medical Innovation at Harvard University. Most people do not phrase a medical question the way a clinical document answers it, so the pipeline rewrites a query before it searches. I worked on that retrieval path, added guardrails for personal data and prompt injection, and ran a red-team pass covering injection, data exposure and medical accuracy before the system went to closed beta. Won Best Presentation at the Spring 2025 showcase.",
         tags: ["RAG", "GUARDRAILS", "WHATSAPP", "HEALTHCARE"],
         link: LINKEDIN_EXPERIENCE
     },

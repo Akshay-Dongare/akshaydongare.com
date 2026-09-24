@@ -5,7 +5,7 @@ import { WorkContent } from "./WorkContent";
 
 export const metadata: Metadata = pageMetadata({
     title: "Work",
-    description: "Work by Akshay Dongare: langchain-litellm, Airbnb's internal LLM gateway, and applied AI at ISO and Harvard.",
+    description: "Work by Akshay Dongare: langchain-litellm, Airbnb's internal LLM gateway, and applied AI at ISO and Harvard University.",
     path: "/work",
 });
 
