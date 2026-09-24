@@ -18,7 +18,7 @@ export function ModeToggle({ className = "" }: { className?: string }) {
             aria-checked={mode === "dark"}
             aria-label="Dark mode"
             onClick={() => setMode(mode === "dark" ? "light" : "dark")}
-            className={`relative inline-flex h-7 w-[52px] shrink-0 items-center rounded-full p-[3px] cursor-none transition-colors duration-300 light:bg-[#1a1c13] dark:bg-[#f2efe9] dark:ring-1 dark:ring-black/25 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current ${className}`}
+            className={`relative inline-flex h-7 w-[52px] shrink-0 items-center rounded-full p-[3px] cursor-none transition-colors duration-300 light:bg-[#1a1c13] dark:bg-[#f2efe9] dark:ring-1 dark:ring-black/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current ${className}`}
         >
             <span
                 aria-hidden="true"
