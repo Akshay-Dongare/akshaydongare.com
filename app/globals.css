@@ -54,11 +54,8 @@
   --border-on-light: rgba(13,17,23,0.10);
 }
 
-/* ── Modes ────────────────────────────────────────────────────────────────
-   Light (Daylight Folio) is the default and lives on :root. Dark is the original
-   Deep Obsidian site, byte-for-byte: every dark value below is the string the
-   components used to inline. data-mode sits on <html>; data-theme stays free for
-   the Navbar's section sentinels, which only matter in dark mode. */
+/* Modes: light (Daylight Folio) is the default on :root; [data-mode="dark"] holds Deep Obsidian.
+   data-mode sits on <html>, leaving data-theme free for the Navbar's section sentinels. */
 @custom-variant dark (&:where([data-mode="dark"], [data-mode="dark"] *));
 @custom-variant light (&:where([data-mode="light"], [data-mode="light"] *));
 
@@ -95,9 +92,8 @@
   --color-diff-del: var(--diff-del);
 }
 
-/* fg-NN replaces text-white/NN: the same color-mix in dark, a solid ink in light,
-   because ink at partial alpha fails 4.5:1 on these grounds. lbl-NN is the same
-   for .text-label call sites, which take the rust label ink in light. */
+/* fg-NN is white at NN% in dark and a solid ink in light, where partial-alpha ink fails 4.5:1;
+   lbl-NN is the same for .text-label, rust in light. */
 :root, [data-mode="light"] {
   --fg-100: #1a1c13;
   --fg-90: #1a1c13;
