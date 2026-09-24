@@ -28,24 +28,24 @@ export default function Error({
     return (
         <div
             className="masthead-glow w-full min-h-screen pt-32 pb-24"
-            style={{ background: "linear-gradient(to bottom, var(--blend-deep) 0%, var(--blend-void) 100%)" }}
+            style={{ background: 'var(--spine-page)' }}
             data-theme="dark"
         >
             <div className="max-w-[1000px] mx-auto px-6 md:px-12 lg:px-20">
 
-                <p className="text-label text-white/55 mb-6">[ ERROR ]</p>
+                <p className="text-label text-lbl-55 mb-6">[ ERROR ]</p>
 
-                <h1 className="text-display-xl text-white/90 mb-8 leading-[1.05]">
+                <h1 className="text-display-xl text-fg-90 mb-8 leading-[1.05]">
                     Something broke on my end.
                 </h1>
 
-                <p className="text-body text-white/65 leading-relaxed max-w-[560px] mb-10">
+                <p className="text-body text-fg-65 leading-relaxed max-w-[560px] mb-10">
                     Not your browser and not the address. Trying again usually works, because
                     most of what can fail here is the WebGL that draws the background.
                 </p>
 
                 {error.digest ? (
-                    <p className="text-label text-white/50 mb-10">
+                    <p className="text-label text-lbl-50 mb-10">
                         Reference: {error.digest}
                     </p>
                 ) : null}
@@ -54,14 +54,14 @@ export default function Error({
                     <button
                         type="button"
                         onClick={reset}
-                        className="text-label text-white/80 hover:text-white transition-colors cursor-none inline-flex items-center gap-2"
+                        className="text-label text-lbl-80 hover:text-lbl-100 light:hover:text-fg-100 transition-colors cursor-none inline-flex items-center gap-2"
                     >
                         Try again
-                        <span className="shrink-0 whitespace-nowrap text-white/55">[ &rarr; ]</span>
+                        <span className="shrink-0 whitespace-nowrap text-fg-55">[ &rarr; ]</span>
                     </button>
                 </div>
 
-                <nav aria-label="Go somewhere that works" className="border-t border-white/[0.08]">
+                <nav aria-label="Go somewhere that works" className="border-t border-line-8">
                     {[
                         { href: "/", label: "Home" },
                         { href: "/work", label: "Work" },
@@ -70,12 +70,12 @@ export default function Error({
                         <Link
                             key={d.href}
                             href={d.href}
-                            className="group flex items-baseline justify-between gap-6 py-6 border-b border-white/[0.08] hover:border-white/20 transition-colors cursor-none"
+                            className="group flex items-baseline justify-between gap-6 py-6 border-b border-line-8 hover:border-line-20 transition-colors cursor-none"
                         >
-                            <span className="text-display-m text-white/80 group-hover:text-white transition-colors duration-300">
+                            <span className="text-display-m text-fg-80 group-hover:text-fg-100 transition-colors duration-300">
                                 {d.label}
                             </span>
-                            <span className="hidden md:block shrink-0 whitespace-nowrap text-label text-white/50 group-hover:text-white/80 transition-colors duration-300">
+                            <span className="hidden md:block shrink-0 whitespace-nowrap text-label text-lbl-50 group-hover:text-lbl-80 light:group-hover:text-fg-100 transition-colors duration-300">
                                 [ &rarr; ]
                             </span>
                         </Link>

@@ -10,13 +10,13 @@ export function AboutContent({ stats }: { stats: PackageStats }) {
     return (
         <div
             className="masthead-glow w-full min-h-screen pt-32 pb-24"
-            style={{ background: 'linear-gradient(to bottom, var(--blend-deep) 0%, var(--blend-void) 100%)' }}
+            style={{ background: 'var(--spine-page)' }}
             data-theme="dark"
         >
             <div className="max-w-[660px] mx-auto px-6 md:px-0">
 
                 <motion.h1
-                    className="text-display-xl text-white/90 mb-16 leading-[1.05]"
+                    className="text-display-xl text-fg-90 mb-16 leading-[1.05]"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1] }}
@@ -45,7 +45,7 @@ export function AboutContent({ stats }: { stats: PackageStats }) {
                 </motion.div>
 
                 <motion.div
-                    className="font-sans leading-relaxed text-body space-y-8 text-white/70"
+                    className="font-sans leading-relaxed text-body space-y-8 text-fg-70"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.35, delay: 0.08, ease: [0.25, 0.1, 0.25, 1] }}
@@ -57,34 +57,34 @@ export function AboutContent({ stats }: { stats: PackageStats }) {
                         I created{" "}
                         <Link
                             href="https://github.com/langchain-ai/langchain-litellm"
-                            className="text-white/85 underline underline-offset-4 decoration-white/20 hover:text-white/55 transition-colors cursor-none"
+                            className="text-fg-85 underline underline-offset-4 decoration-line-20 hover:text-fg-55 transition-colors cursor-none"
                         >
                             langchain-litellm
                         </Link>
                         {" "}and still lead its maintenance. It began as my own repository and now lives inside the langchain-ai organization as LangChain’s official LiteLLM integration, with its own page in the LangChain docs and an entry in the Python API reference. One interface to 100+ model providers, plus router-backed load balancing, embeddings and OCR loading. <Link
                             href={PEPY_URL}
-                            className="text-white/85 hover:underline hover:underline-offset-4 hover:decoration-white/40 hover:text-white/70 transition-colors cursor-none"
+                            className="text-fg-85 hover:underline hover:underline-offset-4 hover:decoration-line-40 hover:text-fg-70 transition-colors cursor-none"
                         >
                             {stats.long} downloads
                         </Link>
                         {" "}across {stats.releases} releases, and around {stats.monthlyLong} every month. I also contribute upstream to{" "}
                         <Link
                             href="https://github.com/langchain-ai/langchain/pulls?q=is%3Apr+author%3AAkshay-Dongare+"
-                            className="text-white/85 underline underline-offset-4 decoration-white/20 hover:text-white/55 transition-colors cursor-none"
+                            className="text-fg-85 underline underline-offset-4 decoration-line-20 hover:text-fg-55 transition-colors cursor-none"
                         >
                             LangChain
                         </Link>
                         ,{" "}
                         <Link
                             href="https://github.com/langchain-ai/langchain-community/pulls?q=is%3Apr+author%3AAkshay-Dongare+"
-                            className="text-white/85 underline underline-offset-4 decoration-white/20 hover:text-white/55 transition-colors cursor-none"
+                            className="text-fg-85 underline underline-offset-4 decoration-line-20 hover:text-fg-55 transition-colors cursor-none"
                         >
                             langchain-community
                         </Link>
                         {" "}and the{" "}
                         <Link
                             href="https://github.com/langchain-ai/docs/pulls?q=is%3Apr+author%3AAkshay-Dongare+"
-                            className="text-white/85 underline underline-offset-4 decoration-white/20 hover:text-white/55 transition-colors cursor-none"
+                            className="text-fg-85 underline underline-offset-4 decoration-line-20 hover:text-fg-55 transition-colors cursor-none"
                         >
                             LangChain documentation
                         </Link>
@@ -109,9 +109,9 @@ export function AboutContent({ stats }: { stats: PackageStats }) {
                         I build in the open. Infrastructure this many teams depend on should be inspectable, and the parts that fail in production are rarely the parts anyone demos.
                     </p>
 
-                    <h2 className="text-display-m font-medium mb-6 mt-16 text-white/90">Timeline</h2>
+                    <h2 className="text-display-m font-medium mb-6 mt-16 text-fg-90">Timeline</h2>
 
-                    <div className="flex flex-col border-b border-white/[0.08]">
+                    <div className="flex flex-col border-b border-line-8">
                         {[
                             { year: "2026", text: "AI platform engineering at Airbnb (contract). LLM gateway concurrency, auth and release safety" },
                             { year: "Since 2025", text: "Creator and lead maintainer, langchain-litellm, now developed inside the langchain-ai organization" },
@@ -123,9 +123,9 @@ export function AboutContent({ stats }: { stats: PackageStats }) {
                             { year: "2022", text: "Signature-forgery detection with CycleGAN, YOLOv5 and VGG16 transfer learning" },
                             { year: "2022", text: "TinyML internship: pruning and INT8 quantization for edge inference" },
                         ].map((item, i) => (
-                            <div key={i} className="flex flex-col md:flex-row border-t border-white/[0.08] py-6 items-start md:items-baseline">
-                                <div className="w-auto md:w-24 mb-1 md:mb-0 font-mono text-[0.8rem] text-white/50">{item.year}</div>
-                                <div className="flex-1 text-[1rem] text-white/70">{item.text}</div>
+                            <div key={i} className="flex flex-col md:flex-row border-t border-line-8 py-6 items-start md:items-baseline">
+                                <div className="w-auto md:w-24 mb-1 md:mb-0 font-mono text-[0.8rem] text-fg-50">{item.year}</div>
+                                <div className="flex-1 text-[1rem] text-fg-70">{item.text}</div>
                             </div>
                         ))}
                     </div>

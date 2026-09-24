@@ -99,13 +99,13 @@ export function WorkContent({ stats }: { stats: PackageStats }) {
     return (
         <div
             className="masthead-glow w-full min-h-screen pt-32 pb-24"
-            style={{ background: 'linear-gradient(to bottom, var(--blend-deep) 0%, var(--blend-void) 100%)' }}
+            style={{ background: 'var(--spine-page)' }}
             data-theme="dark"
         >
             <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20">
 
                 <motion.h1
-                    className="text-display-xl text-white/90 mb-4"
+                    className="text-display-xl text-fg-90 mb-4"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1] }}
@@ -114,7 +114,7 @@ export function WorkContent({ stats }: { stats: PackageStats }) {
                 </motion.h1>
 
                 <motion.p
-                    className="text-body text-white/55 max-w-[600px] mb-20"
+                    className="text-body text-fg-55 max-w-[600px] mb-20"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.35, delay: 0.05, ease: [0.25, 0.1, 0.25, 1] }}
@@ -133,23 +133,23 @@ export function WorkContent({ stats }: { stats: PackageStats }) {
                             <Link
                                 href={proj.link}
                                 aria-label={`${proj.title}, on ${destinationLabel(proj.link).toLowerCase()}`}
-                                className="group block h-full border border-white/[0.08] rounded-lg p-8 md:p-10 cursor-none hover:border-white/20 hover:-translate-y-1 hover:shadow-[0_8px_40px_rgba(107,159,212,0.07)] transition-all duration-[300ms] ease-[cubic-bezier(0.25,0.1,0.25,1)] bg-[#141920]"
+                                className="group block h-full border border-line-8 rounded-lg p-8 md:p-10 cursor-none hover:border-line-20 hover:-translate-y-1 hover:shadow-[var(--work-card-hover)] transition-all duration-[300ms] ease-[cubic-bezier(0.25,0.1,0.25,1)] bg-[var(--work-card)]"
                             >
                                 <div className="flex justify-between items-start gap-4 mb-6">
-                                    <h2 className="text-display-m tracking-tight text-white/90">{proj.title}</h2>
-                                    <span className="hidden md:inline-flex shrink-0 whitespace-nowrap items-baseline gap-2 font-mono text-white/60 md:opacity-0 md:-translate-x-4 md:group-hover:translate-x-0 md:group-hover:opacity-100 transition-all duration-300">
-                                        <span className="text-label text-white/50">{destinationLabel(proj.link)}</span>
+                                    <h2 className="text-display-m tracking-tight text-fg-90">{proj.title}</h2>
+                                    <span className="hidden md:inline-flex shrink-0 whitespace-nowrap items-baseline gap-2 font-mono text-fg-60 md:opacity-0 md:-translate-x-4 md:group-hover:translate-x-0 md:group-hover:opacity-100 transition-all duration-300">
+                                        <span className="text-label text-lbl-50">{destinationLabel(proj.link)}</span>
                                         <span className="text-xl">[ → ]</span>
                                     </span>
                                 </div>
 
-                                <p className="text-body text-white/55 mb-10 leading-relaxed">
+                                <p className="text-body text-fg-55 mb-10 leading-relaxed">
                                     {proj.desc}
                                 </p>
 
                                 <div className="flex flex-wrap gap-3 mt-auto">
                                     {proj.tags.map(tag => (
-                                        <span key={tag} className="text-label text-white/50 bg-white/[0.05] px-3 py-1.5 rounded-sm">
+                                        <span key={tag} className="text-label text-lbl-50 bg-line-5 px-3 py-1.5 rounded-sm">
                                             {tag}
                                         </span>
                                     ))}
