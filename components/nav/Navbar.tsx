@@ -5,14 +5,18 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { PillButton } from "@/components/ui/PillButton";
 import { motion, AnimatePresence } from "framer-motion";
+import { ModeToggle } from "@/components/nav/ModeToggle";
+import { useMode } from "@/lib/mode";
 
 export function Navbar() {
     const [isScrolled, setIsScrolled] = useState(false);
-    const [theme, setTheme] = useState<"light" | "dark">("dark"); // Default dark for hero sections
+    // Null until the scroll effect runs, so the server render lets CSS pick ink or white per mode.
+    const [theme, setTheme] = useState<"light" | "dark" | null>(null);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const toggleRef = useRef<HTMLButtonElement>(null);
     const panelRef = useRef<HTMLDivElement>(null);
     const pathname = usePathname();
+    const mode = useMode();
 
     useEffect(() => {
         const handleScroll = () => {
@@ -23,9 +27,12 @@ export function Navbar() {
                 setIsScrolled(false);
             }
 
-            // Intersection observer logic will go here to determine the background of the current section
-            // For now, simple mock based on scroll position or manual attributes.
-            // We will set data-theme="dark" on dark sections and query them
+            // Every light-mode ground clears 9:1 for ink, so only dark mode reads the sentinels.
+            // Read the attribute: during hydration the hook still reports the server's "light".
+            if (document.documentElement.dataset.mode !== "dark") {
+                setTheme("light");
+                return;
+            }
             const darkSections = document.querySelectorAll('[data-theme="dark"]');
             let isDark = false;
 
@@ -46,7 +53,7 @@ export function Navbar() {
         handleScroll();
 
         return () => window.removeEventListener("scroll", handleScroll);
-    }, [pathname]);
+    }, [pathname, mode]);
 
     const navLinks = [
         { name: "Home", href: "/" },
@@ -55,11 +62,11 @@ export function Navbar() {
         { name: "Contact", href: "/contact" },
     ];
 
-    const textColorClass = theme === "dark" ? "text-white" : "text-[var(--color-charcoal)]";
+    const textColorClass = theme === null ? "text-fg-100" : theme === "dark" ? "text-white" : "text-on-paper";
     const bgClass = isMobileMenuOpen
         ? "bg-transparent"
         : isScrolled
-            ? (theme === "dark" ? "bg-[rgba(7,9,15,0.72)] backdrop-blur-md" : "bg-[rgba(242,239,233,0.88)] backdrop-blur-md")
+            ? (theme === "dark" ? "bg-[var(--nav-glass)] backdrop-blur-md" : "bg-[var(--nav-glass-on-light)] backdrop-blur-md")
             : "bg-transparent";
 
     // Prevent scrolling when mobile menu is open
@@ -116,7 +123,7 @@ export function Navbar() {
         <>
             <nav
                 className={`fixed top-0 left-0 w-full z-[110] pointer-events-none transition-colors duration-300 ease-in-out ${bgClass}`}
-                data-nav-theme={theme}
+                data-nav-theme={theme ?? undefined}
             >
                 {/* On the div, not the nav: Google honours data-nosnippet only on span, div and section. */}
                 <div data-nosnippet className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 h-[80px] flex items-center justify-between">
@@ -139,7 +146,7 @@ export function Navbar() {
                             }
                         }}
                     >
-                        <span className={`font-mono text-sm font-medium tracking-[0.1em] ${isMobileMenuOpen ? "text-white" : textColorClass} transition-colors duration-300`}>
+                        <span className={`font-mono text-sm font-medium tracking-[0.1em] ${isMobileMenuOpen ? "text-fg-100" : textColorClass} transition-colors duration-300`}>
                             [ AD ]
                         </span>
                     </Link>
@@ -158,22 +165,26 @@ export function Navbar() {
                     </div>
 
                     {/* DESKTOP CTA - Right */}
-                    <div className="hidden md:block pointer-events-auto">
-                        <PillButton href="/contact" theme={theme}>
+                    <div className="hidden md:flex items-center gap-6 pointer-events-auto">
+                        <ModeToggle className={`${textColorClass} transition-colors duration-300`} />
+                        <PillButton href="/contact" theme={theme ?? undefined}>
                             Connect with me
                         </PillButton>
                     </div>
 
                     {/* MOBILE TOGGLE - Right */}
+                    <div className="md:hidden flex items-center gap-5 pointer-events-auto">
+                    <ModeToggle className={`${isMobileMenuOpen ? "text-fg-100" : textColorClass} transition-colors duration-300`} />
                     <button
                         ref={toggleRef}
                         aria-expanded={isMobileMenuOpen}
                         aria-controls="mobile-menu"
-                        className={`md:hidden -m-3 p-3 pointer-events-auto font-mono text-sm uppercase tracking-widest cursor-none ${isMobileMenuOpen ? 'text-white' : textColorClass}`}
+                        className={`-m-3 p-3 min-w-[4.75rem] text-right font-mono text-sm uppercase tracking-widest cursor-none ${isMobileMenuOpen ? 'text-fg-100' : textColorClass}`}
                         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                     >
                         {isMobileMenuOpen ? "CLOSE" : "MENU"}
                     </button>
+                    </div>
                 </div>
             </nav>
 
@@ -191,7 +202,7 @@ export function Navbar() {
                         aria-modal="true"
                         aria-label="Menu"
                         className="fixed inset-0 z-[105] flex flex-col justify-center px-8"
-                        style={{ background: '#07090f' }}
+                        style={{ background: 'var(--menu-bg)' }}
                         onClick={() => setIsMobileMenuOpen(false)}
                     >
                         <div className="flex flex-col gap-6" onClick={(e) => e.stopPropagation()}>
@@ -205,7 +216,7 @@ export function Navbar() {
                                     <Link
                                         href={link.href}
                                         onClick={() => setIsMobileMenuOpen(false)}
-                                        className="text-white text-display-m font-sans cursor-none hover:opacity-60 transition-opacity"
+                                        className="text-fg-100 text-display-m font-sans cursor-none hover:opacity-60 transition-opacity"
                                     >
                                         {link.name}
                                     </Link>
@@ -218,7 +229,7 @@ export function Navbar() {
                                 transition={{ delay: 0.2 + (navLinks.length * 0.05), duration: 0.4 }}
                                 className="mt-8"
                             >
-                                <PillButton href="/contact" theme="dark" onClick={() => setIsMobileMenuOpen(false)}>
+                                <PillButton href="/contact" theme={mode} onClick={() => setIsMobileMenuOpen(false)}>
                                     Connect with me
                                 </PillButton>
                             </motion.div>

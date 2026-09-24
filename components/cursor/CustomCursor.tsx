@@ -98,13 +98,17 @@ export function CursorProvider({ children }: { children: React.ReactNode }) {
             <MotionConfig reducedMotion="user">{children}</MotionConfig>
             {isReady && (
                 <motion.div
-                    className="fixed top-0 left-0 pointer-events-none z-[9999] rounded-full mix-blend-difference"
+                    className="fixed top-0 left-0 pointer-events-none z-[9999] rounded-full"
                     style={{
                         x: cursorX,
                         y: cursorY,
                         translateX: "-50%",
                         translateY: "-50%",
-                        backgroundColor: "white",
+                        // White difference dot in dark; a solid ink dot in light, where difference drops under 3:1 over pigment.
+                        backgroundColor: "var(--cursor-color)",
+                        mixBlendMode: "var(--cursor-blend)" as React.CSSProperties["mixBlendMode"],
+                        // A paper halo keeps the ink dot visible over the ink pills.
+                        boxShadow: "var(--cursor-ring)",
                         width: isHovering ? 8 : 5,
                         height: isHovering ? 8 : 5,
                     }}
