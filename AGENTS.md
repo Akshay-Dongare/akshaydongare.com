@@ -293,8 +293,9 @@ the WebGL particle physics, which are continuous rather than reveal animations.
 
 **The reader has seconds, so nothing they need sits behind a click.** The hero's `<dl>`
 carries name, employers, the download figure and the start date on the first screen, at
-every breakpoint. The four Work cards are all open, and the Mission paragraph is shown
-rather than toggled. A carousel is not the fix either: NN/g and click data both find slides
+every breakpoint. The four Work cards are all open, each ending in its claim and the links that
+back it (GitHub, pepy.tech, LinkedIn), with the URLs shared with /work through `lib/links.ts`. The
+Mission paragraph is shown rather than toggled. A carousel is not the fix either: NN/g and click data both find slides
 after the first go mostly unseen, which is the same failure as a collapsed card.
 
 **Type floor.** `.text-label` is 13px, and nothing a reader needs goes below it. At 10.4px
