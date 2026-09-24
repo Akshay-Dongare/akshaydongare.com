@@ -98,6 +98,9 @@ const siteJsonLd = {
   url: "https://akshaydongare.com",
 };
 
+// Light is the default; a stored dark choice is applied before first paint so it never flashes light.
+const modeScript = `try{if(localStorage.getItem('mode')==='dark'){var d=document.documentElement;d.dataset.mode='dark';d.style.colorScheme='dark';var t=document.querySelector('meta[name="theme-color"]');if(t)t.content='#07090f'}}catch(e){}`;
+
 // Runs before first paint so neither a repeat visitor nor someone with reduced motion
 // ever sees a frame of the mask.
 const bootSkipScript = `try{if(sessionStorage.getItem('bootPlayed')||matchMedia('(prefers-reduced-motion: reduce)').matches)document.documentElement.classList.add('skip-boot')}catch(e){}`;
@@ -108,8 +111,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" data-scroll-behavior="smooth" suppressHydrationWarning>
+    <html lang="en" data-scroll-behavior="smooth" data-mode="light" style={{ colorScheme: "light" }} suppressHydrationWarning>
       <head>
+        {/* Owned here, not by viewport metadata, which Next re-inserts on every navigation. */}
+        <meta name="theme-color" content="#faf6ee" suppressHydrationWarning />
+        <script dangerouslySetInnerHTML={{ __html: modeScript }} />
         <script dangerouslySetInnerHTML={{ __html: bootSkipScript }} />
         {/* Without JS the page is a black rectangle: the boot mask is in the server HTML
             and is only ever torn down from an effect, and Framer emits inline opacity:0
