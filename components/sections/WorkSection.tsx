@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { PEPY_URL, type PackageStats } from "@/lib/downloads";
 import { GAMI_AWARD_POST, LINKEDIN_EXPERIENCE } from "@/lib/links";
+import { ScrollCue } from "@/components/ui/ScrollCue";
 
 // All four are open at once: a recruiter gives the page seconds, and a name behind a click
 // is a name they never read. The full account of each lives on /work.
@@ -125,6 +126,7 @@ export function WorkSection({ stats }: { stats: PackageStats }) {
                 </motion.div>
 
             </div>
+            <ScrollCue />
         </section>
     );
 }

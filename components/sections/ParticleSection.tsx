@@ -16,6 +16,7 @@ const ParticleField = dynamic(
 import Link from "next/link";
 import { PEPY_URL, type PackageStats } from "@/lib/downloads";
 import { useMode } from "@/lib/mode";
+import { ScrollCue } from "@/components/ui/ScrollCue";
 
 // Olive #7c8c4b on screen: the field's colour path darkens its input, so this is that colour pre-lightened.
 const LIGHT_NEBULA = "#b9c494";
@@ -84,6 +85,7 @@ export function ParticleSection({ stats }: { stats: PackageStats }) {
             {shouldRenderParticles && (
                 <ParticleField color={light ? LIGHT_NEBULA : "#8da3b5"} blend={light ? "normal" : "add"} fade={light ? LIGHT_FADE : undefined} active={isInView} />
             )}
+            <ScrollCue tone="paper" />
         </section>
     );
 }

@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
 import { PEPY_URL, type PackageStats } from "@/lib/downloads";
+import { ScrollCue } from "@/components/ui/ScrollCue";
 
 
 export function AboutSection({ stats }: { stats: PackageStats }) {
@@ -74,6 +75,7 @@ export function AboutSection({ stats }: { stats: PackageStats }) {
                 </motion.div>
 
             </div>
+            <ScrollCue tone="paper" />
         </section>
     );
 }

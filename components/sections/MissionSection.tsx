@@ -2,6 +2,7 @@
 
 import React, { useRef } from "react";
 import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
+import { ScrollCue } from "@/components/ui/ScrollCue";
 
 export function MissionSection() {
     const containerRef = useRef<HTMLDivElement>(null);
@@ -62,6 +63,7 @@ export function MissionSection() {
                 </div>
 
             </div>
+            <ScrollCue />
         </section>
     );
 }

@@ -4,6 +4,7 @@ import React, { useRef } from "react";
 import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
 import Link from "next/link";
 import { PEPY_URL, type PackageStats } from "@/lib/downloads";
+import { ScrollCue } from "@/components/ui/ScrollCue";
 
 export function HeroSection({ stats }: { stats: PackageStats }) {
     const containerRef = useRef<HTMLDivElement>(null);
@@ -64,7 +65,7 @@ export function HeroSection({ stats }: { stats: PackageStats }) {
             </div>
 
             {/* min-h, and the text block in flow: on a short phone the content grows the hero instead of sliding under the nav. */}
-            <div className="relative w-full min-h-svh max-w-[1400px] mx-auto z-10 flex flex-col justify-end pt-24 pb-[clamp(2rem,5vw,4rem)] px-[clamp(1.5rem,5vw,3rem)]">
+            <div className="relative w-full min-h-svh max-w-[1400px] mx-auto z-10 flex flex-col justify-end pt-24 pb-[clamp(4.5rem,8vw,6rem)] px-[clamp(1.5rem,5vw,3rem)]">
 
                 {/* Bottom Left Text Block. Every reveal here runs on mount, not in view: Google renders
                     in a tall viewport where h-svh stretches, and the h1 never entered it. */}
@@ -101,26 +102,6 @@ export function HeroSection({ stats }: { stats: PackageStats }) {
                         <dd className="text-[1.0625rem] md:text-[1.1875rem] font-medium text-fg-90">Full-time from 11 January 2027</dd>
                     </dl>
 
-                    {/* Scroll cue. A full-viewport hero that ends on a clean edge reads as the
-                        end of the page ("illusion of completeness"), so say there is more. */}
-                    <motion.div
-                        className="mt-8 flex items-center gap-3 [@media(max-height:700px)]:hidden"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ duration: 0.35, delay: 0.45 }}
-                    >
-                        <span className="text-label text-lbl-55">
-                            Scroll
-                        </span>
-                        <motion.span
-                            className="text-[0.7rem] font-mono text-fg-70 leading-none"
-                            animate={{ y: [0, 4, 0] }}
-                            transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
-                            aria-hidden="true"
-                        >
-                            &#8595;
-                        </motion.span>
-                    </motion.div>
                 </motion.div>
 
                 {/* Floating Labels (Right side) */}
@@ -139,6 +120,7 @@ export function HeroSection({ stats }: { stats: PackageStats }) {
 
 
             </div>
+            <ScrollCue gutter="hero" />
         </section>
     );
 }

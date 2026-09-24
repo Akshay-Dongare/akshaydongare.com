@@ -3,6 +3,7 @@
 import React, { useRef } from "react";
 import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
 import Link from "next/link";
+import { ScrollCue } from "@/components/ui/ScrollCue";
 
 // The /files view is the diff itself rather than the conversation, which is what
 // the section is showing. Verified: this PR changed exactly the two files quoted
@@ -209,6 +210,7 @@ export function CodeSection() {
                 </motion.div>
             </div>
 
+            <ScrollCue />
         </section>
     );
 }
