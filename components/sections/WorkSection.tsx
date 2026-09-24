@@ -33,7 +33,7 @@ const buildProjects = (stats: PackageStats) => [
         org: "Harvard",
         role: "GAMI · lead developer",
         line: "A WhatsApp assistant answering blood donation questions in Kenya, with query rewriting and guardrails for personal data and prompt injection.",
-        metric: "Best Presentation, Spring 2025",
+        metric: "Best Presentation, 2025",
         theme: "from-[#2e4560] to-[#0d1117]",
     },
 ];
