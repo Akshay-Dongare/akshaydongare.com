@@ -4,7 +4,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { PEPY_URL, type PackageStats } from "@/lib/downloads";
-import { GAMI_AWARD_POST, LINKEDIN_EXPERIENCE } from "@/lib/links";
+import { GAMI_AWARD_POST, LANGCHAIN_ORG, LINKEDIN_EXPERIENCE } from "@/lib/links";
 import { ScrollCue } from "@/components/ui/ScrollCue";
 
 // All four are open at once: a recruiter gives the page seconds, and a name behind a click
@@ -20,7 +20,13 @@ const buildProjects = (stats: PackageStats) => [
     {
         org: "LangChain",
         role: "langchain-litellm · creator and lead maintainer",
-        line: "LangChain's official LiteLLM integration: one Python interface to 100+ model providers, developed inside the langchain-ai organization.",
+        line: (
+            <>
+                LangChain&apos;s official LiteLLM integration: one Python interface to 100+ model providers, developed inside the{" "}
+                <Link href={LANGCHAIN_ORG} className="underline underline-offset-4 decoration-line-20 hover:text-fg-55 transition-colors cursor-none">langchain-ai</Link>{" "}
+                organization.
+            </>
+        ),
         card: "var(--card-langchain)",
         pills: [
             { label: `${stats.compact} downloads`, href: PEPY_URL, name: `${stats.compact} downloads: all-time figures on pepy.tech` },

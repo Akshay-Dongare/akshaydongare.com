@@ -4,6 +4,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
+import { LANGCHAIN_ORG } from "@/lib/links";
 import { PEPY_URL, type PackageStats } from "@/lib/downloads";
 
 export function AboutContent({ stats }: { stats: PackageStats }) {
@@ -62,7 +63,14 @@ export function AboutContent({ stats }: { stats: PackageStats }) {
                         >
                             langchain-litellm
                         </Link>
-                        {" "}and still lead its maintenance. It began as my own repository and now lives inside the langchain-ai organization as LangChain’s official LiteLLM integration, with its own page in the LangChain docs and an entry in the Python API reference. One interface to 100+ model providers, plus router-backed load balancing, embeddings and OCR loading. <Link
+                        {" "}and still lead its maintenance. It began as my own repository and now lives inside the{" "}
+                        <Link
+                            href={LANGCHAIN_ORG}
+                            className="text-fg-85 underline underline-offset-4 decoration-line-20 hover:text-fg-55 transition-colors cursor-none"
+                        >
+                            langchain-ai
+                        </Link>
+                        {" "}organization as LangChain’s official LiteLLM integration, with its own page in the LangChain docs and an entry in the Python API reference. One interface to 100+ model providers, plus router-backed load balancing, embeddings and OCR loading. <Link
                             href={PEPY_URL}
                             className="text-fg-85 hover:underline hover:underline-offset-4 hover:decoration-line-40 hover:text-fg-70 transition-colors cursor-none"
                         >
