@@ -122,11 +122,17 @@ export function Navbar() {
     return (
         <>
             <nav
-                className={`fixed top-0 left-0 w-full z-[110] pointer-events-none transition-colors duration-300 ease-in-out ${bgClass}`}
+                className="fixed top-0 left-0 w-full z-[110] pointer-events-none"
                 data-nav-theme={theme ?? undefined}
             >
+                {/* The glass is its own layer so light mode can let it run 32px past the bar and fade out:
+                    paper glass over sage would otherwise cut text at a hard edge where dark glass blends in. */}
+                <div
+                    aria-hidden="true"
+                    className={`absolute inset-x-0 top-0 h-full light:h-[112px] transition-colors duration-300 ease-in-out light:[mask-image:linear-gradient(to_bottom,#000_70%,transparent)] light:[-webkit-mask-image:linear-gradient(to_bottom,#000_70%,transparent)] ${bgClass}`}
+                />
                 {/* On the div, not the nav: Google honours data-nosnippet only on span, div and section. */}
-                <div data-nosnippet className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 h-[80px] flex items-center justify-between">
+                <div data-nosnippet className="relative max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 h-[80px] flex items-center justify-between">
 
                     {/* LOGO - Left */}
                     {/* On a sub-page this navigates home, which App Router already scrolls to
