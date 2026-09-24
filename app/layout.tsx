@@ -93,6 +93,8 @@ const siteJsonLd = {
   "@context": "https://schema.org",
   "@type": "WebSite",
   name: "Akshay Dongare",
+  // Google's documented fallback when it is not confident enough to use the name.
+  alternateName: ["akshaydongare.com"],
   url: "https://akshaydongare.com",
 };
 
