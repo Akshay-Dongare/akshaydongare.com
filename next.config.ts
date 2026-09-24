@@ -13,6 +13,10 @@ const nextConfig: NextConfig = {
       { source: '/profile.jpg', destination: '/Akshay_Headshot.jpg', permanent: true },
     ];
   },
+  // Requested directly, /_not-found answers 200, and every real 404 names it as canonical.
+  async headers() {
+    return [{ source: '/_not-found', headers: [{ key: 'X-Robots-Tag', value: 'noindex' }] }];
+  },
 };
 
 const withMDX = createMDX({
