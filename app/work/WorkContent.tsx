@@ -128,7 +128,7 @@ export function WorkContent({ stats }: { stats: PackageStats }) {
                             >
                                 <div className="flex justify-between items-start gap-4 mb-6">
                                     <h2 className="text-display-m tracking-tight text-fg-90">{proj.title}</h2>
-                                    <span className="hidden md:inline-flex shrink-0 whitespace-nowrap items-baseline gap-2 font-mono text-fg-60 md:opacity-0 md:-translate-x-4 md:group-hover:translate-x-0 md:group-hover:opacity-100 transition-all duration-300">
+                                    <span className="hidden lg:inline-flex shrink-0 whitespace-nowrap items-baseline gap-2 font-mono text-fg-60 lg:opacity-0 lg:-translate-x-4 lg:group-hover:translate-x-0 lg:group-hover:opacity-100 transition-all duration-300">
                                         <span className="text-label text-lbl-50">{destinationLabel(proj.link)}</span>
                                         <span className="text-xl">[ → ]</span>
                                     </span>
