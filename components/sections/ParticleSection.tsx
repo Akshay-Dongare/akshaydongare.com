@@ -19,6 +19,9 @@ import { useMode } from "@/lib/mode";
 
 // Olive #7c8c4b on screen: the field's colour path darkens its input, so this is that colour pre-lightened.
 const LIGHT_NEBULA = "#b9c494";
+// Dark's additive light vanishes as its gradient pales from ~40% down; paper shows pigment
+// everywhere, so light fades over that same band instead. Fitted to dark's measured profile.
+const LIGHT_FADE: [number, number] = [-0.7, 0.3];
 
 export function ParticleSection({ stats }: { stats: PackageStats }) {
     const containerRef = useRef<HTMLDivElement>(null);
@@ -79,7 +82,7 @@ export function ParticleSection({ stats }: { stats: PackageStats }) {
             </div>
 
             {shouldRenderParticles && (
-                <ParticleField color={light ? LIGHT_NEBULA : "#8da3b5"} blend={light ? "normal" : "add"} active={isInView} />
+                <ParticleField color={light ? LIGHT_NEBULA : "#8da3b5"} blend={light ? "normal" : "add"} fade={light ? LIGHT_FADE : undefined} active={isInView} />
             )}
         </section>
     );

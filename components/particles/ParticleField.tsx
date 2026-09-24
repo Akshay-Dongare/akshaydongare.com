@@ -78,7 +78,10 @@ const MAX_DT     = 0.05;         // same 3-frame clamp the old dtScale had
 // very different values and the lag spread is even without needing Math.random().
 const GOLDEN = 0.6180339887498949;
 
-function PointCloud({ color = "#8da3b5", reduced = false, blend = "add" }: { color?: string; reduced?: boolean; blend?: "add" | "normal" }) {
+// The NDC band over which the field fades out toward the section foot; see the vertex shader.
+const DARK_FADE: [number, number] = [-0.75, -0.05];
+
+function PointCloud({ color = "#8da3b5", reduced = false, blend = "add", fade = DARK_FADE }: { color?: string; reduced?: boolean; blend?: "add" | "normal"; fade?: [number, number] }) {
     const pointsRef = useRef<THREE.Points>(null);
     const { mouse, viewport, gl } = useThree();
 
@@ -204,12 +207,14 @@ function PointCloud({ color = "#8da3b5", reduced = false, blend = "add" }: { col
         uniforms: {
             uColor:         { value: new THREE.Color(color) },
             uGlobalOpacity: { value: 0.62 },
+            uFade:          { value: new THREE.Vector2(fade[0], fade[1]) },
         },
         vertexShader: `
             attribute float aOpacity;
             attribute float aSize;
             varying   float vOpacity;
             varying   float vFade;
+            uniform   vec2  uFade;
             void main() {
                 vOpacity      = aOpacity;
                 vec4 mvPos    = modelViewMatrix * vec4(position, 1.0);
@@ -226,7 +231,7 @@ function PointCloud({ color = "#8da3b5", reduced = false, blend = "add" }: { col
                 // and -1 at the bottom: full strength to ~52% down, gone by ~87%,
                 // which is before the first channel would clip.
                 float ndcY    = gl_Position.y / gl_Position.w;
-                vFade         = smoothstep(-0.75, -0.05, ndcY);
+                vFade         = smoothstep(uFade.x, uFade.y, ndcY);
             }
         `,
         fragmentShader: `
@@ -243,7 +248,7 @@ function PointCloud({ color = "#8da3b5", reduced = false, blend = "add" }: { col
                 gl_FragColor = vec4(uColor, alpha);
             }
         `,
-    }), [color, blend]);
+    }), [color, blend, fade]);
     // A mode switch builds a new material; free the old one's GPU program.
     useEffect(() => () => material.dispose(), [material]);
 
@@ -581,7 +586,7 @@ function PointCloud({ color = "#8da3b5", reduced = false, blend = "add" }: { col
     return <points ref={pointsRef} geometry={geometry} material={material} />;
 }
 
-export function ParticleField({ color = "#8da3b5", className = "", active = true, blend = "add" }: { color?: string; className?: string; active?: boolean; blend?: "add" | "normal" }) {
+export function ParticleField({ color = "#8da3b5", className = "", active = true, blend = "add", fade = DARK_FADE }: { color?: string; className?: string; active?: boolean; blend?: "add" | "normal"; fade?: [number, number] }) {
     // Reduced motion: render the field once and then stop, rather than removing it.
     // The particles are this section's visual content, so a still frame keeps the
     // composition while the movement — which is the part that triggers vestibular
@@ -600,7 +605,7 @@ export function ParticleField({ color = "#8da3b5", className = "", active = true
                     // visit once it had been seen once, six screens away from the viewport.
                     frameloop={reduced ? "demand" : active ? "always" : "never"}
             >
-                <PointCloud color={color} reduced={reduced} blend={blend} />
+                <PointCloud color={color} reduced={reduced} blend={blend} fade={fade} />
             </Canvas>
         </div>
     );
