@@ -13,7 +13,7 @@ const ROUTES: Array<{ path: string; lastModified: string; priority: number; chan
     { path: "/work", lastModified: "2026-09-22", priority: 0.9, changeFrequency: "monthly" },
     { path: "/about", lastModified: "2026-09-22", priority: 0.9, changeFrequency: "monthly" },
     { path: "/contact", lastModified: "2026-09-21", priority: 0.8, changeFrequency: "yearly" },
-    { path: "/colophon", lastModified: "2026-09-21", priority: 0.3, changeFrequency: "yearly" },
+    { path: "/colophon", lastModified: "2026-09-24", priority: 0.3, changeFrequency: "yearly" },
     { path: "/privacy", lastModified: "2026-09-21", priority: 0.3, changeFrequency: "yearly" },
 ];
 
