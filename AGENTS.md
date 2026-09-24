@@ -87,6 +87,21 @@ unannounced new tab is *not* a WCAG failure at any enforceable level — SC 3.2.
 Change on Request is AAA, and SC 3.2.1/3.2.2 govern focus and input, not link
 activation. This is a usability decision, not a conformance one.
 
+### Search
+
+Google builds the result from the server HTML, so these hold it to what a recruiter should read.
+
+- **Snippet exclusions.** `data-nosnippet` sits on the boot mask and on the inner div of the nav
+  and the footer. Google honours it only on `span`, `div` and `section`, never on `<nav>` or
+  `<footer>`. The mask needs it most: Google's renderer has no sessionStorage, so it gets the
+  mask on every render, and `aria-hidden` is not a snippet control.
+- **Description order.** The homepage description leads with the name, then the employers, then
+  the download figure. Phones cut it near 110 characters, so what must be seen goes first.
+- **Sitemap dates.** `lastModified` in `app/sitemap.ts` is set by hand. Bump a route's date when
+  its main content changes and at no other time; a date that moves on every deploy is ignored.
+- **Old URLs.** `/projects` and `/social` from the previous site 308 to `/work` and `/contact`
+  in `next.config.ts`. `/blog` has no equivalent and stays a 404.
+
 ### Branding
 
 **Logo:** typographical brutalist `[ AD ]` in monospace — Navbar (small, inline, inherits theme text color) and Footer (medium weight, paired with the Akshay Dongare wordmark). Do not revert to the old overlapping-circles letterform.
@@ -95,8 +110,10 @@ activation. This is a usability decision, not a conformance one.
 three files Next picks up by convention: `app/favicon.ico` (16, 32, 48), `app/icon.png` (192)
 and `app/apple-icon.png` (180, opaque and square because iOS rounds its own corners). The 16px
 frame is "AD" alone, rendered at native size: with brackets, each letter at that size is about
-6px tall with sub-pixel strokes and blurs to grey. Google Search only accepts a square that is
-a multiple of 48px, which the 48 and 192 satisfy.
+6px tall with sub-pixel strokes and blurs to grey. Google Search needs a square of at least
+8px, recommends one larger than 48px, and does not accept SVG; the 192 PNG covers all three.
+Keep these files byte-stable: Google wants a stable favicon URL, and Next's `?hash` changes
+whenever a file does.
 
 **Portrait:** `/public/Akshay_Headshot.jpg` (1197x1497) — rendered through
 `next/image` with `fill` in two places, so each one needs a positioned ancestor
