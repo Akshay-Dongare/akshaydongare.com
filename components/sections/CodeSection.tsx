@@ -165,7 +165,7 @@ export function CodeSection() {
             </div>
 
             {/* Code Overlay */}
-            {/* On phones the diff runs past the section; fade it out rather than let the edge slice the glyphs. */}
+            {/* The diff can run past the section, most on phones; fade it out rather than let the edge slice the glyphs. */}
             <div
                 className="relative w-full h-full max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 pt-32 overflow-hidden z-10 pointer-events-none"
                 style={{ WebkitMaskImage: 'linear-gradient(to bottom, #000 85%, transparent 100%)', maskImage: 'linear-gradient(to bottom, #000 85%, transparent 100%)' }}
