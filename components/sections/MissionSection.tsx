@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
 import { ScrollCue } from "@/components/ui/ScrollCue";
 
@@ -16,6 +16,7 @@ export function MissionSection() {
     // Framer has nothing to opt out of. Collapsing the output range is the opt-out.
     const reduced = !!useReducedMotion();
     const y = useTransform(scrollYProgress, [0, 1], reduced ? ["0%", "0%"] : ["0%", "30%"]);
+    const [approachOpen, setApproachOpen] = useState(true);
 
     return (
         <section
@@ -54,11 +55,29 @@ export function MissionSection() {
                         transition={{ duration: 0.35, delay: 0.08 }}
                         className="flex flex-col items-start md:items-end gap-2 text-left md:text-right"
                     >
-                        {/* Shown, not behind a toggle: prose behind a click is prose nobody reads, and Google never sees it. */}
-                        <span className="text-label text-lbl-55">APPROACH</span>
-                        <p className="text-body text-fg-75 leading-relaxed text-left max-w-[360px]">
-                            Provider routing, auth, retries, concurrency. The parts nobody demos are the parts that page you at 3am. That layer is what I work on, and I work on it in the open, because infrastructure this many teams depend on should be inspectable.
-                        </p>
+                        {/* Open by default so a first read gets it; collapsing keeps the text in the DOM, where Google reads it. */}
+                        <button
+                            type="button"
+                            onClick={() => setApproachOpen((open) => !open)}
+                            aria-expanded={approachOpen}
+                            aria-controls="mission-approach-panel"
+                            className="group flex items-center gap-2 py-2 -my-2 cursor-none text-label text-lbl-55 hover:text-lbl-90 light:hover:text-fg-100 transition-colors"
+                        >
+                            <span>APPROACH</span>
+                            <span className="shrink-0 whitespace-nowrap">[ {approachOpen ? "−" : "+"} ]</span>
+                        </button>
+                        <motion.div
+                            id="mission-approach-panel"
+                            initial={false}
+                            animate={{ height: approachOpen ? "auto" : 0, opacity: approachOpen ? 1 : 0 }}
+                            transition={{ duration: 0.3, ease: "easeInOut" }}
+                            className="overflow-hidden"
+                            inert={!approachOpen}
+                        >
+                            <p className="text-body text-fg-75 leading-relaxed text-left max-w-[360px]">
+                                Provider routing, auth, retries, concurrency. The parts nobody demos are the parts that page you at 3am. That layer is what I work on, and I work on it in the open, because infrastructure this many teams depend on should be inspectable.
+                            </p>
+                        </motion.div>
                     </motion.div>
                 </div>
 
