@@ -128,9 +128,9 @@
   --chip: rgba(250, 246, 238, 0.72);
   --more-bg: #faf6ee;
   --more-ink: #1a1c13;
-  --more-line: #1a1c13;
-  --more-bg-hover: #1a1c13;
-  --more-ink-hover: #faf6ee;
+  --more-line: #f6dcc2;
+  --more-bg-hover: #f6dcc2;
+  --more-ink-hover: #1a1c13;
   --chip-line: rgba(107, 42, 17, 0.28);
   --chip-line-hover: rgba(107, 42, 17, 0.6);
   --chip-hover: rgba(107, 42, 17, 0.08);
