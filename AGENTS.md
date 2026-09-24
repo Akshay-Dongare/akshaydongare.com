@@ -133,7 +133,7 @@ and an accurate `sizes`. Do not revert either to a plain `<img>`: the source is
   `object-cover object-top` inside a rounded card with a gradient overlay.
   `sizes="(max-width: 768px) 100vw, 480px"`, and no `priority` — it is below the
   fold, so the default lazy load is correct.
-- `app/about/AboutContent.tsx` (full-width portrait): `object-cover object-top`
+- `app/about/AboutContent.tsx` (portrait centered in the page's single 820px column): `object-cover object-top`
   in a rounded container. Carries `priority` because it is that page's LCP
   element, and `sizes="320px"` because the box is capped by `max-w-[320px]`.
 
@@ -296,7 +296,9 @@ the WebGL particle physics, which are continuous rather than reveal animations.
 carries name, employers, the download figure and the start date on the first screen, at
 every breakpoint. The four Work cards are all open, each ending in claim pills that are themselves
 links to the evidence (pepy.tech, LinkedIn), with the URLs shared with /work through `lib/links.ts`. The
-Mission paragraph is shown rather than toggled. A carousel is not the fix either: NN/g and click data both find slides
+Mission paragraph opens by default and folds away under APPROACH; collapsed, it stays in the DOM, so
+Google still reads it. Every homepage section ends in a `ScrollCue` at its bottom-left that scrolls to
+the next; Particle and About pass `tone="paper"` because in dark mode they end on a light ground. A carousel is not the fix either: NN/g and click data both find slides
 after the first go mostly unseen, which is the same failure as a collapsed card.
 
 **Type floor.** `.text-label` is 13px, and nothing a reader needs goes below it. At 10.4px
