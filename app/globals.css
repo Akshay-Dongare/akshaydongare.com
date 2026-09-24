@@ -54,6 +54,188 @@
   --border-on-light: rgba(13,17,23,0.10);
 }
 
+/* ── Modes ────────────────────────────────────────────────────────────────
+   Light (Daylight Folio) is the default and lives on :root. Dark is the original
+   Deep Obsidian site, byte-for-byte: every dark value below is the string the
+   components used to inline. data-mode sits on <html>; data-theme stays free for
+   the Navbar's section sentinels, which only matter in dark mode. */
+@custom-variant dark (&:where([data-mode="dark"], [data-mode="dark"] *));
+@custom-variant light (&:where([data-mode="light"], [data-mode="light"] *));
+
+@theme inline {
+  --color-fg-100: var(--fg-100);
+  --color-fg-90: var(--fg-90);
+  --color-fg-85: var(--fg-85);
+  --color-fg-80: var(--fg-80);
+  --color-fg-75: var(--fg-75);
+  --color-fg-70: var(--fg-70);
+  --color-fg-65: var(--fg-65);
+  --color-fg-60: var(--fg-60);
+  --color-fg-55: var(--fg-55);
+  --color-fg-50: var(--fg-50);
+  --color-lbl-100: var(--lbl-100);
+  --color-lbl-90: var(--lbl-90);
+  --color-lbl-85: var(--lbl-85);
+  --color-lbl-80: var(--lbl-80);
+  --color-lbl-75: var(--lbl-75);
+  --color-lbl-70: var(--lbl-70);
+  --color-lbl-65: var(--lbl-65);
+  --color-lbl-60: var(--lbl-60);
+  --color-lbl-55: var(--lbl-55);
+  --color-lbl-50: var(--lbl-50);
+  --color-line-5: var(--line-5);
+  --color-line-8: var(--line-8);
+  --color-line-20: var(--line-20);
+  --color-line-25: var(--line-25);
+  --color-line-40: var(--line-40);
+  --color-on-paper: var(--on-paper);
+  --color-chip: var(--chip);
+  --color-pill: var(--pill);
+  --color-pill-hover: var(--pill-hover);
+  --color-pill-ink: var(--pill-ink);
+  --color-diff-add: var(--diff-add);
+  --color-diff-del: var(--diff-del);
+}
+
+/* fg-NN replaces text-white/NN: the same color-mix in dark, a solid ink in light,
+   because ink at partial alpha fails 4.5:1 on these grounds. lbl-NN is the same
+   for .text-label call sites, which take the rust label ink in light. */
+:root, [data-mode="light"] {
+  --fg-100: #1a1c13;
+  --fg-90: #1a1c13;
+  --fg-85: #1a1c13;
+  --fg-80: #272a1e;
+  --fg-75: #272a1e;
+  --fg-70: #272a1e;
+  --fg-65: #272a1e;
+  --fg-60: #3d422c;
+  --fg-55: #3d422c;
+  --fg-50: #3d422c;
+  --lbl-100: #6b2a11;
+  --lbl-90: #6b2a11;
+  --lbl-85: #6b2a11;
+  --lbl-80: #6b2a11;
+  --lbl-75: #6b2a11;
+  --lbl-70: #6b2a11;
+  --lbl-65: #6b2a11;
+  --lbl-60: #6b2a11;
+  --lbl-55: #6b2a11;
+  --lbl-50: #6b2a11;
+  --line-5: rgba(26, 28, 19, 0.04);
+  --line-8: rgba(26, 28, 19, 0.10);
+  --line-20: rgba(26, 28, 19, 0.24);
+  --line-25: rgba(26, 28, 19, 0.28);
+  --line-40: rgba(26, 28, 19, 0.40);
+  --on-paper: #1a1c13;
+  --chip: rgba(250, 246, 238, 0.72);
+  --pill: #1a1c13;
+  --pill-hover: #2e3222;
+  --pill-ink: #faf6ee;
+  --diff-add: #165626;
+  --diff-del: #88282c;
+  --page-bg: #faf6ee;
+  --menu-bg: #faf6ee;
+  --code-veil: rgba(250, 246, 238, 0.5);
+  --boot-panel: #f3ecdd;
+  --cursor-color: #1a1c13;
+  --cursor-blend: normal;
+  --cursor-ring: 0 0 0 1.5px #faf6ee;
+  --nav-glass: rgba(250, 246, 238, 0.88);
+  --nav-glass-on-light: rgba(250, 246, 238, 0.88);
+  --particle-halo: 0 2px 24px rgba(250, 246, 238, 0.5);
+  --tension-ring: rgba(26, 28, 19, 0.75);
+  --work-card: #fffdf8;
+  --code-mask: linear-gradient(to bottom, transparent 0%, #000 24%, #000 88%, transparent 100%);
+  --work-card-hover: 0 8px 40px rgba(26, 28, 19, 0.08);
+  --code-glow: none;
+  --card-shadow: 0 1px 2px rgba(26, 28, 19, 0.06), 0 10px 28px rgba(26, 28, 19, 0.08);
+  --card-airbnb: linear-gradient(to bottom in oklab, #f9e2cf, #faf6ee);
+  --card-langchain: linear-gradient(to bottom in oklab, #e6e9d3, #faf6ee);
+  --card-iso: linear-gradient(to bottom in oklab, #efe4cc, #faf6ee);
+  --card-harvard: linear-gradient(to bottom in oklab, #ece4cf, #faf6ee);
+  --masthead-glow: radial-gradient(90% 70% at 50% -8%, rgba(213, 120, 76, 0.12) 0%, rgba(213, 120, 76, 0.065) 34%, rgba(213, 120, 76, 0.02) 60%, transparent 78%), radial-gradient(52% 44% at 18% 2%, rgba(124, 140, 75, 0.06) 0%, rgba(124, 140, 75, 0.017) 48%, transparent 74%);
+  --spine-hero: linear-gradient(to bottom, #faf6ee 0%, #f3ecdd 100%);
+  --depth-hero: linear-gradient(135deg, #faf6ee 0%, #f3ecdd 55%, #f5efe2 100%);
+  --spine-particle: linear-gradient(to bottom, #f3ecdd 0%, #f2ebdb 8%, #f1e9d8 13.2%, #f0e8d6 17.7%, #efe7d4 21.8%, #ede5d1 25.9%, #ece4cf 30%, #e9e2cb 35.9%, #e6e0c8 39.9%, #e3dec4 43.4%, #e0ddc1 46.6%, #dcdbbe 49.8%, #d9d9bb 53.1%, #d6d8b9 56.7%, #d3d6b6 61%, #d1d5b4 65.5%, #d0d5b3 70%, #d0d5b4 75%, #d1d6b6 80.1%, #d2d7b8 85.4%, #d3d8ba 90.8%, #d4d9bc 95.4%, #d6d9bd 100%);
+  --spine-about: linear-gradient(to bottom, #d6d9bd 0%, #f6dcc2 100%);
+  --spine-work: linear-gradient(to bottom, #f6dcc2 0%, #f8ddc4 4.1%, #f8dfc7 6.2%, #f8e0c9 8%, #f8e2cb 9.7%, #f8e3cd 11.5%, #f8e5d0 13.7%, #f8e6d2 18%, #f6e5cf 27.6%, #f3e3cc 32%, #f1e2ca 35.7%, #eee1c8 38.9%, #ece0c6 42%, #eadfc5 44.4%, #e7dec4 46.1%, #e5dec3 47.7%, #e2ddc2 49.1%, #e0dcc1 50.5%, #dddcc0 51.8%, #dbdbc0 53.1%, #d8dabe 54.5%, #d6d9bd 56%, #d2d6b9 58.5%, #ced3b5 60.1%, #cbd1b1 61.5%, #c8cead 62.7%, #c6cba8 64%, #c3c9a4 65.3%, #c1c6a0 66.7%, #bec49c 68.4%, #bdc299 70.2%, #bcc198 72%, #bec29a 75%, #c2c6a0 77.9%, #c8cba7 80.7%, #cfcfaf 83%, #d5d4b7 85.2%, #dbd9be 87.3%, #e1dec6 89.5%, #e7e2ce 91.8%, #ede7d5 94.6%, #f1ebdb 97.3%, #f3ecdd 100%);
+  --spine-mission: linear-gradient(to bottom, #f3ecdd 0%, #faf6ee 100%);
+  --depth-mission: linear-gradient(to bottom, #f3ecdd, #f6f1e6, #faf6ee);
+  --spine-code: linear-gradient(to bottom, #faf6ee 0%, #f3ecdd 50%, #faf6ee 100%);
+  --depth-code: linear-gradient(to top right, #f1e4d0, #faf6ee, #eef0e0);
+  --spine-contact: linear-gradient(to bottom, #faf6ee 0%, #f9f5ec 4%, #f7f3e9 6.6%, #f6f2e7 8.9%, #f5f0e4 11%, #f4efe2 13.1%, #f3eddf 15.4%, #f3ecdd 18%, #f3eadb 20.8%, #f3e9d8 23.4%, #f4e7d6 26%, #f4e6d3 28.6%, #f4e4d1 31.4%, #f5e3ce 34.8%, #f5e1cc 42%, #f5e2ce 50.3%, #f5e3d1 54.3%, #f5e4d3 57.7%, #f5e6d5 61%, #f5e7d8 64.3%, #f5e8da 68%, #f5eadd 72.2%, #f6ebdf 76.3%, #f6ede2 80.4%, #f7efe4 84.3%, #f8f1e6 88.2%, #f9f2e9 92.1%, #f9f4eb 96%, #faf6ee 100%);
+  --spine-footer: linear-gradient(to bottom, #faf6ee 0%, #f9f4ec 4%, #f8f3e9 7.3%, #f7f1e7 10.3%, #f6f0e4 13.3%, #f5efe2 16.5%, #f4eddf 20.2%, #f3ecdd 28%, #f3ecdd 62%, #f4eddf 73%, #f5efe2 78.2%, #f6f0e4 82.6%, #f7f2e7 86.7%, #f8f3e9 90.8%, #f9f5ec 95.1%, #faf6ee 100%);
+  --spine-page: linear-gradient(to bottom, #f3ecdd 0%, #faf6ee 100%);
+}
+
+[data-mode="dark"] {
+  --fg-100: #ffffff;
+  --fg-90: color-mix(in oklab, #ffffff 90%, transparent);
+  --fg-85: color-mix(in oklab, #ffffff 85%, transparent);
+  --fg-80: color-mix(in oklab, #ffffff 80%, transparent);
+  --fg-75: color-mix(in oklab, #ffffff 75%, transparent);
+  --fg-70: color-mix(in oklab, #ffffff 70%, transparent);
+  --fg-65: color-mix(in oklab, #ffffff 65%, transparent);
+  --fg-60: color-mix(in oklab, #ffffff 60%, transparent);
+  --fg-55: color-mix(in oklab, #ffffff 55%, transparent);
+  --fg-50: color-mix(in oklab, #ffffff 50%, transparent);
+  --lbl-100: #ffffff;
+  --lbl-90: color-mix(in oklab, #ffffff 90%, transparent);
+  --lbl-85: color-mix(in oklab, #ffffff 85%, transparent);
+  --lbl-80: color-mix(in oklab, #ffffff 80%, transparent);
+  --lbl-75: color-mix(in oklab, #ffffff 75%, transparent);
+  --lbl-70: color-mix(in oklab, #ffffff 70%, transparent);
+  --lbl-65: color-mix(in oklab, #ffffff 65%, transparent);
+  --lbl-60: color-mix(in oklab, #ffffff 60%, transparent);
+  --lbl-55: color-mix(in oklab, #ffffff 55%, transparent);
+  --lbl-50: color-mix(in oklab, #ffffff 50%, transparent);
+  --line-5: color-mix(in oklab, #ffffff 5%, transparent);
+  --line-8: color-mix(in oklab, #ffffff 8%, transparent);
+  --line-20: color-mix(in oklab, #ffffff 20%, transparent);
+  --line-25: color-mix(in oklab, #ffffff 25%, transparent);
+  --line-40: color-mix(in oklab, #ffffff 40%, transparent);
+  --on-paper: var(--color-charcoal);
+  --chip: rgba(0, 0, 0, 0.3);
+  --pill: var(--blend-deep);
+  --pill-hover: var(--blend-surface);
+  --pill-ink: #ffffff;
+  --diff-add: #7fd0a3;
+  --diff-del: #e08b94;
+  --page-bg: var(--blend-void);
+  --menu-bg: #07090f;
+  --code-veil: rgba(7, 9, 15, 0.5);
+  --boot-panel: #000000;
+  --cursor-color: #ffffff;
+  --cursor-blend: difference;
+  --cursor-ring: none;
+  --nav-glass: rgba(7, 9, 15, 0.72);
+  --nav-glass-on-light: rgba(242, 239, 233, 0.88);
+  --particle-halo: 0 2px 24px rgba(7, 9, 15, 0.5);
+  --tension-ring: rgba(255, 255, 255, 0.55);
+  --work-card: #141920;
+  --code-mask: linear-gradient(to bottom, transparent 0%, #000 12%, #000 88%, transparent 100%);
+  --work-card-hover: 0 8px 40px rgba(107, 159, 212, 0.07);
+  --code-glow: 0 0 12px rgba(255, 255, 255, 0.08);
+  --card-shadow: none;
+  --card-airbnb: linear-gradient(to bottom in oklab, #3a6288, #0d1117);
+  --card-langchain: linear-gradient(to bottom in oklab, #1c2230, #07090f);
+  --card-iso: linear-gradient(to bottom in oklab, #3f5d7e, #1c2230);
+  --card-harvard: linear-gradient(to bottom in oklab, #2e4560, #0d1117);
+  --masthead-glow: radial-gradient(90% 70% at 50% -8%, rgba(107, 159, 212, 0.11) 0%, rgba(107, 159, 212, 0.06) 34%, rgba(107, 159, 212, 0.018) 60%, transparent 78%), radial-gradient(52% 44% at 18% 2%, rgba(141, 163, 181, 0.05) 0%, rgba(141, 163, 181, 0.014) 48%, transparent 74%);
+  --spine-hero: linear-gradient(to bottom, var(--blend-void) 0%, var(--blend-deep) 100%);
+  --depth-hero: linear-gradient(135deg, var(--blend-void) 0%, var(--blend-deep) 55%, #0a0e15 100%);
+  --spine-particle: linear-gradient(to bottom, var(--blend-deep) 0%, #0e1218 4.2%, #0f131a 8.3%, #11161e 12.5%, #141923 16.7%, #181d29 20.8%, var(--blend-surface) 25%, #2e4560 50%, #7da0c0 72%, #91aec8 76%, #a2b9d0 80%, #b0c3d6 84%, #bacada 88%, #c2d0dd 92%, #c6d3df 96%, var(--blend-mist) 100%);
+  --spine-about: linear-gradient(to bottom, var(--blend-mist) 0%, var(--blend-parchment) 100%);
+  --spine-work: linear-gradient(to bottom, var(--blend-parchment) 0%, var(--blend-warm) 42%, var(--blend-mist) 56%, #8fa8ba 66%, #507086 74%, #283848 82%, #131e2a 90%, #101821 92.5%, #0e141b 95%, #0d1218 97.5%, var(--blend-deep) 100%);
+  --spine-mission: linear-gradient(to bottom, var(--blend-deep) 0%, var(--blend-void) 100%);
+  --depth-mission: linear-gradient(to bottom, var(--blend-deep), #0a0e15, var(--blend-void));
+  --spine-code: linear-gradient(to bottom, var(--blend-void) 0%, var(--blend-deep) 50%, var(--blend-void) 100%);
+  --depth-code: linear-gradient(to top right, #0d1a2e, var(--blend-void), #0a0e15);
+  --spine-contact: linear-gradient(to bottom, var(--blend-void) 0%, var(--blend-deep) 18%, #0e1928 42%, #0c1520 68%, var(--blend-void) 100%);
+  --spine-footer: linear-gradient(to bottom, var(--blend-void) 0%, var(--blend-deep) 28%, var(--blend-deep) 62%, var(--blend-void) 100%);
+  --spine-page: linear-gradient(to bottom, var(--blend-deep) 0%, var(--blend-void) 100%);
+}
+
 @media (prefers-reduced-motion: no-preference) {
   html {
     scroll-behavior: smooth;
@@ -72,7 +254,7 @@ html.skip-boot .boot-mask {
 }
 
 body {
-  background-color: var(--blend-void);
+  background-color: var(--page-bg);
   color: var(--color-charcoal);
   font-family: var(--font-geist-sans), sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -192,16 +374,7 @@ html:not(.custom-cursor-active) .cursor-none {
   height: 62vh;
   z-index: 0;
   pointer-events: none;
-  background:
-    radial-gradient(90% 70% at 50% -8%,
-      rgba(107, 159, 212, 0.11) 0%,
-      rgba(107, 159, 212, 0.06) 34%,
-      rgba(107, 159, 212, 0.018) 60%,
-      transparent 78%),
-    radial-gradient(52% 44% at 18% 2%,
-      rgba(141, 163, 181, 0.05) 0%,
-      rgba(141, 163, 181, 0.014) 48%,
-      transparent 74%);
+  background: var(--masthead-glow);
 }
 .masthead-glow > * {
   position: relative;
