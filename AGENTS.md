@@ -91,6 +91,13 @@ activation. This is a usability decision, not a conformance one.
 
 **Logo:** typographical brutalist `[ AD ]` in monospace — Navbar (small, inline, inherits theme text color) and Footer (medium weight, paired with the Akshay Dongare wordmark). Do not revert to the old overlapping-circles letterform.
 
+**Favicon:** the same mark in Geist Mono 700, parchment `#f2efe9` on void `#07090f`, as
+three files Next picks up by convention: `app/favicon.ico` (16, 32, 48), `app/icon.png` (192)
+and `app/apple-icon.png` (180, opaque and square because iOS rounds its own corners). The 16px
+frame is "AD" alone, rendered at native size: with brackets, each letter at that size is about
+6px tall with sub-pixel strokes and blurs to grey. Google Search only accepts a square that is
+a multiple of 48px, which the 48 and 192 satisfy.
+
 **Portrait:** `/public/Akshay_Headshot.jpg` (1197x1497) — rendered through
 `next/image` with `fill` in two places, so each one needs a positioned ancestor
 and an accurate `sizes`. Do not revert either to a plain `<img>`: the source is
