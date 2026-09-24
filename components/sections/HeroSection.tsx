@@ -120,7 +120,7 @@ export function HeroSection({ stats }: { stats: PackageStats }) {
 
 
             </div>
-            <ScrollCue gutter="hero" />
+            <ScrollCue />
         </section>
     );
 }
