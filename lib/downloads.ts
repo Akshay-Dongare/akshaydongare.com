@@ -20,7 +20,8 @@ const BADGE_MONTH = "https://static.pepy.tech/badge/langchain-litellm/month";
 const PYPI = "https://pypi.org/pypi/langchain-litellm/json";
 const REVALIDATE = 3600; // 1h
 
-export const PEPY_URL = "https://pepy.tech/project/langchain-litellm";
+// The canonical path: /project/ is a 308 to this. Any filters in the address bar are added by pepy's own page on load.
+export const PEPY_URL = "https://pepy.tech/projects/langchain-litellm";
 
 export interface PackageStats {
     /** All-time, compact, for labels and chips: "15M". */
