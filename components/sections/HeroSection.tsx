@@ -66,12 +66,12 @@ export function HeroSection({ stats }: { stats: PackageStats }) {
             {/* Content Container */}
             <div className="relative w-full h-full max-w-[1400px] mx-auto z-10">
 
-                {/* Bottom Left Text Block */}
+                {/* Bottom Left Text Block. Every reveal here runs on mount, not in view: Google renders
+                    in a tall viewport where h-svh stretches, and the h1 never entered it. */}
                 <motion.div
                     className="absolute bottom-[clamp(2rem,5vw,4rem)] left-[clamp(1.5rem,5vw,3rem)] max-w-[640px]"
                     initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, margin: "-10%" }}
+                    animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1], delay: 0.08 }}
                 >
                     <div className="flex flex-col gap-1 mb-8">
@@ -88,8 +88,7 @@ export function HeroSection({ stats }: { stats: PackageStats }) {
                     <motion.div
                         className="mt-10 flex items-center gap-3"
                         initial={{ opacity: 0 }}
-                        whileInView={{ opacity: 1 }}
-                        viewport={{ once: true }}
+                        animate={{ opacity: 1 }}
                         transition={{ duration: 0.35, delay: 0.45 }}
                     >
                         <span className="text-[0.62rem] font-mono text-white/55 tracking-[0.15em] uppercase">
@@ -110,8 +109,7 @@ export function HeroSection({ stats }: { stats: PackageStats }) {
                 <motion.div
                     className="absolute bottom-[clamp(2rem,5vw,4rem)] right-[15%] hidden md:flex flex-col gap-1 w-[200px]"
                     initial={{ opacity: 0 }}
-                    whileInView={{ opacity: 1 }}
-                    viewport={{ once: true }}
+                    animate={{ opacity: 1 }}
                     transition={{ duration: 0.35, delay: 0.16 }}
                 >
                     <span className="text-[0.62rem] font-mono text-white opacity-60 tracking-[0.15em] uppercase leading-relaxed">
@@ -124,8 +122,7 @@ export function HeroSection({ stats }: { stats: PackageStats }) {
                 <motion.div
                     className="absolute top-[60%] right-[30%] hidden lg:flex flex-col gap-1 w-[240px]"
                     initial={{ opacity: 0 }}
-                    whileInView={{ opacity: 1 }}
-                    viewport={{ once: true }}
+                    animate={{ opacity: 1 }}
                     transition={{ duration: 0.35, delay: 0.2 }}
                 >
                     <Link
