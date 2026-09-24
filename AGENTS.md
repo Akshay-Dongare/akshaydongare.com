@@ -150,11 +150,12 @@ null state rendered as `text-fg-100`, which CSS resolves per mode. The root layo
 theme-color meta; viewport metadata would be re-inserted as light on every navigation.
 
 **Every colour is a token with two values.** `:root, [data-mode="light"]` holds light and
-`[data-mode="dark"]` holds dark, and each dark value is the exact string the component used to
-inline, so dark mode renders as it did before the switcher existed. Section backgrounds are
+`[data-mode="dark"]` holds dark, and each dark value is numerically equal to what the component used
+to inline, so dark mode renders as it did before the switcher existed. Section backgrounds are
 `var(--spine-*)`, the parallax layers `var(--depth-*)`, the Work cards `var(--card-*)`. The card
-tokens say `to bottom in oklab` because that is what Tailwind's `bg-gradient-to-b` emitted. The one
-intended dark difference is `color-scheme: dark`, so native scrollbars match the page.
+tokens say `to bottom in oklab` because that is what Tailwind's `bg-gradient-to-b` emitted. The intended
+dark differences are `color-scheme: dark`, so native scrollbars match the page; the Code label at the
+13px floor instead of 9.9px; the code overlay's fade at its foot; and the claim pills.
 
 **Text never uses white or black utilities.** `text-fg-NN` replaces `text-white/NN`: in dark it
 is the same `color-mix` Tailwind emits for `text-white/NN`, in light a solid ink by role (NN 85
