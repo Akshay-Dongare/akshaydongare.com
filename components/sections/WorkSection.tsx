@@ -4,7 +4,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { PEPY_URL, type PackageStats } from "@/lib/downloads";
-import { GAMI_AWARD_POST, LINKEDIN_EXPERIENCE, LITELLM_REPO } from "@/lib/links";
+import { GAMI_AWARD_POST, LINKEDIN_EXPERIENCE } from "@/lib/links";
 
 // All four are open at once: a recruiter gives the page seconds, and a name behind a click
 // is a name they never read. The full account of each lives on /work.
@@ -13,39 +13,32 @@ const buildProjects = (stats: PackageStats) => [
         org: "Airbnb",
         role: "AI Platform · contract",
         line: "Made the internal LLM gateway about 28 services use safe to serve two providers in one process. Shipped as a version bump, so no consumer had to migrate.",
-        metric: "28 services, zero migrations",
         card: "var(--card-airbnb)",
-        links: [{ label: "LinkedIn", href: LINKEDIN_EXPERIENCE, name: "Airbnb role on LinkedIn" }],
+        pills: [{ label: "28 services, zero migrations", href: LINKEDIN_EXPERIENCE, name: "28 services, zero migrations: the Airbnb role on LinkedIn" }],
     },
     {
         org: "LangChain",
         role: "langchain-litellm · creator and lead maintainer",
         line: "LangChain's official LiteLLM integration: one Python interface to 100+ model providers, developed inside the langchain-ai organization.",
-        metric: `${stats.compact} downloads, ${stats.monthlyCompact} a month`,
         card: "var(--card-langchain)",
-        links: [
-            { label: "GitHub", href: LITELLM_REPO, name: "langchain-litellm on GitHub" },
-            { label: "pepy.tech", href: PEPY_URL, name: "langchain-litellm download figures on pepy.tech" },
+        pills: [
+            { label: `${stats.compact} downloads`, href: PEPY_URL, name: `${stats.compact} downloads: all-time figures on pepy.tech` },
+            { label: `${stats.monthlyCompact} a month`, href: PEPY_URL, name: `${stats.monthlyCompact} a month: the last 30 days on pepy.tech` },
         ],
     },
     {
         org: "ISO",
         role: "Companion · applied AI engineer",
         line: "Designed the agentic graph patterns ISO's standards assistant runs on, and the evaluation that keeps its answers on official ISO sources.",
-        metric: "Official sources only",
         card: "var(--card-iso)",
-        links: [{ label: "LinkedIn", href: LINKEDIN_EXPERIENCE, name: "ISO role on LinkedIn" }],
+        pills: [{ label: "Grounded in ISO sources", href: LINKEDIN_EXPERIENCE, name: "Grounded in ISO sources: the ISO role on LinkedIn" }],
     },
     {
         org: "Harvard",
         role: "GAMI · lead developer",
         line: "A WhatsApp assistant answering blood donation questions in Kenya, with query rewriting and guardrails for personal data and prompt injection.",
-        metric: "Best Presentation, 2025",
         card: "var(--card-harvard)",
-        links: [
-            { label: "LinkedIn", href: LINKEDIN_EXPERIENCE, name: "Harvard role on LinkedIn" },
-            { label: "Award post", href: GAMI_AWARD_POST, name: "Award post: Best Presentation at GAMI 2025, on LinkedIn" },
-        ],
+        pills: [{ label: "Best Presentation, 2025", href: GAMI_AWARD_POST, name: "Best Presentation, 2025: the award post on LinkedIn" }],
     },
 ];
 
@@ -91,24 +84,19 @@ export function WorkSection({ stats }: { stats: PackageStats }) {
                                     <p className="text-label text-lbl-80">{project.role}</p>
                                 </div>
                                 <p className="text-body text-fg-90 max-w-[46ch]">{project.line}</p>
-                                {/* The claim, then where to check it; each name says card and destination, so four "LinkedIn"s are not ambiguous. */}
-                                <div className="mt-auto flex flex-wrap items-center justify-between gap-x-6 gap-y-2">
-                                    <p className="text-label text-lbl-100 bg-chip px-3 py-1.5 rounded-full">
-                                        {project.metric}
-                                    </p>
-                                    <div className="flex flex-wrap items-center gap-x-5">
-                                        {project.links.map((link) => (
-                                            <Link
-                                                key={link.href + link.label}
-                                                href={link.href}
-                                                aria-label={link.name}
-                                                className="inline-flex items-center gap-2 py-2 cursor-none text-label text-lbl-80 hover:text-lbl-100 light:hover:text-fg-100 transition-colors"
-                                            >
-                                                <span>{link.label}</span>
-                                                <span className="shrink-0 whitespace-nowrap">[ → ]</span>
-                                            </Link>
-                                        ))}
-                                    </div>
+                                {/* Each claim is its own link to the evidence; the name keeps the visible words (SC 2.5.3). */}
+                                <div className="mt-auto flex flex-wrap items-center gap-2">
+                                    {project.pills.map((pill) => (
+                                        <Link
+                                            key={pill.label}
+                                            href={pill.href}
+                                            aria-label={pill.name}
+                                            className="inline-flex items-center gap-2 cursor-none text-label text-lbl-100 bg-chip hover:bg-[var(--chip-hover)] shadow-[inset_0_0_0_1px_var(--chip-line)] hover:shadow-[inset_0_0_0_1px_var(--chip-line-hover)] transition-[background-color,box-shadow] duration-200 px-3 py-1.5 rounded-full"
+                                        >
+                                            {/* A no-break space keeps the arrow on the last word when a long pill wraps on a phone. */}
+                                            <span>{pill.label}{"\u00a0→"}</span>
+                                        </Link>
+                                    ))}
                                 </div>
                             </div>
                         </motion.article>

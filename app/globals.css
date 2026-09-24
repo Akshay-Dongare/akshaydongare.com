@@ -131,6 +131,9 @@
   --more-line: #1a1c13;
   --more-bg-hover: #1a1c13;
   --more-ink-hover: #faf6ee;
+  --chip-line: rgba(107, 42, 17, 0.28);
+  --chip-line-hover: rgba(107, 42, 17, 0.6);
+  --chip-hover: rgba(107, 42, 17, 0.08);
   --pill-ink: #faf6ee;
   --diff-add: #165626;
   --diff-del: #88282c;
@@ -202,6 +205,9 @@
   --more-line: transparent;
   --more-bg-hover: var(--blend-surface);
   --more-ink-hover: #ffffff;
+  --chip-line: rgba(255, 255, 255, 0.25);
+  --chip-line-hover: rgba(255, 255, 255, 0.6);
+  --chip-hover: rgba(255, 255, 255, 0.1);
   --pill-ink: #ffffff;
   --diff-add: #7fd0a3;
   --diff-del: #e08b94;
