@@ -117,7 +117,7 @@ export function WorkSection({ stats }: { stats: PackageStats }) {
 
                 {/* Its own dark pill: the gradient behind this spot is light on desktop and dark on a phone. */}
                 <div className="mt-6 flex justify-end">
-                    <Link href="/work" className="group flex items-center gap-2 cursor-none text-label text-pill-ink bg-pill hover:bg-pill-hover transition-colors px-4 py-2.5 rounded-full">
+                    <Link href="/work" className="group flex items-center gap-2 cursor-none text-label shadow-[inset_0_0_0_1.5px_var(--more-line)] bg-[var(--more-bg)] text-[var(--more-ink)] hover:bg-[var(--more-bg-hover)] hover:text-[var(--more-ink-hover)] transition-colors px-4 py-2.5 rounded-full">
                         <span>ALL WORK</span>
                         <span className="shrink-0 whitespace-nowrap">[ → ]</span>
                     </Link>

@@ -90,8 +90,6 @@
   --color-line-40: var(--line-40);
   --color-on-paper: var(--on-paper);
   --color-chip: var(--chip);
-  --color-pill: var(--pill);
-  --color-pill-hover: var(--pill-hover);
   --color-pill-ink: var(--pill-ink);
   --color-diff-add: var(--diff-add);
   --color-diff-del: var(--diff-del);
@@ -128,8 +126,11 @@
   --line-40: rgba(26, 28, 19, 0.40);
   --on-paper: #1a1c13;
   --chip: rgba(250, 246, 238, 0.72);
-  --pill: #1a1c13;
-  --pill-hover: #2e3222;
+  --more-bg: #faf6ee;
+  --more-ink: #1a1c13;
+  --more-line: #1a1c13;
+  --more-bg-hover: #1a1c13;
+  --more-ink-hover: #faf6ee;
   --pill-ink: #faf6ee;
   --diff-add: #165626;
   --diff-del: #88282c;
@@ -196,8 +197,11 @@
   --line-40: color-mix(in oklab, #ffffff 40%, transparent);
   --on-paper: var(--color-charcoal);
   --chip: rgba(0, 0, 0, 0.3);
-  --pill: var(--blend-deep);
-  --pill-hover: var(--blend-surface);
+  --more-bg: var(--blend-deep);
+  --more-ink: #ffffff;
+  --more-line: transparent;
+  --more-bg-hover: var(--blend-surface);
+  --more-ink-hover: #ffffff;
   --pill-ink: #ffffff;
   --diff-add: #7fd0a3;
   --diff-del: #e08b94;
