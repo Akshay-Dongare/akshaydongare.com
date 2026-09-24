@@ -28,7 +28,8 @@ export function Footer() {
             style={{ background: 'linear-gradient(to bottom, var(--blend-void) 0%, var(--blend-deep) 28%, var(--blend-deep) 62%, var(--blend-void) 100%)' }}
             data-theme="dark"
         >
-            <div className="max-w-[1400px] mx-auto">
+            {/* Link lists stitched into a snippet read as noise; Google honours this on div, not footer. */}
+            <div data-nosnippet className="max-w-[1400px] mx-auto">
 
                 {/* UPPER AREA - Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-32">

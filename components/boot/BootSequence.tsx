@@ -145,9 +145,11 @@ export function BootSequence({ children }: { children: React.ReactNode }) {
     return (
         <>
             {children}
+            {/* The mask is in the server HTML, so without data-nosnippet Google can quote it as the snippet. */}
             {maskMounted && (
                 <div
                     aria-hidden="true"
+                    data-nosnippet
                     className="boot-mask fixed inset-0 z-[9999] pointer-events-none overflow-hidden"
                 >
                     <div

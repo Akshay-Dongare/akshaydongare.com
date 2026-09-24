@@ -118,7 +118,8 @@ export function Navbar() {
                 className={`fixed top-0 left-0 w-full z-[110] pointer-events-none transition-colors duration-300 ease-in-out ${bgClass}`}
                 data-nav-theme={theme}
             >
-                <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 h-[80px] flex items-center justify-between">
+                {/* On the div, not the nav: Google honours data-nosnippet only on span, div and section. */}
+                <div data-nosnippet className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 h-[80px] flex items-center justify-between">
 
                     {/* LOGO - Left */}
                     {/* On a sub-page this navigates home, which App Router already scrolls to
