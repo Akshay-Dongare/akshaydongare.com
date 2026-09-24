@@ -31,16 +31,21 @@ export function useMode(): Mode {
     return useSyncExternalStore(subscribe, read, () => "light");
 }
 
+// React hydrates <meta> by content, so after the pre-paint script it appends a second one: set them all.
+function setThemeColor(mode: Mode) {
+    document.querySelectorAll('meta[name="theme-color"]').forEach((m) => m.setAttribute("content", THEME_COLOR[mode]));
+}
+
 // Reads the attribute, never the hook: during hydration the hook reports the server's "light".
 export function syncThemeColor() {
-    document.querySelector('meta[name="theme-color"]')?.setAttribute("content", THEME_COLOR[read()]);
+    setThemeColor(read());
 }
 
 export function applyMode(mode: Mode) {
     const root = document.documentElement;
     root.dataset.mode = mode;
     root.style.colorScheme = mode;
-    document.querySelector('meta[name="theme-color"]')?.setAttribute("content", THEME_COLOR[mode]);
+    setThemeColor(mode);
 }
 
 export function setMode(mode: Mode) {

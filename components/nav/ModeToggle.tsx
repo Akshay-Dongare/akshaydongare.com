@@ -8,7 +8,7 @@ import { setMode, syncThemeColor, useMode } from "@/lib/mode";
 export function ModeToggle({ className = "" }: { className?: string }) {
     const mode = useMode();
 
-    // The pre-paint script runs before the theme-color meta exists, so sync the meta here.
+    // Hydration appends a second theme-color meta at the server's colour, so bring every copy in line.
     useEffect(() => { syncThemeColor(); }, [mode]);
 
     return (
