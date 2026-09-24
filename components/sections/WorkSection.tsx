@@ -3,7 +3,8 @@
 import React from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import type { PackageStats } from "@/lib/downloads";
+import { PEPY_URL, type PackageStats } from "@/lib/downloads";
+import { GAMI_AWARD_POST, LINKEDIN_EXPERIENCE, LITELLM_REPO } from "@/lib/links";
 
 // All four are open at once: a recruiter gives the page seconds, and a name behind a click
 // is a name they never read. The full account of each lives on /work.
@@ -14,6 +15,7 @@ const buildProjects = (stats: PackageStats) => [
         line: "Made the internal LLM gateway about 28 services use safe to serve two providers in one process. Shipped as a version bump, so no consumer had to migrate.",
         metric: "28 services, zero migrations",
         card: "var(--card-airbnb)",
+        links: [{ label: "LinkedIn", href: LINKEDIN_EXPERIENCE, name: "Airbnb role on LinkedIn" }],
     },
     {
         org: "LangChain",
@@ -21,6 +23,10 @@ const buildProjects = (stats: PackageStats) => [
         line: "LangChain's official LiteLLM integration: one Python interface to 100+ model providers, developed inside the langchain-ai organization.",
         metric: `${stats.compact} downloads, ${stats.monthlyCompact} a month`,
         card: "var(--card-langchain)",
+        links: [
+            { label: "GitHub", href: LITELLM_REPO, name: "langchain-litellm on GitHub" },
+            { label: "pepy.tech", href: PEPY_URL, name: "langchain-litellm download figures on pepy.tech" },
+        ],
     },
     {
         org: "ISO",
@@ -28,6 +34,7 @@ const buildProjects = (stats: PackageStats) => [
         line: "Designed the agentic graph patterns ISO's standards assistant runs on, and the evaluation that keeps its answers on official ISO sources.",
         metric: "Official sources only",
         card: "var(--card-iso)",
+        links: [{ label: "LinkedIn", href: LINKEDIN_EXPERIENCE, name: "ISO role on LinkedIn" }],
     },
     {
         org: "Harvard",
@@ -35,6 +42,10 @@ const buildProjects = (stats: PackageStats) => [
         line: "A WhatsApp assistant answering blood donation questions in Kenya, with query rewriting and guardrails for personal data and prompt injection.",
         metric: "Best Presentation, 2025",
         card: "var(--card-harvard)",
+        links: [
+            { label: "LinkedIn", href: LINKEDIN_EXPERIENCE, name: "Harvard role on LinkedIn" },
+            { label: "Award post", href: GAMI_AWARD_POST, name: "Award post: Best Presentation at GAMI 2025, on LinkedIn" },
+        ],
     },
 ];
 
@@ -80,9 +91,25 @@ export function WorkSection({ stats }: { stats: PackageStats }) {
                                     <p className="text-label text-lbl-80">{project.role}</p>
                                 </div>
                                 <p className="text-body text-fg-90 max-w-[46ch]">{project.line}</p>
-                                <p className="mt-auto self-start text-label text-lbl-100 bg-chip px-3 py-1.5 rounded-full">
-                                    {project.metric}
-                                </p>
+                                {/* The claim, then where to check it; each name says card and destination, so four "LinkedIn"s are not ambiguous. */}
+                                <div className="mt-auto flex flex-wrap items-center justify-between gap-x-6 gap-y-2">
+                                    <p className="text-label text-lbl-100 bg-chip px-3 py-1.5 rounded-full">
+                                        {project.metric}
+                                    </p>
+                                    <div className="flex flex-wrap items-center gap-x-5">
+                                        {project.links.map((link) => (
+                                            <Link
+                                                key={link.href + link.label}
+                                                href={link.href}
+                                                aria-label={link.name}
+                                                className="inline-flex items-center gap-2 py-2 cursor-none text-label text-lbl-80 hover:text-lbl-100 light:hover:text-fg-100 transition-colors"
+                                            >
+                                                <span>{link.label}</span>
+                                                <span className="shrink-0 whitespace-nowrap">[ → ]</span>
+                                            </Link>
+                                        ))}
+                                    </div>
+                                </div>
                             </div>
                         </motion.article>
                     ))}

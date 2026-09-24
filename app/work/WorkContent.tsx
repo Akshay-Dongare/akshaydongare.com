@@ -4,23 +4,14 @@ import React from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import type { PackageStats } from "@/lib/downloads";
-
-// The three closed-source engagements have nothing public to link, so they point at the
-// experience list rather than the top of the profile: a reader who clicks "Airbnb" lands
-// on the roles themselves instead of a headline and a photo. LinkedIn has no per-position
-// permalink - the experience page carries exactly one anchorable id, for the section as a
-// whole, and no fragment links at all - so a single role cannot be deep-linked. Verified
-// that this URL resolves for a LOGGED-OUT visitor in a real browser, which is most people
-// arriving from here; a plain curl gets LinkedIn's 999 bot block and bounces to the
-// profile, so that is not a valid way to test it.
-const LINKEDIN_EXPERIENCE = "https://www.linkedin.com/in/akshay-dongare/details/experience/";
+import { LINKEDIN_EXPERIENCE, LITELLM_REPO } from "@/lib/links";
 
 const buildProjects = (stats: PackageStats) => [
     {
         title: "langchain-litellm",
         desc: `Creator and lead maintainer of LangChain's official LiteLLM integration. Started as my own repository; now developed and released inside the langchain-ai organization, with its own page in the LangChain docs and an entry in the Python API reference. One interface to 100+ providers, plus router-backed load balancing, embeddings and OCR loading. ${stats.long} downloads across ${stats.releases} releases, and around ${stats.monthlyLong} every month.`,
         tags: ["PYTHON", "PYPI", "CREATOR", "MAINTAINER"],
-        link: "https://github.com/langchain-ai/langchain-litellm"
+        link: LITELLM_REPO
     },
     {
         title: "Airbnb · AI Platform",
