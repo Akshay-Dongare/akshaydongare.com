@@ -6,12 +6,14 @@ import Link from "next/link";
 import { PEPY_URL, type PackageStats } from "@/lib/downloads";
 import { GAMI_AWARD_POST, GAMI_SITE, LANGCHAIN_ORG, LINKEDIN_EXPERIENCE } from "@/lib/links";
 import { ScrollCue } from "@/components/ui/ScrollCue";
+import { OrgLogo } from "@/components/ui/OrgLogo";
 
 // All four are open at once: a recruiter gives the page seconds, and a name behind a click
 // is a name they never read. The full account of each lives on /work.
 const buildProjects = (stats: PackageStats) => [
     {
         org: "Airbnb",
+        logo: "airbnb" as const,
         role: "AI Platform · contract",
         line: "Made the internal LLM gateway about 28 services use safe to serve two providers in one process. Shipped as a version bump, so no consumer had to migrate.",
         card: "var(--card-airbnb)",
@@ -19,6 +21,7 @@ const buildProjects = (stats: PackageStats) => [
     },
     {
         org: "LangChain",
+        logo: "langchain" as const,
         role: "langchain-litellm · creator and lead maintainer",
         line: (
             <>
@@ -35,6 +38,7 @@ const buildProjects = (stats: PackageStats) => [
     },
     {
         org: "ISO",
+        logo: "iso" as const,
         role: "Companion · applied AI engineer",
         line: "Designed the agentic graph patterns ISO's standards assistant runs on, and the evaluation that keeps its answers on official ISO sources.",
         card: "var(--card-iso)",
@@ -42,6 +46,7 @@ const buildProjects = (stats: PackageStats) => [
     },
     {
         org: "Harvard University",
+        logo: "harvard" as const,
         role: (
             <>
                 <Link href={GAMI_SITE} className="underline underline-offset-4 decoration-line-20 hover:text-fg-55 transition-colors cursor-none">Global Alliance for Medical Innovation</Link>
@@ -92,7 +97,10 @@ export function WorkSection({ stats }: { stats: PackageStats }) {
                             <div className="absolute inset-0" style={{ background: project.card }} />
                             <div className="relative h-full p-6 md:p-8 flex flex-col gap-5">
                                 <div className="flex flex-col gap-2">
-                                    <h3 className="text-display-m text-fg-100 leading-none">{project.org}</h3>
+                                    <div className="flex items-center gap-3">
+                                        <OrgLogo org={project.logo} />
+                                        <h3 className="text-display-m text-fg-100 leading-none">{project.org}</h3>
+                                    </div>
                                     <p className="text-label text-lbl-80">{project.role}</p>
                                 </div>
                                 <p className="text-body text-fg-90 max-w-[46ch]">{project.line}</p>
