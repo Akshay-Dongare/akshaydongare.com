@@ -136,9 +136,10 @@ html:not(.custom-cursor-active) .cursor-none {
      would have cleared at ~14:1. Callers set their own colour; the two that did not
      were checked (ExpandToggle always passes one, and the Footer tagline's <p>s carry
      text-white/70 themselves). */
+  /* 13px floor: at 10.4px the capitals subtend under 0.2 degrees, below where reading slows sharply. */
   .text-label {
     font-family: var(--font-geist-mono), monospace;
-    font-size: 0.65rem;
+    font-size: 0.8125rem;
     text-transform: uppercase;
     letter-spacing: 0.12em;
   }
