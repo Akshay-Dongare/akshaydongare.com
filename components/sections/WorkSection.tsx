@@ -25,7 +25,7 @@ const buildProjects = (stats: PackageStats) => [
         role: (
             <>
                 <Link href={LITELLM_REPO} className="underline underline-offset-4 decoration-line-20 hover:text-fg-55 transition-colors cursor-none">langchain-litellm</Link>
-                {" · creator and lead maintainer"}
+                {"\u00a0· creator and lead maintainer"}
             </>
         ),
         line: (
@@ -53,7 +53,7 @@ const buildProjects = (stats: PackageStats) => [
         role: (
             <>
                 <Link href={GAMI_SITE} className="underline underline-offset-4 decoration-line-20 hover:text-fg-55 transition-colors cursor-none">Global Alliance for Medical Innovation</Link>
-                {" · lead developer"}
+                {"\u00a0· lead developer"}
             </>
         ),
         line: "A WhatsApp assistant answering blood donation questions in Kenya, with query rewriting and guardrails for personal data and prompt injection.",
