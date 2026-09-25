@@ -3,13 +3,13 @@
 import React from "react";
 import { motion } from "framer-motion";
 
-// The far bottom-left of a homepage section, bobbing as one unit so it reads as a prompt; a click scrolls on.
+// The far bottom-left of every homepage section but the last, bobbing as one unit so it reads as a prompt; a click scrolls on.
 // tone "paper" is for sections that end on a light ground in dark mode (Particle, About).
 export function ScrollCue({ tone = "auto" }: { tone?: "auto" | "paper" }) {
     const toNext = (e: React.MouseEvent<HTMLButtonElement>) => {
         const sections = Array.from(document.querySelectorAll("main section"));
         const here = e.currentTarget.closest("section");
-        const next = sections[sections.indexOf(here as Element) + 1] ?? document.querySelector("footer");
+        const next = sections[sections.indexOf(here as Element) + 1];
         const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
         next?.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
     };

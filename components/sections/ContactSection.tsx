@@ -5,7 +5,6 @@ import { motion, useInView } from "framer-motion";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { useMode } from "@/lib/mode";
-import { ScrollCue } from "@/components/ui/ScrollCue";
 
 // Terracotta #a8532b on screen: the field's colour path darkens its input, so this is that colour pre-lightened.
 const LIGHT_CLIMAX = "#d49b72";
@@ -79,7 +78,6 @@ export function ContactSection() {
             {shouldRenderParticles && (
                 <MorphingParticleField color={light ? LIGHT_CLIMAX : "#ffffff"} className="opacity-70 dark:mix-blend-plus-lighter" active={isInView} />
             )}
-            <ScrollCue />
         </section>
     );
 }
