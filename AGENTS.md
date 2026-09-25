@@ -51,7 +51,7 @@ BootSequence → CursorProvider → Navbar + <main> + Footer
 ```
 
 - **BootSequence** (`components/boot/BootSequence.tsx`): Plays a one-time iris-wipe animation on first visit (gated by `sessionStorage`). Renders children directly on repeat visits.
-- **CursorProvider** (`components/cursor/CustomCursor.tsx`): Replaces the native cursor with a hyper-minimal 5px dot whose colour and blend come from `--cursor-color` and `--cursor-blend`: white with `mix-blend-mode: difference` in dark, a solid ink dot in light, where difference falls under 3:1 over the particle pigment. Scales to 8px on hover via a 150ms spring. Tracking uses raw DOM events mixed with React context at 60fps. Native `cursor: none` is set globally in `globals.css`.
+- **CursorProvider** (`components/cursor/CustomCursor.tsx`): Replaces the native cursor with a hyper-minimal 5px dot whose colour and blend come from `--cursor-color` and `--cursor-blend`: white with `mix-blend-mode: difference` in dark, a solid ink dot in light, where difference falls under 3:1 over the particle pigment. Scales to 8px on hover via a 150ms spring. It runs only while the page has focus and the pointer is inside it: with another app in front, macOS will not let the browser hide its pointer, so the dot hides and the native pointer returns rather than showing both. Tracking uses raw DOM events mixed with React context at 60fps. Native `cursor: none` is set globally in `globals.css`.
 - **`app/template.tsx`**: Wraps every route in a `PageTransition` fade/slide — this is the Next.js `template.tsx` (re-mounts on every navigation, unlike `layout.tsx`).
 
 ### Navbar Dark/Light Theme Detection

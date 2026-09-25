@@ -270,8 +270,8 @@ body {
 
 /* The native pointer is hidden ONLY while the custom cursor is actually running.
    CursorProvider adds .custom-cursor-active to <html> at the exact point it attaches
-   its mousemove listener and drops it on cleanup, so the CSS and the component cannot
-   disagree. They used to be independent, and they did disagree: the component bails on
+   its mousemove listener, drops it on cleanup and while the page lacks focus, so the
+   CSS and the component cannot disagree. They used to be independent, and they did disagree: the component bails on
    a touch device or prefers-reduced-motion, while these rules stayed on unconditionally.
    That left two real groups with no pointer at all — someone who asked for reduced
    motion and is using a mouse, and anyone on a touchscreen laptop driving it with a

@@ -20,6 +20,7 @@ export function useCursor() {
 export function CursorProvider({ children }: { children: React.ReactNode }) {
     const [isReady, setIsReady] = useState(false);
     const [isHovering, setIsHovering] = useState(false);
+    const [isVisible, setIsVisible] = useState(false);
 
     const cursorX = useSpring(-100, { stiffness: 2000, damping: 40, mass: 0.1 });
     const cursorY = useSpring(-100, { stiffness: 2000, damping: 40, mass: 0.1 });
@@ -39,14 +40,44 @@ export function CursorProvider({ children }: { children: React.ReactNode }) {
 
         // globals.css hides the native pointer only while this class is present, so the
         // early return above can never strand a mouse user with no cursor at all.
-        document.documentElement.classList.add("custom-cursor-active");
+        const root = document.documentElement;
+        let inside = false;
+        let shown = false;
 
-        const moveCursor = (e: MouseEvent) => {
-            cursorX.set(e.clientX);
-            cursorY.set(e.clientY);
+        // The custom cursor runs only while the page has focus. With another app in front, macOS will
+        // not let the browser hide its pointer, so the dot would ride beside the native arrow.
+        const sync = () => {
+            const focused = document.hasFocus();
+            root.classList.toggle("custom-cursor-active", focused);
+            const next = focused && inside;
+            if (next !== shown) {
+                shown = next;
+                setIsVisible(next);
+            }
         };
 
+        const moveCursor = (e: MouseEvent) => {
+            // Jump rather than spring when the dot reappears, so it does not streak in from where it vanished.
+            if (shown) {
+                cursorX.set(e.clientX);
+                cursorY.set(e.clientY);
+            } else {
+                cursorX.jump(e.clientX);
+                cursorY.jump(e.clientY);
+            }
+            inside = true;
+            sync();
+        };
+        const leave = () => {
+            inside = false;
+            sync();
+        };
+
+        root.classList.toggle("custom-cursor-active", document.hasFocus());
         window.addEventListener("mousemove", moveCursor);
+        window.addEventListener("focus", sync);
+        window.addEventListener("blur", sync);
+        root.addEventListener("mouseleave", leave);
 
         // Global listeners for hover state on interactive elements
         const handleMouseOver = (e: MouseEvent) => {
@@ -80,8 +111,11 @@ export function CursorProvider({ children }: { children: React.ReactNode }) {
         window.addEventListener("mouseout", handleMouseOut);
 
         return () => {
-            document.documentElement.classList.remove("custom-cursor-active");
+            root.classList.remove("custom-cursor-active");
             window.removeEventListener("mousemove", moveCursor);
+            window.removeEventListener("focus", sync);
+            window.removeEventListener("blur", sync);
+            root.removeEventListener("mouseleave", leave);
             window.removeEventListener("mouseover", handleMouseOver);
             window.removeEventListener("mouseout", handleMouseOut);
         };
@@ -111,6 +145,7 @@ export function CursorProvider({ children }: { children: React.ReactNode }) {
                         boxShadow: "var(--cursor-ring)",
                         width: isHovering ? 8 : 5,
                         height: isHovering ? 8 : 5,
+                        opacity: isVisible ? 1 : 0,
                     }}
                     transition={{
                         width:  { duration: 0.15, ease: [0.25, 0.1, 0.25, 1] },
