@@ -56,7 +56,7 @@ BootSequence → CursorProvider → Navbar + <main> + Footer
 
 ### Navbar Dark/Light Theme Detection
 
-In light mode the Navbar skips all of this and stays ink, because every light ground clears 9:1 for it; the sentinels below only matter in dark mode. The switcher (`components/nav/ModeToggle.tsx`) is an icon-only `role="switch"`, a sun knob on an ink track in light and a moon knob on a paper track in dark, beside the CTA on desktop and beside MENU on phones. Its look reads `data-mode` through CSS variants, so it is right before hydration.
+In light mode the Navbar skips all of this and stays ink, because every light ground clears 9:1 for it; the sentinels below only matter in dark mode. The switcher (`components/nav/ModeToggle.tsx`) is an icon-only `role="switch"`, a sun knob on an ink track in light and a moon knob on a paper track in dark, beside the CTA on desktop and beside MENU on phones. Its look reads `data-mode` through CSS variants, so it is right before hydration. The scrolled glass is its own layer, 112px tall against the 80px bar, masked to fade out over its last 30% in both modes, so text scrolling under the bar dissolves instead of being cut by a hard edge. All three glass values share one opacity, 0.6.
 
 In dark mode the Navbar (`components/nav/Navbar.tsx`) adapts its text and background colors based on the content scrolled behind it. It queries all `[data-theme="dark"]` DOM elements on every scroll event and checks if any overlap `y=60px` (the navbar height).
 
