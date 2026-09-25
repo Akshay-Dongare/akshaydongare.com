@@ -336,6 +336,13 @@ Google still reads it. Every homepage section but Contact ends in a `ScrollCue` 
 the next; Contact has none, since only the footer follows it. Particle and About pass `tone="paper"` because in dark mode they end on a light ground. A carousel is not the fix either: NN/g and click data both find slides
 after the first go mostly unseen, which is the same failure as a collapsed card.
 
+**Hero layout.** The claim sits mid-screen and the facts row at the foot, below a hairline, with the
+three keywords at its far end; stacking everything in one bottom-left column read as crowded and left
+the right half empty. The h1's measure is `max-w-[14em]`, in em so it holds three lines at every
+desktop width, and its size is `clamp(2.8rem, min(6vw, 9.5svh), 5.5rem)`, so a short laptop window
+shrinks the headline instead of pushing the facts below the fold. Measured, the `<dl>` ends inside
+the viewport at every size from 375x667 to 1920x1080, which keeps the first-screen rule above.
+
 **Download figures link the number, not the sentence.** The link wraps "15 million" or "1 million" and
 stops there, so the underline marks the claim rather than the words around it. All-time figures go to
 `PYPI_URL` and monthly ones to `PEPY_URL` (both in `lib/downloads.ts`). pepy's page header still says
