@@ -66,7 +66,7 @@ export function AboutContent({ stats }: { stats: PackageStats }) {
                             className="text-fg-85 underline underline-offset-4 decoration-line-20 hover:text-fg-55 transition-colors cursor-none"
                         >
                             langchain-ai
-                        </Link> organization as LangChain’s official LiteLLM integration, with its own page in the LangChain docs and an entry in the Python API reference. One interface to 100+ model providers, plus router-backed load balancing, embeddings and OCR loading. <Link
+                        </Link> organization as LangChain’s official LiteLLM integration, with its own page in the LangChain docs and an entry in the Python API reference. One interface to 140+ model providers, plus router-backed load balancing, embeddings and OCR loading. <Link
                             href={PYPI_URL}
                             className="text-fg-85 hover:underline hover:underline-offset-4 hover:decoration-line-40 hover:text-fg-70 transition-colors cursor-none"
                         >

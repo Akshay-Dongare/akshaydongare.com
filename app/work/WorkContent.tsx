@@ -14,7 +14,7 @@ const buildProjects = (stats: PackageStats): Project[] => [
     {
         title: "langchain-litellm",
         logo: "langchain",
-        desc: `Creator and lead maintainer of LangChain's official LiteLLM integration. Started as my own repository; now developed and released inside the langchain-ai organization, with its own page in the LangChain docs and an entry in the Python API reference. One interface to 100+ providers, plus router-backed load balancing, embeddings and OCR loading. ${stats.long} downloads across ${stats.releases} releases, and around ${stats.monthlyLong} every month.`,
+        desc: `Creator and lead maintainer of LangChain's official LiteLLM integration. Started as my own repository; now developed and released inside the langchain-ai organization, with its own page in the LangChain docs and an entry in the Python API reference. One interface to 140+ providers, plus router-backed load balancing, embeddings and OCR loading. ${stats.long} downloads across ${stats.releases} releases, and around ${stats.monthlyLong} every month.`,
         tags: ["PYTHON", "PYPI", "CREATOR", "MAINTAINER"],
         link: LITELLM_REPO
     },
