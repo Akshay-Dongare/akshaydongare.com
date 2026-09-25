@@ -122,11 +122,12 @@
   --line-40: rgba(26, 28, 19, 0.40);
   --on-paper: #1a1c13;
   --chip: rgba(250, 246, 238, 0.72);
-  /* ALL WORK is the section's one solid button, inverted against the page like the mode switch's track. */
-  --more-bg: #1a1c13;
-  --more-ink: #faf6ee;
-  --more-bg-hover: #3d422c;
-  --more-ink-hover: #faf6ee;
+  /* ALL WORK is made of the cards' material, so it reads as more of the same without outweighing them. */
+  --more-bg: rgba(255, 253, 248, 0.72);
+  --more-ink: #1a1c13;
+  --more-edge: rgba(26, 28, 19, 0.14);
+  --more-bg-hover: rgba(255, 255, 255, 0.92);
+  --more-ink-hover: #1a1c13;
   --chip-line: rgba(107, 42, 17, 0.28);
   --chip-line-hover: rgba(107, 42, 17, 0.6);
   --chip-hover: rgba(107, 42, 17, 0.08);
@@ -150,9 +151,10 @@
   --work-card-hover: 0 8px 40px rgba(26, 28, 19, 0.08);
   --code-glow: none;
   --card-shadow: 0 1px 2px rgba(26, 28, 19, 0.06), 0 10px 28px rgba(26, 28, 19, 0.08);
-  /* One surface for all four homepage Work cards, the same as /work's; the logos carry the colour. */
-  --card: #fffdf8;
+  /* One surface for all four homepage Work cards, translucent so the section's gradient tints it; the logos carry the colour. */
+  --card: rgba(255, 253, 248, 0.72);
   --card-edge: rgba(26, 28, 19, 0.08);
+  --card-sheen: inset 0 1px 0 rgba(255, 255, 255, 0.7);
   --masthead-glow: radial-gradient(90% 70% at 50% -8%, rgba(213, 120, 76, 0.12) 0%, rgba(213, 120, 76, 0.065) 34%, rgba(213, 120, 76, 0.02) 60%, transparent 78%), radial-gradient(52% 44% at 18% 2%, rgba(124, 140, 75, 0.06) 0%, rgba(124, 140, 75, 0.017) 48%, transparent 74%);
   --spine-hero: linear-gradient(to bottom, #faf6ee 0%, #f3ecdd 100%);
   --depth-hero: linear-gradient(135deg, #faf6ee 0%, #f3ecdd 55%, #f5efe2 100%);
@@ -196,10 +198,11 @@
   --line-40: color-mix(in oklab, #ffffff 40%, transparent);
   --on-paper: var(--color-charcoal);
   --chip: rgba(0, 0, 0, 0.3);
-  --more-bg: #f2efe9;
-  --more-ink: #07090f;
-  --more-bg-hover: #ffffff;
-  --more-ink-hover: #07090f;
+  --more-bg: rgba(57, 69, 86, 0.88);
+  --more-ink: #ffffff;
+  --more-edge: rgba(255, 255, 255, 0.14);
+  --more-bg-hover: rgba(69, 82, 102, 0.94);
+  --more-ink-hover: #ffffff;
   --chip-line: rgba(255, 255, 255, 0.25);
   --chip-line-hover: rgba(255, 255, 255, 0.6);
   --chip-hover: rgba(255, 255, 255, 0.1);
@@ -221,9 +224,12 @@
   --code-mask: linear-gradient(to bottom, transparent 0%, #000 12%, #000 88%, transparent 100%);
   --work-card-hover: 0 8px 40px rgba(107, 159, 212, 0.07);
   --code-glow: 0 0 12px rgba(255, 255, 255, 0.08);
-  --card-shadow: 0 10px 28px rgba(7, 9, 15, 0.28);
-  --card: #141920;
-  --card-edge: rgba(255, 255, 255, 0.08);
+  --card-shadow: 0 10px 28px rgba(7, 9, 15, 0.18);
+  /* A mid slate: in dark mode these cards sit on the light end of the bridge, where near-black read as holes.
+     0.88 is as translucent as it goes before white/80 labels over the palest ground drop under 4.5:1. */
+  --card: rgba(57, 69, 86, 0.88);
+  --card-edge: rgba(255, 255, 255, 0.1);
+  --card-sheen: inset 0 1px 0 rgba(255, 255, 255, 0.07);
   --masthead-glow: radial-gradient(90% 70% at 50% -8%, rgba(107, 159, 212, 0.11) 0%, rgba(107, 159, 212, 0.06) 34%, rgba(107, 159, 212, 0.018) 60%, transparent 78%), radial-gradient(52% 44% at 18% 2%, rgba(141, 163, 181, 0.05) 0%, rgba(141, 163, 181, 0.014) 48%, transparent 74%);
   --spine-hero: linear-gradient(to bottom, var(--blend-void) 0%, var(--blend-deep) 100%);
   --depth-hero: linear-gradient(135deg, var(--blend-void) 0%, var(--blend-deep) 55%, #0a0e15 100%);

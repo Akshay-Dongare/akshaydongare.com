@@ -87,7 +87,7 @@ export function WorkSection({ stats }: { stats: PackageStats }) {
                     {PROJECTS.map((project, i) => (
                         <motion.article
                             key={project.org}
-                            className="relative rounded-xl overflow-hidden border border-[var(--card-edge)] bg-[var(--card)] shadow-[var(--card-shadow)]"
+                            className="relative rounded-xl overflow-hidden border border-[var(--card-edge)] bg-[var(--card)] shadow-[var(--card-sheen),var(--card-shadow)]"
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
@@ -123,7 +123,7 @@ export function WorkSection({ stats }: { stats: PackageStats }) {
 
                 {/* Its own pill: the ground behind this spot shifts between breakpoints, so the pill carries its contrast. */}
                 <div className="mt-6 flex justify-end">
-                    <Link href="/work" className="group flex items-center gap-2 cursor-none text-label bg-[var(--more-bg)] text-[var(--more-ink)] hover:bg-[var(--more-bg-hover)] hover:text-[var(--more-ink-hover)] transition-colors px-4 py-2.5 rounded-full">
+                    <Link href="/work" className="group flex items-center gap-2 cursor-none text-label shadow-[inset_0_0_0_1px_var(--more-edge)] bg-[var(--more-bg)] text-[var(--more-ink)] hover:bg-[var(--more-bg-hover)] hover:text-[var(--more-ink-hover)] transition-colors px-4 py-2.5 rounded-full">
                         <span>ALL WORK</span>
                         <span className="shrink-0 whitespace-nowrap">[ → ]</span>
                     </Link>
