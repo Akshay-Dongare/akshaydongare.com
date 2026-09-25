@@ -137,12 +137,19 @@ and an accurate `sizes`. Do not revert either to a plain `<img>`: the source is
   in a rounded container. Carries `priority` because it is that page's LCP
   element, and `sizes="320px"` because the box is capped by `max-w-[320px]`.
 
-**Organisation logos:** `components/ui/OrgLogo.tsx` keeps every mark in one table. The homepage
-Work cards set it inline beside the name at `h-8 md:h-9`; /work gives it a 52px row above the title,
-because Tech Mahindra ships only a 4:1 lockup and NC State's brick needs 52px, and both broke titles
-when inline. A mark is decorative (`alt=""`) where the organisation's name is adjacent text. The three
-NC State cards on /work never name it, so their `affiliation` field goes into the card's `aria-label`
-and the logo's alt, rather than leaving the affiliation to a picture.
+**Organisation logos:** `components/ui/OrgLogo.tsx` keeps every mark in one table, and every Work
+card on both pages carries one. The homepage sets it inline beside the name; /work gives it a 40px
+row above the title, because Tech Mahindra's 4:1 lockup broke titles when inline. A mark is
+decorative (`alt=""`) where the organisation's name is adjacent text. The four NC State cards on
+/work never name it, so their `affiliation` field goes into the card's `aria-label` and the logo's
+alt, rather than leaving the affiliation to a picture.
+- **Every mark covers the same area, not the same height.** Height is `--logo-s` times the square
+  root of height over width, so a square mark is `--logo-s` tall and a 4:1 lockup half that. At one
+  shared height the wide lockups read about twice the size of the square marks. `--logo-s` is
+  2rem, 2.25rem from `md`.
+- **Personal and freelance work** (Ollama, Lane Segmentation) takes `org="self"`: the site's own
+  `[ AD ]` in the nav's mono, as text in `text-fg-100`, so it follows the mode. Its 0.49em size is
+  the same area as the image marks.
 - Brand-kit files are used as provided and never recoloured for a ground. Where a brand ships a
   dark-ground variant, the table's `dark` entry holds it and CSS picks by `data-mode`, so it is right
   before hydration: LangChain's icon from langchain.com/brand-assets (`#030710`, white on dark) and
@@ -150,8 +157,8 @@ and the logo's alt, rather than leaving the affiliation to a picture.
 - Airbnb is the Simple Icons Belo (CC0) in `#FF5A5F`. ISO's red square is unchanged. Harvard's is the
   shield alone, cropped from the Wikimedia lockup by `viewBox` with the wordmark path removed.
 - NC State is the 2x2 white-on-red brick, its preferred version on any ground, so it has no dark
-  entry. `minH: 52` is its published screen minimum, the size of its 108x52 Minimum file; the
-  committed PNG is the 1080x520 Maximum, which the optimiser scales down.
+  entry. It shows below NC State's published 52px screen minimum because the owner chose one size
+  for every mark.
 - NC State's trademark FAQ says students may not put its logos on a resume, and Tech Mahindra's Terms
   of Use ask for written consent to use its marks. The owner chose to show both; do not remove or
   swap them on those grounds without asking.
@@ -159,9 +166,10 @@ and the logo's alt, rather than leaving the affiliation to a picture.
   suppression; width and height only set the aspect ratio. The optimiser's srcset stopped at 2x
   and softened the brick on 3x phones, and the source is only 10KB. Two-variant marks load
   eagerly: a lazy image under `display:none` is never fetched, so the first mode switch blanked it.
-- On /work, cards without a logo only share a two-column row with each other (Satellite Vision
-  with Ollama, and Lane Segmentation alone at the end), so a 52px logo row never faces a card that
-  has none. Keep that pairing when adding a project.
+
+**/about body text is justified** (`text-justify hyphens-auto`), at the owner's request. Hyphenation
+depends on `lang="en"` on `<html>`. WCAG 1.4.8 advises against justified text, but only at AAA, so
+it stays on this one page and does not spread without asking.
 
 ### Modes
 
@@ -323,8 +331,8 @@ carries name, employers, the download figure and the start date on the first scr
 every breakpoint. The four Work cards are all open, each ending in claim pills that are themselves
 links (PyPI, pepy.tech, LinkedIn), with the URLs shared with /work through `lib/links.ts`. The
 Mission paragraph opens by default and folds away under APPROACH; collapsed, it stays in the DOM, so
-Google still reads it. Every homepage section ends in a `ScrollCue` at its bottom-left that scrolls to
-the next; Particle and About pass `tone="paper"` because in dark mode they end on a light ground. A carousel is not the fix either: NN/g and click data both find slides
+Google still reads it. Every homepage section but Contact ends in a `ScrollCue` at its bottom-left that scrolls to
+the next; Contact has none, since only the footer follows it. Particle and About pass `tone="paper"` because in dark mode they end on a light ground. A carousel is not the fix either: NN/g and click data both find slides
 after the first go mostly unseen, which is the same failure as a collapsed card.
 
 **Download figures link the number, not the sentence.** The link wraps "15 million" or "1 million" and
