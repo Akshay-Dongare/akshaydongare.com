@@ -139,7 +139,8 @@ and an accurate `sizes`. Do not revert either to a plain `<img>`: the source is
 
 **Organisation logos:** `components/ui/OrgLogo.tsx` keeps every mark in one table, and every Work
 card on both pages carries one. The homepage sets it inline beside the name; /work gives it a 40px
-row above the title, because Tech Mahindra's 4:1 lockup broke titles when inline. A mark is
+row above the title, because Tech Mahindra's 4:1 lockup broke titles when inline; the card's
+destination label (LINKEDIN, GITHUB) sits at the far end of that row. A mark is
 decorative (`alt=""`) where the organisation's name is adjacent text. The four NC State cards on
 /work never name it, so their `affiliation` field goes into the card's `aria-label` and the logo's
 alt, rather than leaving the affiliation to a picture.
@@ -436,6 +437,14 @@ There is currently no writing section. `app/writing/` was removed because its th
 ### Sub-Pages
 
 `/about`, `/work`, `/contact`, `/privacy`, `/colophon` are standalone App Router pages. All use `var(--spine-page)`: cream to paper in light, the dark obsidian canvas (`#0d1117 → #07090f`) in dark. Text tokens: `text-fg-90` headings, `text-fg-65–70` body, `text-fg-50–55` muted. **Do not go below `fg-50`**: in dark, white/45 measures 4.49:1 on void and white/35 3.19:1, which fails WCAG 2.2 SC 1.4.3 AA for text under 24px. Borders: `border-line-8`, hover `border-line-20`.
+
+**Each /work card is one target without being one `<a>`.** The title link stretches over the card
+through its `::after` (`after:absolute after:inset-0`, against the card's `relative`), which also
+carries the focus ring. A description can then hold links of its own, as the Harvard card does
+for GAMI, Harvard University and the award post: they take the `INLINE` class, whose `relative z-10`
+lifts them above the stretched layer. Do not wrap a card in a link again; an `<a>` inside an `<a>`
+is invalid HTML, and the old whole-card link also hid the description from screen readers behind
+its `aria-label`.
 
 All five carry `.masthead-glow` (defined in `app/globals.css`), a still, soft blue
 bloom across the top 62vh that echoes the homepage nebula without running a second
