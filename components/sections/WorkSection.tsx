@@ -16,7 +16,6 @@ const buildProjects = (stats: PackageStats) => [
         logo: "airbnb" as const,
         role: "AI Platform · contract",
         line: "Made the internal LLM gateway about 28 services use safe to serve two providers in one process. Shipped as a version bump, so no consumer had to migrate.",
-        card: "var(--card-airbnb)",
         pills: [{ label: "28 services, zero migrations", href: LINKEDIN_EXPERIENCE, name: "28 services, zero migrations: the Airbnb role on LinkedIn" }],
     },
     {
@@ -33,7 +32,6 @@ const buildProjects = (stats: PackageStats) => [
                 LangChain&apos;s official LiteLLM integration: one Python interface to 140+ model providers, developed inside the <Link href={LANGCHAIN_ORG} className="underline underline-offset-4 decoration-line-20 hover:text-fg-55 transition-colors cursor-none">langchain-ai</Link> organization.
             </>
         ),
-        card: "var(--card-langchain)",
         pills: [
             { label: `${stats.compact} downloads`, href: PYPI_URL, name: `${stats.compact} downloads: langchain-litellm on PyPI` },
             { label: `${stats.monthlyCompact} a month`, href: PEPY_URL, name: `${stats.monthlyCompact} a month: the last 30 days on pepy.tech` },
@@ -44,7 +42,6 @@ const buildProjects = (stats: PackageStats) => [
         logo: "iso" as const,
         role: "Companion · applied AI engineer",
         line: "Designed the agentic graph patterns ISO's standards assistant runs on, and the evaluation that keeps its answers on official ISO sources.",
-        card: "var(--card-iso)",
         pills: [{ label: "Grounded in ISO sources", href: LINKEDIN_EXPERIENCE, name: "Grounded in ISO sources: the ISO role on LinkedIn" }],
     },
     {
@@ -57,7 +54,6 @@ const buildProjects = (stats: PackageStats) => [
             </>
         ),
         line: "A WhatsApp assistant answering blood donation questions in Kenya, with query rewriting and guardrails for personal data and prompt injection.",
-        card: "var(--card-harvard)",
         pills: [{ label: "Best Presentation, 2025", href: GAMI_AWARD_POST, name: "Best Presentation, 2025: the award post on LinkedIn" }],
     },
 ];
@@ -91,13 +87,12 @@ export function WorkSection({ stats }: { stats: PackageStats }) {
                     {PROJECTS.map((project, i) => (
                         <motion.article
                             key={project.org}
-                            className="relative rounded-xl overflow-hidden shadow-[var(--card-shadow)]"
+                            className="relative rounded-xl overflow-hidden border border-[var(--card-edge)] bg-[var(--card)] shadow-[var(--card-shadow)]"
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ duration: 0.35, delay: Math.min(i * 0.05, 0.15) }}
                         >
-                            <div className="absolute inset-0" style={{ background: project.card }} />
                             <div className="relative h-full p-6 md:p-8 flex flex-col gap-5">
                                 <div className="flex flex-col gap-2">
                                     <div className="flex items-center gap-3">
@@ -128,7 +123,7 @@ export function WorkSection({ stats }: { stats: PackageStats }) {
 
                 {/* Its own pill: the ground behind this spot shifts between breakpoints, so the pill carries its contrast. */}
                 <div className="mt-6 flex justify-end">
-                    <Link href="/work" className="group flex items-center gap-2 cursor-none text-label shadow-[inset_0_0_0_1.5px_var(--more-line)] bg-[var(--more-bg)] text-[var(--more-ink)] hover:bg-[var(--more-bg-hover)] hover:text-[var(--more-ink-hover)] transition-colors px-4 py-2.5 rounded-full">
+                    <Link href="/work" className="group flex items-center gap-2 cursor-none text-label bg-[var(--more-bg)] text-[var(--more-ink)] hover:bg-[var(--more-bg-hover)] hover:text-[var(--more-ink-hover)] transition-colors px-4 py-2.5 rounded-full">
                         <span>ALL WORK</span>
                         <span className="shrink-0 whitespace-nowrap">[ → ]</span>
                     </Link>
