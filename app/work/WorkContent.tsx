@@ -141,10 +141,10 @@ export function WorkContent({ stats }: { stats: PackageStats }) {
                                 aria-label={`${proj.title}${proj.affiliation ? `, ${proj.affiliation}` : ""}, on ${destinationLabel(proj.link).toLowerCase()}`}
                                 className="group block h-full border border-line-8 rounded-lg p-8 md:p-10 cursor-none hover:border-line-20 hover:-translate-y-1 hover:shadow-[var(--work-card-hover)] transition-all duration-[300ms] ease-[cubic-bezier(0.25,0.1,0.25,1)] bg-[var(--work-card)]"
                             >
-                                {/* A row of its own, since two of these marks are wide lockups that would break the title.
-                                    52px is NC State's minimum and fits every mark, so titles line up across the cards that have one. */}
+                                {/* A row of its own, since Tech Mahindra's 4:1 lockup broke titles inline. 40px holds the
+                                    tallest mark, Harvard's shield, so every title starts at the same height. */}
                                 {proj.logo && (
-                                    <div className="flex h-[52px] items-center mb-5">
+                                    <div className="flex h-10 items-center mb-5">
                                         <OrgLogo org={proj.logo} alt={proj.affiliation} />
                                     </div>
                                 )}

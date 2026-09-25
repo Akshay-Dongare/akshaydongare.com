@@ -1,24 +1,27 @@
 import Image from "next/image";
 
-// Official marks, never recoloured. A dark entry is the brand's own variant for dark grounds,
-// and minH is the brand's published minimum height on screen, which wins over the slot the mark sits in.
+// Official marks, never recoloured. A dark entry is the brand's own variant for dark grounds.
 const LOGOS = {
     airbnb: { src: "/logos/airbnb.svg", w: 24, h: 24 },
     langchain: { src: "/logos/langchain-light.svg", dark: "/logos/langchain-dark.svg", w: 63, h: 63 },
     iso: { src: "/logos/iso.svg", w: 1181, h: 1087 },
     harvard: { src: "/logos/harvard-shield.svg", w: 127, h: 149 },
     // NC State's opaque red brick is its preferred version on any ground, so it has no dark variant.
-    ncstate: { src: "/logos/ncstate-brick.png", w: 1080, h: 520, minH: 52 },
+    ncstate: { src: "/logos/ncstate-brick.png", w: 1080, h: 520 },
     techmahindra: { src: "/logos/techmahindra-light.svg", dark: "/logos/techmahindra-dark.svg", w: 200, h: 50 },
 } as const;
 
 export type Org = keyof typeof LOGOS;
 
+// Every mark covers the same area, not the same height, so a 4:1 lockup reads the same size as a square one.
+// --logo-s is the side of that square; the default suits a display-m heading.
+const SIZE = "[--logo-s:2rem] md:[--logo-s:2.25rem]";
+
 // Decorative by default, since the name usually sits beside the mark; pass alt where it does not.
 // Served as is, since the optimiser's srcset stops at 2x; width and height only set the aspect ratio.
-export function OrgLogo({ org, className = "h-8 md:h-9", alt = "" }: { org: Org; className?: string; alt?: string }) {
+export function OrgLogo({ org, className = SIZE, alt = "" }: { org: Org; className?: string; alt?: string }) {
     const logo = LOGOS[org];
-    const style = "minH" in logo ? { minHeight: logo.minH } : undefined;
+    const style = { height: `calc(var(--logo-s) * ${Math.sqrt(logo.h / logo.w).toFixed(3)})` };
     // A lazy image under display:none is never fetched, so a two-variant mark loads both up front or blanks on its first switch.
     const loading = "dark" in logo ? "eager" : "lazy";
     const mark = (src: string, variant = "") => (
