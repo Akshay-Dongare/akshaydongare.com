@@ -4,11 +4,14 @@ import React from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import type { PackageStats } from "@/lib/downloads";
-import { LINKEDIN_EXPERIENCE, LITELLM_REPO } from "@/lib/links";
+import { GAMI_AWARD_POST, GAMI_SITE, HARVARD_SITE, LINKEDIN_EXPERIENCE, LITELLM_REPO } from "@/lib/links";
 import { OrgLogo, type Org } from "@/components/ui/OrgLogo";
 
 // affiliation names the organisation for cards whose title does not, so it is not left to the logo alone.
-type Project = { title: string; desc: string; tags: string[]; link: string; logo?: Org; affiliation?: string };
+type Project = { title: string; desc: React.ReactNode; tags: string[]; link: string; logo?: Org; affiliation?: string };
+
+// Links inside a description sit above the card's stretched title link, so both stay clickable.
+const INLINE = "relative z-10 text-fg-85 underline underline-offset-4 decoration-line-20 hover:text-fg-55 transition-colors cursor-none";
 
 const buildProjects = (stats: PackageStats): Project[] => [
     {
@@ -28,7 +31,14 @@ const buildProjects = (stats: PackageStats): Project[] => [
     {
         title: "Harvard University · Kenya Blood Donation Assistant",
         logo: "harvard",
-        desc: "Lead developer on a WhatsApp assistant that answers blood donation questions for users in Kenya, built under the Global Alliance for Medical Innovation at Harvard University. Most people do not phrase a medical question the way a clinical document answers it, so the pipeline rewrites a query before it searches. I worked on that retrieval path, added guardrails for personal data and prompt injection, and ran a red-team pass covering injection, data exposure and medical accuracy before the system went to closed beta. Won Best Presentation at the Spring 2025 showcase.",
+        desc: (
+            <>
+                Lead developer on a WhatsApp assistant that answers blood donation questions for users in Kenya, built under
+                the <Link href={GAMI_SITE} className={INLINE}>Global Alliance for Medical Innovation</Link> at <Link href={HARVARD_SITE} className={INLINE}>Harvard University</Link>.
+                Most people do not phrase a medical question the way a clinical document answers it, so the pipeline rewrites a query before it searches. I worked on that retrieval path, added guardrails for personal data and prompt injection, and ran a red-team pass covering injection, data exposure and medical accuracy before the system went to closed beta.
+                Won <Link href={GAMI_AWARD_POST} className={INLINE}>Best Presentation</Link> at the Spring 2025 showcase.
+            </>
+        ),
         tags: ["RAG", "GUARDRAILS", "WHATSAPP", "HEALTHCARE"],
         link: LINKEDIN_EXPERIENCE
     },
