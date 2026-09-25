@@ -5,28 +5,36 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import type { PackageStats } from "@/lib/downloads";
 import { LINKEDIN_EXPERIENCE, LITELLM_REPO } from "@/lib/links";
+import { OrgLogo, type Org } from "@/components/ui/OrgLogo";
 
-const buildProjects = (stats: PackageStats) => [
+// affiliation names the organisation for cards whose title does not, so it is not left to the logo alone.
+type Project = { title: string; desc: string; tags: string[]; link: string; logo?: Org; affiliation?: string };
+
+const buildProjects = (stats: PackageStats): Project[] => [
     {
         title: "langchain-litellm",
+        logo: "langchain",
         desc: `Creator and lead maintainer of LangChain's official LiteLLM integration. Started as my own repository; now developed and released inside the langchain-ai organization, with its own page in the LangChain docs and an entry in the Python API reference. One interface to 100+ providers, plus router-backed load balancing, embeddings and OCR loading. ${stats.long} downloads across ${stats.releases} releases, and around ${stats.monthlyLong} every month.`,
         tags: ["PYTHON", "PYPI", "CREATOR", "MAINTAINER"],
         link: LITELLM_REPO
     },
     {
         title: "Airbnb · AI Platform",
+        logo: "airbnb",
         desc: "The team already used the package I maintain, which is how they found me. Their internal LLM gateway, used by roughly 28 services, could not safely serve two providers in one process, because configuration lived in process-wide globals. I moved it to per-model registries resolved per request, giving a structural concurrency guarantee rather than a lock, and put an expiry-aware cache behind the auth path. Thirteen changes across ten repos, zero consumer migrations, and a test suite that went from 17 to 144. Two calls in two months; the rest was async.",
         tags: ["PYTHON", "LLM GATEWAY", "CONCURRENCY", "CONTRACT"],
         link: LINKEDIN_EXPERIENCE
     },
     {
         title: "Harvard University · Kenya Blood Donation Assistant",
+        logo: "harvard",
         desc: "Lead developer on a WhatsApp assistant that answers blood donation questions for users in Kenya, built under the Global Alliance for Medical Innovation at Harvard University. Most people do not phrase a medical question the way a clinical document answers it, so the pipeline rewrites a query before it searches. I worked on that retrieval path, added guardrails for personal data and prompt injection, and ran a red-team pass covering injection, data exposure and medical accuracy before the system went to closed beta. Won Best Presentation at the Spring 2025 showcase.",
         tags: ["RAG", "GUARDRAILS", "WHATSAPP", "HEALTHCARE"],
         link: LINKEDIN_EXPERIENCE
     },
     {
         title: "ISO · Companion",
+        logo: "iso",
         desc: "Applied AI engineer on Companion, the assistant the International Organization for Standardization builds for its own standards work. I designed the agentic graph patterns it runs on, which is what let it scale without maintenance cost scaling with it, and ran the comparative evaluation behind its web search layer so answers come from official ISO sources rather than the open web. Started the architecture documentation and refactored the legacy codebase while I was in there.",
         tags: ["LANGGRAPH", "AGENTS", "RETRIEVAL", "CONTRACT"],
         link: LINKEDIN_EXPERIENCE
@@ -45,33 +53,40 @@ const buildProjects = (stats: PackageStats) => [
     },
     {
         title: "Tech Mahindra · TinyML",
+        logo: "techmahindra",
         desc: "Pruning and INT8 quantization on YOLOv5 for deployment to resource-constrained edge devices. Twelve times smaller, ten times faster on CPU, with detection accuracy held on COCO.",
         tags: ["TINYML", "QUANTIZATION", "YOLOV5", "EDGE"],
         link: "https://github.com/Akshay-Dongare/Model_Compression"
     },
     {
         title: "CookBook",
+        logo: "ncstate",
+        affiliation: "NC State University",
         desc: "Full-stack recipe discovery platform. FastAPI and MongoDB, React and TypeScript, Groq inference for nutrition filtering. CI-tested and coverage-tracked.",
         tags: ["FASTAPI", "REACT", "MONGODB", "GROQ"],
         link: "https://github.com/AMAPAD/CookBook"
     },
     {
-        title: "Lane Segmentation + Sign Detection",
-        desc: "Real-time semantic segmentation for lane detection layered with traffic-sign recognition on one video stream. Faster R-CNN and ResNet50 on GTSRB; FCN on a custom-labelled lane dataset.",
-        tags: ["PYTORCH", "FASTER R-CNN", "FCN", "GTSRB"],
-        link: "https://github.com/Akshay-Dongare/Lane-Segmentation-along-with-Traffic-Sign-Detection"
-    },
-    {
         title: "The Professional Filter",
+        logo: "ncstate",
+        affiliation: "NC State University",
         desc: "Work-vs-personal email classifier trained on the Enron corpus, with an LLM-augmented layer for the messy long tail.",
         tags: ["PYTHON", "NLP", "LLM"],
         link: "https://github.com/Akshay-Dongare/The-Professional-Filter"
     },
     {
         title: "WolfLease",
+        logo: "ncstate",
+        affiliation: "NC State University",
         desc: "Django and Streamlit sublease marketplace for student housing, with a multi-criteria search and a linting and coverage CI matrix.",
         tags: ["DJANGO", "STREAMLIT", "CI"],
         link: "https://github.com/AMAPAD/WolfLease"
+    },
+    {
+        title: "Lane Segmentation + Sign Detection",
+        desc: "Real-time semantic segmentation for lane detection layered with traffic-sign recognition on one video stream. Faster R-CNN and ResNet50 on GTSRB; FCN on a custom-labelled lane dataset.",
+        tags: ["PYTORCH", "FASTER R-CNN", "FCN", "GTSRB"],
+        link: "https://github.com/Akshay-Dongare/Lane-Segmentation-along-with-Traffic-Sign-Detection"
     }
 ];
 
@@ -123,11 +138,19 @@ export function WorkContent({ stats }: { stats: PackageStats }) {
                         >
                             <Link
                                 href={proj.link}
-                                aria-label={`${proj.title}, on ${destinationLabel(proj.link).toLowerCase()}`}
+                                aria-label={`${proj.title}${proj.affiliation ? `, ${proj.affiliation}` : ""}, on ${destinationLabel(proj.link).toLowerCase()}`}
                                 className="group block h-full border border-line-8 rounded-lg p-8 md:p-10 cursor-none hover:border-line-20 hover:-translate-y-1 hover:shadow-[var(--work-card-hover)] transition-all duration-[300ms] ease-[cubic-bezier(0.25,0.1,0.25,1)] bg-[var(--work-card)]"
                             >
+                                {/* A row of its own, since two of these marks are wide lockups that would break the title.
+                                    52px is NC State's minimum and fits every mark, so titles line up across the cards that have one. */}
+                                {proj.logo && (
+                                    <div className="flex h-[52px] items-center mb-5">
+                                        <OrgLogo org={proj.logo} alt={proj.affiliation} />
+                                    </div>
+                                )}
                                 <div className="flex justify-between items-start gap-4 mb-6">
-                                    <h2 className="text-display-m tracking-tight text-fg-90">{proj.title}</h2>
+                                    {/* The separator binds to the word before it, so a wrapped title never opens a line with it. */}
+                                    <h2 className="text-display-m tracking-tight text-fg-90">{proj.title.replaceAll(" · ", "\u00a0· ")}</h2>
                                     <span className="hidden lg:inline-flex shrink-0 whitespace-nowrap items-baseline gap-2 font-mono text-fg-60 lg:opacity-0 lg:-translate-x-4 lg:group-hover:translate-x-0 lg:group-hover:opacity-100 transition-all duration-300">
                                         <span className="text-label text-lbl-50">{destinationLabel(proj.link)}</span>
                                         <span className="text-xl">[ → ]</span>
