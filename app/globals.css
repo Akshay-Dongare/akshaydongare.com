@@ -140,8 +140,9 @@
   --cursor-color: #1a1c13;
   --cursor-blend: normal;
   --cursor-ring: 0 0 0 1.5px #faf6ee;
-  --nav-glass: rgba(250, 246, 238, 0.88);
-  --nav-glass-on-light: rgba(250, 246, 238, 0.88);
+  /* One opacity for every glass: 0.6 is as clear as it goes before white nav text over paper drops under 4.5:1. */
+  --nav-glass: rgba(250, 246, 238, 0.6);
+  --nav-glass-on-light: rgba(250, 246, 238, 0.6);
   --particle-halo: 0 2px 24px rgba(250, 246, 238, 0.5);
   --tension-ring: rgba(26, 28, 19, 0.75);
   --work-card: #fffdf8;
@@ -214,8 +215,8 @@
   --cursor-color: #ffffff;
   --cursor-blend: difference;
   --cursor-ring: none;
-  --nav-glass: rgba(7, 9, 15, 0.72);
-  --nav-glass-on-light: rgba(242, 239, 233, 0.88);
+  --nav-glass: rgba(7, 9, 15, 0.6);
+  --nav-glass-on-light: rgba(242, 239, 233, 0.6);
   --particle-halo: 0 2px 24px rgba(7, 9, 15, 0.5);
   --tension-ring: rgba(255, 255, 255, 0.55);
   --work-card: #141920;
