@@ -137,18 +137,31 @@ and an accurate `sizes`. Do not revert either to a plain `<img>`: the source is
   in a rounded container. Carries `priority` because it is that page's LCP
   element, and `sizes="320px"` because the box is capped by `max-w-[320px]`.
 
-**Organisation logos:** `components/ui/OrgLogo.tsx` puts each employer's official mark beside
-its name on the homepage Work cards, in brand colour, at the heading's cap height. They are
-decorative (`alt=""`, `aria-hidden`) because the name is the adjacent text, so a screen reader
-would otherwise say it twice.
-- Airbnb and LangChain are Simple Icons paths (CC0), inlined so CSS sets the fill per mode.
-  Airbnb's coral `#FF5A5F` holds in both. LangChain's published `#7FC8FF` washes out on paper,
-  so light mode uses its dark teal `#1C3C3C`.
-- `public/logos/iso.svg` is ISO's red square, unchanged. `public/logos/harvard-shield.svg` is
-  the shield alone, cropped from the Wikimedia lockup by `viewBox` with the wordmark path
-  removed, since the heading already says "Harvard University".
-- Both files go through `next/image`, which serves an `.svg` unoptimised on its own. That avoids
-  a `no-img-element` suppression; width and height there only set the aspect ratio.
+**Organisation logos:** `components/ui/OrgLogo.tsx` keeps every mark in one table. The homepage
+Work cards set it inline beside the name at `h-8 md:h-9`; /work gives it a 52px row above the title,
+because Tech Mahindra ships only a 4:1 lockup and NC State's brick needs 52px, and both broke titles
+when inline. A mark is decorative (`alt=""`) where the organisation's name is adjacent text. The three
+NC State cards on /work never name it, so their `affiliation` field goes into the card's `aria-label`
+and the logo's alt, rather than leaving the affiliation to a picture.
+- Brand-kit files are used as provided and never recoloured for a ground. Where a brand ships a
+  dark-ground variant, the table's `dark` entry holds it and CSS picks by `data-mode`, so it is right
+  before hydration: LangChain's icon from langchain.com/brand-assets (`#030710`, white on dark) and
+  Tech Mahindra's Color Positive and Color Negative from its October 2025 kit.
+- Airbnb is the Simple Icons Belo (CC0) in `#FF5A5F`. ISO's red square is unchanged. Harvard's is the
+  shield alone, cropped from the Wikimedia lockup by `viewBox` with the wordmark path removed.
+- NC State is the 2x2 white-on-red brick, its preferred version on any ground, so it has no dark
+  entry. `minH: 52` is its published screen minimum, the size of its 108x52 Minimum file; the
+  committed PNG is the 1080x520 Maximum, which the optimiser scales down.
+- NC State's trademark FAQ says students may not put its logos on a resume, and Tech Mahindra's Terms
+  of Use ask for written consent to use its marks. The owner chose to show both; do not remove or
+  swap them on those grounds without asking.
+- Every mark goes through `next/image` with `unoptimized`, which avoids a `no-img-element`
+  suppression; width and height only set the aspect ratio. The optimiser's srcset stopped at 2x
+  and softened the brick on 3x phones, and the source is only 10KB. Two-variant marks load
+  eagerly: a lazy image under `display:none` is never fetched, so the first mode switch blanked it.
+- On /work, cards without a logo only share a two-column row with each other (Satellite Vision
+  with Ollama, and Lane Segmentation alone at the end), so a 52px logo row never faces a card that
+  has none. Keep that pairing when adding a project.
 
 ### Modes
 
@@ -308,11 +321,19 @@ the WebGL particle physics, which are continuous rather than reveal animations.
 **The reader has seconds, so nothing they need sits behind a click.** The hero's `<dl>`
 carries name, employers, the download figure and the start date on the first screen, at
 every breakpoint. The four Work cards are all open, each ending in claim pills that are themselves
-links to the evidence (pepy.tech, LinkedIn), with the URLs shared with /work through `lib/links.ts`. The
+links (PyPI, pepy.tech, LinkedIn), with the URLs shared with /work through `lib/links.ts`. The
 Mission paragraph opens by default and folds away under APPROACH; collapsed, it stays in the DOM, so
 Google still reads it. Every homepage section ends in a `ScrollCue` at its bottom-left that scrolls to
 the next; Particle and About pass `tone="paper"` because in dark mode they end on a light ground. A carousel is not the fix either: NN/g and click data both find slides
 after the first go mostly unseen, which is the same failure as a collapsed card.
+
+**Download figures link the number, not the sentence.** The link wraps "15 million" or "1 million" and
+stops there, so the underline marks the claim rather than the words around it. All-time figures go to
+`PYPI_URL` and monthly ones to `PEPY_URL` (both in `lib/downloads.ts`). pepy's page header still says
+the latest version is 0.6.6: its metadata last synced on 24 May 2026, although its download counts
+are current. No pepy URL avoids that header, so pepy backs only the monthly count, which it states
+as "in the last 30 days". PyPI lists every release but shows no download count at all, so the
+pill's accessible name calls it the package on PyPI, not a citation for the figure.
 
 **Type floor.** `.text-label` is 13px, and nothing a reader needs goes below it. At 10.4px
 the capitals subtend under 0.2 degrees, where reading slows sharply (Legge and Bigelow 2011).
