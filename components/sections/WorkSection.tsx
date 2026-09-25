@@ -30,9 +30,7 @@ const buildProjects = (stats: PackageStats) => [
         ),
         line: (
             <>
-                LangChain&apos;s official LiteLLM integration: one Python interface to 100+ model providers, developed inside the{" "}
-                <Link href={LANGCHAIN_ORG} className="underline underline-offset-4 decoration-line-20 hover:text-fg-55 transition-colors cursor-none">langchain-ai</Link>{" "}
-                organization.
+                LangChain&apos;s official LiteLLM integration: one Python interface to 100+ model providers, developed inside the <Link href={LANGCHAIN_ORG} className="underline underline-offset-4 decoration-line-20 hover:text-fg-55 transition-colors cursor-none">langchain-ai</Link> organization.
             </>
         ),
         card: "var(--card-langchain)",

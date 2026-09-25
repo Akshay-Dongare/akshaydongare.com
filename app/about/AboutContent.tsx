@@ -56,41 +56,32 @@ export function AboutContent({ stats }: { stats: PackageStats }) {
                         I’m Akshay Dongare, an AI platform engineer in Raleigh, North Carolina, finishing a Master’s in Computer Science at NC State. I work on LLM infrastructure: the gateways, provider routing, auth and concurrency that sit between an application and a model. The degree finishes in December 2026, and from 11 January 2027 this is the whole job: AI platform, LLM infrastructure, or the backend work underneath both, wherever in the country the team sits. I’m authorized to work in the US on F-1 OPT through January 2030.
                     </p>
                     <p>
-                        I created{" "}
-                        <Link
+                        I created <Link
                             href="https://github.com/langchain-ai/langchain-litellm"
                             className="text-fg-85 underline underline-offset-4 decoration-line-20 hover:text-fg-55 transition-colors cursor-none"
                         >
                             langchain-litellm
-                        </Link>
-                        {" "}and still lead its maintenance. It began as my own repository and now lives inside the{" "}
-                        <Link
+                        </Link> and still lead its maintenance. It began as my own repository and now lives inside the <Link
                             href={LANGCHAIN_ORG}
                             className="text-fg-85 underline underline-offset-4 decoration-line-20 hover:text-fg-55 transition-colors cursor-none"
                         >
                             langchain-ai
-                        </Link>
-                        {" "}organization as LangChain’s official LiteLLM integration, with its own page in the LangChain docs and an entry in the Python API reference. One interface to 100+ model providers, plus router-backed load balancing, embeddings and OCR loading. <Link
+                        </Link> organization as LangChain’s official LiteLLM integration, with its own page in the LangChain docs and an entry in the Python API reference. One interface to 100+ model providers, plus router-backed load balancing, embeddings and OCR loading. <Link
                             href={PYPI_URL}
                             className="text-fg-85 hover:underline hover:underline-offset-4 hover:decoration-line-40 hover:text-fg-70 transition-colors cursor-none"
                         >
                             {stats.long}
-                        </Link> downloads across {stats.releases} releases, and around {stats.monthlyLong} every month. I also contribute upstream to{" "}
-                        <Link
+                        </Link> downloads across {stats.releases} releases, and around {stats.monthlyLong} every month. I also contribute upstream to <Link
                             href="https://github.com/langchain-ai/langchain/pulls?q=is%3Apr+author%3AAkshay-Dongare+"
                             className="text-fg-85 underline underline-offset-4 decoration-line-20 hover:text-fg-55 transition-colors cursor-none"
                         >
                             LangChain
-                        </Link>
-                        ,{" "}
-                        <Link
+                        </Link>, <Link
                             href="https://github.com/langchain-ai/langchain-community/pulls?q=is%3Apr+author%3AAkshay-Dongare+"
                             className="text-fg-85 underline underline-offset-4 decoration-line-20 hover:text-fg-55 transition-colors cursor-none"
                         >
                             langchain-community
-                        </Link>
-                        {" "}and the{" "}
-                        <Link
+                        </Link> and the <Link
                             href="https://github.com/langchain-ai/docs/pulls?q=is%3Apr+author%3AAkshay-Dongare+"
                             className="text-fg-85 underline underline-offset-4 decoration-line-20 hover:text-fg-55 transition-colors cursor-none"
                         >
