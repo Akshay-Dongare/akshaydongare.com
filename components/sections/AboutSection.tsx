@@ -4,7 +4,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
-import { PEPY_URL, type PackageStats } from "@/lib/downloads";
+import { PYPI_URL, type PackageStats } from "@/lib/downloads";
 import { ScrollCue } from "@/components/ui/ScrollCue";
 
 
@@ -23,14 +23,12 @@ export function AboutSection({ stats }: { stats: PackageStats }) {
                         transition={{ duration: 0.35 }}
                         className="text-display-l text-on-paper mb-10 max-w-[720px] leading-tight"
                     >
-                        I maintain langchain-litellm, LangChain&apos;s official interface to 100+ model providers, downloaded{" "}
-                        <Link
-                            href={PEPY_URL}
+                        I maintain langchain-litellm, LangChain&apos;s official interface to 100+ model providers, downloaded <Link
+                            href={PYPI_URL}
                             className="hover:underline hover:underline-offset-[6px] hover:decoration-on-paper/40 transition-colors cursor-none"
                         >
-                            {stats.long} times
-                        </Link>
-                        {" "}and counting.
+                            {stats.long}
+                        </Link> times and counting.
                     </motion.h2>
 
                     <motion.div

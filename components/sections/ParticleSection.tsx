@@ -75,9 +75,8 @@ export function ParticleSection({ stats }: { stats: PackageStats }) {
                             href={PEPY_URL}
                             className="pointer-events-auto cursor-none hover:underline hover:underline-offset-[10px] hover:decoration-line-40 transition-colors"
                         >
-                            {stats.monthlyLong} installs
-                        </Link>
-                        {" "}a month means someone else&apos;s production depends on your defaults.
+                            {stats.monthlyLong}
+                        </Link> installs a month means someone else&apos;s production depends on your defaults.
                     </h2>
                 </motion.div>
             </div>

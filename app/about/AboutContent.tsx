@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
 import { LANGCHAIN_ORG } from "@/lib/links";
-import { PEPY_URL, type PackageStats } from "@/lib/downloads";
+import { PYPI_URL, type PackageStats } from "@/lib/downloads";
 
 export function AboutContent({ stats }: { stats: PackageStats }) {
     return (
@@ -71,12 +71,11 @@ export function AboutContent({ stats }: { stats: PackageStats }) {
                             langchain-ai
                         </Link>
                         {" "}organization as LangChain’s official LiteLLM integration, with its own page in the LangChain docs and an entry in the Python API reference. One interface to 100+ model providers, plus router-backed load balancing, embeddings and OCR loading. <Link
-                            href={PEPY_URL}
+                            href={PYPI_URL}
                             className="text-fg-85 hover:underline hover:underline-offset-4 hover:decoration-line-40 hover:text-fg-70 transition-colors cursor-none"
                         >
-                            {stats.long} downloads
-                        </Link>
-                        {" "}across {stats.releases} releases, and around {stats.monthlyLong} every month. I also contribute upstream to{" "}
+                            {stats.long}
+                        </Link> downloads across {stats.releases} releases, and around {stats.monthlyLong} every month. I also contribute upstream to{" "}
                         <Link
                             href="https://github.com/langchain-ai/langchain/pulls?q=is%3Apr+author%3AAkshay-Dongare+"
                             className="text-fg-85 underline underline-offset-4 decoration-line-20 hover:text-fg-55 transition-colors cursor-none"

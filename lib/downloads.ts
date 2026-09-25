@@ -23,6 +23,9 @@ const REVALIDATE = 3600; // 1h
 // The canonical path: /project/ is a 308 to this. Any filters in the address bar are added by pepy's own page on load.
 export const PEPY_URL = "https://pepy.tech/projects/langchain-litellm";
 
+// All-time figures link to the package on PyPI, which lists every release; pepy's header lags them, so pepy backs only the monthly count.
+export const PYPI_URL = "https://pypi.org/project/langchain-litellm/";
+
 export interface PackageStats {
     /** All-time, compact, for labels and chips: "15M". */
     compact: string;

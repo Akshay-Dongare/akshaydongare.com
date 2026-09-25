@@ -3,7 +3,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { PEPY_URL, type PackageStats } from "@/lib/downloads";
+import { PEPY_URL, PYPI_URL, type PackageStats } from "@/lib/downloads";
 import { GAMI_AWARD_POST, GAMI_SITE, LANGCHAIN_ORG, LINKEDIN_EXPERIENCE } from "@/lib/links";
 import { ScrollCue } from "@/components/ui/ScrollCue";
 import { OrgLogo } from "@/components/ui/OrgLogo";
@@ -32,7 +32,7 @@ const buildProjects = (stats: PackageStats) => [
         ),
         card: "var(--card-langchain)",
         pills: [
-            { label: `${stats.compact} downloads`, href: PEPY_URL, name: `${stats.compact} downloads: all-time figures on pepy.tech` },
+            { label: `${stats.compact} downloads`, href: PYPI_URL, name: `${stats.compact} downloads: langchain-litellm on PyPI` },
             { label: `${stats.monthlyCompact} a month`, href: PEPY_URL, name: `${stats.monthlyCompact} a month: the last 30 days on pepy.tech` },
         ],
     },

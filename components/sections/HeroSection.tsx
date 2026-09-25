@@ -3,7 +3,7 @@
 import React, { useRef } from "react";
 import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
 import Link from "next/link";
-import { PEPY_URL, type PackageStats } from "@/lib/downloads";
+import { PYPI_URL, type PackageStats } from "@/lib/downloads";
 import { ScrollCue } from "@/components/ui/ScrollCue";
 
 export function HeroSection({ stats }: { stats: PackageStats }) {
@@ -90,13 +90,12 @@ export function HeroSection({ stats }: { stats: PackageStats }) {
                         <dd className="text-[1.0625rem] md:text-[1.1875rem] font-medium text-fg-90">Airbnb · ISO · Harvard University</dd>
                         <dt className="text-label text-lbl-60">Creator of</dt>
                         <dd className="text-[1.0625rem] md:text-[1.1875rem] font-medium text-fg-90">
-                            langchain-litellm,{" "}
-                            <Link
-                                href={PEPY_URL}
+                            langchain-litellm, <Link
+                                href={PYPI_URL}
                                 className="pointer-events-auto cursor-none hover:underline hover:underline-offset-4 hover:decoration-line-40"
                             >
-                                {stats.long} downloads
-                            </Link>
+                                {stats.long}
+                            </Link> downloads
                         </dd>
                         <dt className="text-label text-lbl-60">Available</dt>
                         <dd className="text-[1.0625rem] md:text-[1.1875rem] font-medium text-fg-90">Full-time from 11 January 2027</dd>
