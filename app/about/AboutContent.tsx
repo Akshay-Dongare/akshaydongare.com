@@ -47,7 +47,7 @@ export function AboutContent({ stats }: { stats: PackageStats }) {
                 </motion.div>
 
                 <motion.div
-                    className="font-sans leading-relaxed text-body lg:text-[1.25rem] space-y-8 text-fg-70"
+                    className="font-sans leading-relaxed text-body lg:text-[1.25rem] space-y-8 text-fg-70 text-justify hyphens-auto"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.35, delay: 0.08, ease: [0.25, 0.1, 0.25, 1] }}
