@@ -41,12 +41,15 @@ const buildProjects = (stats: PackageStats): Project[] => [
     },
     {
         title: "Satellite Vision",
+        logo: "ncstate",
+        affiliation: "NC State University",
         desc: "Vision Transformers benchmarked head-to-head against CNNs on EuroSAT and UC Merced land-use imagery. Pure PyTorch, built to show where self-attention earns its cost on small-image remote sensing and where it does not.",
         tags: ["PYTORCH", "VIT", "CNN", "REMOTE SENSING"],
         link: "https://github.com/Akshay-Dongare/satellite-vision"
     },
     {
         title: "Ollama Local LLM",
+        logo: "self",
         desc: "Running language models locally with Ollama. Custom modelfiles wired into the Python SDK and LlamaIndex for inference that never leaves the machine.",
         tags: ["OLLAMA", "LLAMA-INDEX", "LOCAL LLM"],
         link: "https://github.com/Akshay-Dongare/Ollama-Local-LLM"
@@ -67,6 +70,13 @@ const buildProjects = (stats: PackageStats): Project[] => [
         link: "https://github.com/AMAPAD/CookBook"
     },
     {
+        title: "Lane Segmentation + Sign Detection",
+        logo: "self",
+        desc: "Real-time semantic segmentation for lane detection layered with traffic-sign recognition on one video stream. Faster R-CNN and ResNet50 on GTSRB; FCN on a custom-labelled lane dataset.",
+        tags: ["PYTORCH", "FASTER R-CNN", "FCN", "GTSRB"],
+        link: "https://github.com/Akshay-Dongare/Lane-Segmentation-along-with-Traffic-Sign-Detection"
+    },
+    {
         title: "The Professional Filter",
         logo: "ncstate",
         affiliation: "NC State University",
@@ -81,12 +91,6 @@ const buildProjects = (stats: PackageStats): Project[] => [
         desc: "Django and Streamlit sublease marketplace for student housing, with a multi-criteria search and a linting and coverage CI matrix.",
         tags: ["DJANGO", "STREAMLIT", "CI"],
         link: "https://github.com/AMAPAD/WolfLease"
-    },
-    {
-        title: "Lane Segmentation + Sign Detection",
-        desc: "Real-time semantic segmentation for lane detection layered with traffic-sign recognition on one video stream. Faster R-CNN and ResNet50 on GTSRB; FCN on a custom-labelled lane dataset.",
-        tags: ["PYTORCH", "FASTER R-CNN", "FCN", "GTSRB"],
-        link: "https://github.com/Akshay-Dongare/Lane-Segmentation-along-with-Traffic-Sign-Detection"
     }
 ];
 
