@@ -152,7 +152,7 @@ export function WorkContent({ stats }: { stats: PackageStats }) {
                         >
                             {/* The title link stretches over the card through its ::after, so the card stays one target while
                                 the description can hold links of its own; an <a> inside an <a> is invalid HTML. */}
-                            <div className="group relative h-full border border-line-8 rounded-lg p-8 md:p-10 cursor-none hover:border-line-20 hover:-translate-y-1 hover:shadow-[var(--work-card-hover)] transition-all duration-[300ms] ease-[cubic-bezier(0.25,0.1,0.25,1)] bg-[var(--work-card)]">
+                            <div className="group relative h-full border border-line-8 rounded-lg p-8 md:p-10 cursor-none shadow-[var(--card-sheen)] hover:border-line-20 hover:-translate-y-1 hover:shadow-[var(--card-sheen),var(--work-card-hover)] transition-all duration-[300ms] ease-[cubic-bezier(0.25,0.1,0.25,1)] bg-[var(--work-card)]">
                                 {/* A row of its own, since Tech Mahindra's 4:1 lockup broke titles inline. 40px holds the
                                     tallest mark, Harvard's shield, and the destination sits at its far end. */}
                                 <div className="flex h-10 items-center justify-between gap-4 mb-5">

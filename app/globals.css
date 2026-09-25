@@ -146,7 +146,8 @@
   --nav-glass-on-light: rgba(250, 246, 238, 0.6);
   --particle-halo: 0 2px 24px rgba(250, 246, 238, 0.5);
   --tension-ring: rgba(26, 28, 19, 0.75);
-  --work-card: #fffdf8;
+  /* The homepage cards' material; /work's pale ground takes the same opacity as the homepage's. */
+  --work-card: rgba(255, 253, 248, 0.72);
   --code-mask: linear-gradient(to bottom, transparent 0%, #000 24%, #000 88%, transparent 100%);
   --work-card-hover: 0 8px 40px rgba(26, 28, 19, 0.08);
   --code-glow: none;
@@ -220,7 +221,8 @@
   --nav-glass-on-light: rgba(242, 239, 233, 0.6);
   --particle-halo: 0 2px 24px rgba(7, 9, 15, 0.5);
   --tension-ring: rgba(255, 255, 255, 0.55);
-  --work-card: #141920;
+  /* The homepage slate, far less opaque: on /work's near-black ground 0.88 would read as heavy slabs. */
+  --work-card: rgba(57, 69, 86, 0.35);
   --code-mask: linear-gradient(to bottom, transparent 0%, #000 12%, #000 88%, transparent 100%);
   --work-card-hover: 0 8px 40px rgba(107, 159, 212, 0.07);
   --code-glow: 0 0 12px rgba(255, 255, 255, 0.08);
