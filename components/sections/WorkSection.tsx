@@ -4,7 +4,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { PEPY_URL, PYPI_URL, type PackageStats } from "@/lib/downloads";
-import { GAMI_AWARD_POST, GAMI_SITE, LANGCHAIN_ORG, LINKEDIN_EXPERIENCE } from "@/lib/links";
+import { GAMI_AWARD_POST, GAMI_SITE, LANGCHAIN_ORG, LINKEDIN_EXPERIENCE, LITELLM_REPO } from "@/lib/links";
 import { ScrollCue } from "@/components/ui/ScrollCue";
 import { OrgLogo } from "@/components/ui/OrgLogo";
 
@@ -22,7 +22,12 @@ const buildProjects = (stats: PackageStats) => [
     {
         org: "LangChain",
         logo: "langchain" as const,
-        role: "langchain-litellm · creator and lead maintainer",
+        role: (
+            <>
+                <Link href={LITELLM_REPO} className="underline underline-offset-4 decoration-line-20 hover:text-fg-55 transition-colors cursor-none">langchain-litellm</Link>
+                {" · creator and lead maintainer"}
+            </>
+        ),
         line: (
             <>
                 LangChain&apos;s official LiteLLM integration: one Python interface to 100+ model providers, developed inside the{" "}
