@@ -63,7 +63,7 @@ export function ColophonContent() {
 
                     <h2 className="text-display-m mt-16 mb-4 text-fg-85">Source</h2>
                     <p>
-                        I believe in learning through shared code. If you&apos;re curious about how specific components or animations were built, the full source code for this website is <Link href="https://github.com/Akshay-Dongare/akshaydongare.com" className="text-fg-80 underline underline-offset-4 decoration-line-20 hover:text-fg-50 transition-colors cursor-none">on GitHub</Link>.
+                        I believe in learning through shared code. If you&apos;re curious about how specific components or animations were built, the <Link href="https://github.com/Akshay-Dongare/akshaydongare.com" className="text-fg-80 underline underline-offset-4 decoration-line-20 hover:text-fg-50 transition-colors cursor-none">full source code</Link> for this website is on GitHub.
                     </p>
 
                 </motion.div>
