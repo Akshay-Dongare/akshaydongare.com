@@ -191,11 +191,14 @@ to inline, so dark mode renders as it did before the switcher existed. Section b
 `color-scheme: dark`, so native scrollbars match the page; the Code label at the 13px floor instead of
 9.9px; the code overlay's fade at its foot; the claim pills; and the Work cards and ALL WORK button below.
 
-**Work cards and ALL WORK.** The four homepage cards share one flat surface, `var(--card)` with a
-`var(--card-edge)` hairline: `#fffdf8` in light and `#141920` in dark, the same as the /work cards, so
-the logos carry the colour. They replaced a different gradient per card in each mode, which read as
-muddy in both. ALL WORK is the section's one solid button, inverted against the page like the mode
-switch's track: ink on paper in light, paper on ink in dark, with no border in either.
+**Work cards and ALL WORK.** The four homepage cards share one surface, `var(--card)` with a
+`var(--card-edge)` hairline and a faint top sheen, so the logos carry the colour; a gradient per card
+read as muddy in both modes. The surface is translucent so the section's own gradient tints it: paper
+at 0.72 in light, and in dark a mid slate `#394556` at 0.88, because in dark mode the cards sit on the
+light end of the bridge, where near-black read as holes. 0.88 is as clear as dark goes before white/80
+labels over the palest ground drop under 4.5:1. ALL WORK is made of the same material in both modes
+rather than an inverted solid: it is a way to more of the same, and a solid ink pill outweighed the
+cards it follows.
 
 **Text never uses white or black utilities.** `text-fg-NN` replaces `text-white/NN`: in dark it
 is the same `color-mix` Tailwind emits for `text-white/NN`, in light a solid ink by role (NN 85
@@ -358,8 +361,8 @@ pill's accessible name calls it the package on PyPI, not a citation for the figu
 
 **Type floor.** `.text-label` is 13px, and nothing a reader needs goes below it. At 10.4px
 the capitals subtend under 0.2 degrees, where reading slows sharply (Legge and Bigelow 2011).
-Card text is measured, not eyeballed: on the dark `#141920` card white/80 labels clear 11.5:1,
-and on the light `#fffdf8` card the rust labels clear 10.5:1.
+Card text is measured, not eyeballed, over the palest ground each translucent card can sit on: in dark
+white/80 labels clear 5.26:1 over parchment, and in light the rust labels clear 9.0:1 over olive.
 
 ### Particle Systems (Two Distinct Components — Narrative Escalation)
 
