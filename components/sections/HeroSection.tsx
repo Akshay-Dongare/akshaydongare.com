@@ -65,12 +65,13 @@ export function HeroSection({ stats }: { stats: PackageStats }) {
             </div>
 
             {/* min-h, and the text block in flow: on a short phone the content grows the hero instead of sliding under the nav. */}
-            <div className="relative w-full min-h-svh max-w-[1400px] mx-auto z-10 flex flex-col justify-end pt-24 pb-[clamp(4.5rem,8vw,6rem)] px-[clamp(1.5rem,5vw,3rem)]">
+            <div className="relative w-full min-h-svh max-w-[1400px] mx-auto z-10 flex flex-col pt-[clamp(5.5rem,14svh,7rem)] pb-[clamp(4.5rem,8vw,6rem)] px-[clamp(1.5rem,5vw,3rem)]">
 
-                {/* Bottom Left Text Block. Every reveal here runs on mount, not in view: Google renders
-                    in a tall viewport where h-svh stretches, and the h1 never entered it. */}
+                {/* The claim sits mid-screen, its measure in em so the headline holds about three lines at any desktop
+                    width, and its size capped by height too so a short laptop window keeps room around it. Every reveal
+                    here runs on mount, not in view: Google renders in a tall viewport where h-svh stretches. */}
                 <motion.div
-                    className="relative max-w-[640px]"
+                    className="my-auto"
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1], delay: 0.08 }}
@@ -80,12 +81,20 @@ export function HeroSection({ stats }: { stats: PackageStats }) {
                         <span className="text-label text-lbl-70">{"->"} ai platform engineer . llm infrastructure</span>
                     </div>
 
-                    <h1 className="text-display-xl text-fg-100 font-sans leading-[1.05] tracking-[-0.02em]">
-                        I build the layer between your application and the model, and I make it hold.
+                    <h1 className="text-display-xl text-fg-100 font-sans leading-[1.05] tracking-[-0.02em] max-w-[14em]" style={{ fontSize: "clamp(2.8rem, min(6vw, 9.5svh), 5.5rem)" }}>
+                        I build the layer between your application and the model, and I{"\u00a0"}make it hold.
                     </h1>
+                </motion.div>
 
-                    {/* The first screen carries what a recruiter scans for in seconds: who, for whom, when. */}
-                    <dl className="mt-7 grid grid-cols-[auto_1fr] gap-x-5 gap-y-2.5 items-baseline">
+                {/* What a recruiter scans for in seconds, who, for whom and when, gets a row of its own at the foot,
+                    set off from the claim by a hairline, with the keywords at its far end. */}
+                <motion.div
+                    className="mt-[clamp(1.5rem,6svh,3rem)] pt-6 border-t border-line-8 flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1], delay: 0.16 }}
+                >
+                    <dl className="grid grid-cols-[auto_1fr] gap-x-5 gap-y-2.5 items-baseline">
                         <dt className="text-label text-lbl-60">AI systems for</dt>
                         <dd className="text-[1.0625rem] md:text-[1.1875rem] font-medium text-fg-90">Airbnb · ISO · Harvard University</dd>
                         <dt className="text-label text-lbl-60">Creator of</dt>
@@ -101,23 +110,12 @@ export function HeroSection({ stats }: { stats: PackageStats }) {
                         <dd className="text-[1.0625rem] md:text-[1.1875rem] font-medium text-fg-90">Full-time from 11 January 2027</dd>
                     </dl>
 
+                    <p className="hidden lg:block text-label text-lbl-60 leading-relaxed text-right">
+                        LLM gateways<br />
+                        Provider routing<br />
+                        Auth &amp; concurrency
+                    </p>
                 </motion.div>
-
-                {/* Floating Labels (Right side) */}
-                <motion.div
-                    className="absolute bottom-[clamp(2rem,5vw,4rem)] right-[15%] hidden lg:flex flex-col gap-1 w-[200px]"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.35, delay: 0.16 }}
-                >
-                    <span className="text-label text-lbl-60 leading-relaxed">
-                        LLM GATEWAYS<br />
-                        PROVIDER ROUTING<br />
-                        AUTH &amp; CONCURRENCY
-                    </span>
-                </motion.div>
-
-
             </div>
             <ScrollCue />
         </section>
