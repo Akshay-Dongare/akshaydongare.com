@@ -140,26 +140,28 @@ export function WorkContent({ stats }: { stats: PackageStats }) {
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.3, delay: 0.08 + (i * 0.03), ease: [0.25, 0.1, 0.25, 1] }}
                         >
-                            <Link
-                                href={proj.link}
-                                aria-label={`${proj.title}${proj.affiliation ? `, ${proj.affiliation}` : ""}, on ${destinationLabel(proj.link).toLowerCase()}`}
-                                className="group block h-full border border-line-8 rounded-lg p-8 md:p-10 cursor-none hover:border-line-20 hover:-translate-y-1 hover:shadow-[var(--work-card-hover)] transition-all duration-[300ms] ease-[cubic-bezier(0.25,0.1,0.25,1)] bg-[var(--work-card)]"
-                            >
+                            {/* The title link stretches over the card through its ::after, so the card stays one target while
+                                the description can hold links of its own; an <a> inside an <a> is invalid HTML. */}
+                            <div className="group relative h-full border border-line-8 rounded-lg p-8 md:p-10 cursor-none hover:border-line-20 hover:-translate-y-1 hover:shadow-[var(--work-card-hover)] transition-all duration-[300ms] ease-[cubic-bezier(0.25,0.1,0.25,1)] bg-[var(--work-card)]">
                                 {/* A row of its own, since Tech Mahindra's 4:1 lockup broke titles inline. 40px holds the
-                                    tallest mark, Harvard's shield, so every title starts at the same height. */}
-                                {proj.logo && (
-                                    <div className="flex h-10 items-center mb-5">
-                                        <OrgLogo org={proj.logo} alt={proj.affiliation} />
-                                    </div>
-                                )}
-                                <div className="flex justify-between items-start gap-4 mb-6">
-                                    {/* The separator binds to the word before it, so a wrapped title never opens a line with it. */}
-                                    <h2 className="text-display-m tracking-tight text-fg-90">{proj.title.replaceAll(" · ", "\u00a0· ")}</h2>
-                                    <span className="hidden lg:inline-flex shrink-0 whitespace-nowrap items-baseline gap-2 font-mono text-fg-60 lg:opacity-0 lg:-translate-x-4 lg:group-hover:translate-x-0 lg:group-hover:opacity-100 transition-all duration-300">
+                                    tallest mark, Harvard's shield, and the destination sits at its far end. */}
+                                <div className="flex h-10 items-center justify-between gap-4 mb-5">
+                                    {proj.logo && <OrgLogo org={proj.logo} alt={proj.affiliation} />}
+                                    <span aria-hidden="true" className="hidden lg:inline-flex shrink-0 whitespace-nowrap items-baseline gap-2 font-mono text-fg-60 lg:opacity-0 lg:-translate-x-4 lg:group-hover:translate-x-0 lg:group-hover:opacity-100 transition-all duration-300">
                                         <span className="text-label text-lbl-50">{destinationLabel(proj.link)}</span>
                                         <span className="text-xl">[ → ]</span>
                                     </span>
                                 </div>
+                                {/* The separator binds to the word before it, so a wrapped title never opens a line with it. */}
+                                <h2 className="text-display-m tracking-tight text-fg-90 mb-6">
+                                    <Link
+                                        href={proj.link}
+                                        aria-label={`${proj.title}${proj.affiliation ? `, ${proj.affiliation}` : ""}, on ${destinationLabel(proj.link).toLowerCase()}`}
+                                        className="cursor-none outline-none after:absolute after:inset-0 after:rounded-lg focus-visible:after:outline-2 focus-visible:after:outline-offset-2 focus-visible:after:outline-current"
+                                    >
+                                        {proj.title.replaceAll(" · ", "\u00a0· ")}
+                                    </Link>
+                                </h2>
 
                                 <p className="text-body text-fg-55 mb-10 leading-relaxed">
                                     {proj.desc}
@@ -172,7 +174,7 @@ export function WorkContent({ stats }: { stats: PackageStats }) {
                                         </span>
                                     ))}
                                 </div>
-                            </Link>
+                            </div>
                         </motion.div>
                     ))}
                 </div>
