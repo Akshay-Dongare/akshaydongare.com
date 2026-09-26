@@ -46,12 +46,41 @@ export function CursorProvider({ children }: { children: React.ReactNode }) {
         const root = document.documentElement;
         let inside = false;
         let shown = false;
+        let focused = document.hasFocus();
+
+        // Back from another app, macOS can keep its arrow up while Chrome re-sets the same hidden cursor object.
+        // Toggling between two invisible cursors hands it a new object; 150ms apart, well past Blink's 20ms cursor timer.
+        const SPACING = 150;
+        let lastFlip = -Infinity;
+        let moveFlips = 0;
+        let timer = 0;
+        const flip = () => {
+            lastFlip = performance.now();
+            root.classList.toggle("cursor-resync");
+        };
+        // A still pointer gets three timed flips; a moving one also flips on its next moves, since Blink
+        // drops a style-driven cursor while it has lost the pointer's position.
+        const resync = () => {
+            window.clearTimeout(timer);
+            if (!focused) return;
+            moveFlips = 3;
+            let left = 3;
+            const tick = () => {
+                if (!focused || left === 0) return;
+                left -= 1;
+                flip();
+                timer = window.setTimeout(tick, SPACING);
+            };
+            tick();
+        };
 
         // The custom cursor runs only while the page has focus. With another app in front, macOS will
         // not let the browser hide its pointer, so the dot would ride beside the native arrow.
         const sync = () => {
-            const focused = document.hasFocus();
+            const wasFocused = focused;
+            focused = document.hasFocus();
             root.classList.toggle("custom-cursor-active", focused);
+            if (focused !== wasFocused) resync();
             const next = focused && inside;
             if (next !== shown) {
                 shown = next;
@@ -68,19 +97,30 @@ export function CursorProvider({ children }: { children: React.ReactNode }) {
                 cursorX.jump(e.clientX);
                 cursorY.jump(e.clientY);
             }
+            if (!inside) moveFlips = 3;
             inside = true;
             sync();
+            if (moveFlips > 0 && focused && performance.now() - lastFlip >= SPACING) {
+                moveFlips -= 1;
+                flip();
+            }
         };
         const leave = () => {
             inside = false;
             sync();
         };
+        // A tab switch or a Back restore puts the page under a pointer that never entered it.
+        const reshow = () => {
+            if (document.visibilityState === "visible") resync();
+        };
 
-        root.classList.toggle("custom-cursor-active", document.hasFocus());
+        root.classList.toggle("custom-cursor-active", focused);
         window.addEventListener("mousemove", moveCursor);
         window.addEventListener("focus", sync);
         window.addEventListener("blur", sync);
         root.addEventListener("mouseleave", leave);
+        document.addEventListener("visibilitychange", reshow);
+        window.addEventListener("pageshow", reshow);
 
         // Global listeners for hover state on interactive elements
         const handleMouseOver = (e: MouseEvent) => {
@@ -114,11 +154,14 @@ export function CursorProvider({ children }: { children: React.ReactNode }) {
         window.addEventListener("mouseout", handleMouseOut);
 
         return () => {
-            root.classList.remove("custom-cursor-active");
+            window.clearTimeout(timer);
+            root.classList.remove("custom-cursor-active", "cursor-resync");
             window.removeEventListener("mousemove", moveCursor);
             window.removeEventListener("focus", sync);
             window.removeEventListener("blur", sync);
             root.removeEventListener("mouseleave", leave);
+            document.removeEventListener("visibilitychange", reshow);
+            window.removeEventListener("pageshow", reshow);
             window.removeEventListener("mouseover", handleMouseOver);
             window.removeEventListener("mouseout", handleMouseOut);
         };
