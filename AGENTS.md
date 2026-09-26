@@ -171,6 +171,10 @@ frame is "AD" alone, rendered at native size: with brackets, each letter at that
 Keep these files byte-stable: Google wants a stable favicon URL, and Next's `?hash` changes
 whenever a file does.
 
+**Radii and shadows:** controls and chips are pills; every surface, cards and portraits alike, is
+20px, 24px from `md`. Shadows are ink-tinted (`var(--card-shadow)`), never black. Small controls reach
+about 44px through invisible padding or `::after`, never by drawing larger.
+
 **Portrait:** `/public/Akshay_Headshot.jpg` (1197x1497) — rendered through
 `next/image` with `fill` in two places, so each one needs a positioned ancestor
 and an accurate `sizes`. Do not revert either to a plain `<img>`: the source is
@@ -393,8 +397,9 @@ ParticleSection into AboutSection (was 6.0x) and WorkSection into MissionSection
 15.7x) are steep-into-flat, so the fix eases the END of it: extra stops across the final
 segment following 1-(1-t)^k, which decelerates the rate into the boundary instead of
 stopping it dead. Every joint on the home page now sits at 3.3x or below with a step of 0,
-and the worst one is Hero into ParticleSection at 3.0x, which is floored by 8-bit colour
-rather than by the curve.
+and Hero into ParticleSection sits at 3.0x, which is floored by 8-bit colour rather than by the
+curve. The closest to the ceiling is About into Work at 768px in dark mode, 3.28x, since the homepage
+portrait took a fixed 4:5 frame and the About section got shorter there.
 
 **Every joint is measured, and they are all 0.** Adjacent sections must agree on the
 colour at their shared edge; a mismatch shows up as a hard line across the full width,
@@ -441,9 +446,11 @@ after the first go mostly unseen, which is the same failure as a collapsed card.
 **Hero layout.** The claim sits mid-screen and the facts row at the foot, below a hairline, with the
 three keywords at its far end; stacking everything in one bottom-left column read as crowded and left
 the right half empty. The h1's measure is `max-w-[14em]`, in em so it holds three lines at every
-desktop width, and its size is `clamp(2.8rem, min(6vw, 9.5svh), 5.5rem)`, so a short laptop window
-shrinks the headline instead of pushing the facts below the fold. Measured, the `<dl>` ends inside
-the viewport at every size from 375x667 to 1920x1080, which keeps the first-screen rule above.
+desktop width, and its size is `clamp(min(2.8rem, 6.5svh), min(6vw, 9.5svh), 5.5rem)`, so a short
+laptop window or a short phone shrinks the headline instead of pushing the facts below the fold.
+Measured, the `<dl>` ends inside the viewport at every size from 360x640 to 1920x1080, which keeps the
+first-screen rule above. The download figure keeps whole from 375px (`min-[375px]:whitespace-nowrap`);
+at 360 it must wrap, or the Creator row takes three lines and the facts fall below the fold.
 
 **Download figures link the number, not the sentence.** The link wraps "15 million" or "1 million" and
 stops there, so the underline marks the claim rather than the words around it. All-time figures go to
@@ -452,6 +459,12 @@ the latest version is 0.6.6: its metadata last synced on 24 May 2026, although i
 are current. No pepy URL avoids that header, so pepy backs only the monthly count, which it states
 as "in the last 30 days". PyPI lists every release but shows no download count at all, so the
 pill's accessible name calls it the package on PyPI, not a citation for the figure.
+
+**Copy and wrapping.** Visible copy uses the typographic apostrophe ’, never `&apos;` or a straight
+tick. h2 and h3 balance their lines and paragraphs use `text-wrap: pretty`; the hero h1, the Mission
+h2 and the hero's dd rows opt out, because balance rewrapped the h1's tuned lines and started a dd
+line with the separator. Phrases that must not split use a no-break space or `whitespace-nowrap`,
+and a separator binds to the word before it.
 
 **Type floor.** `.text-label` is 13px, and nothing a reader needs goes below it. At 10.4px
 the capitals subtend under 0.2 degrees, where reading slows sharply (Legge and Bigelow 2011).
