@@ -18,7 +18,7 @@ export function AboutContent({ stats }: { stats: PackageStats }) {
             <div className="max-w-[820px] mx-auto px-6 md:px-10">
 
                 <motion.h1
-                    className="text-display-xl text-fg-90 mb-16 leading-[1.05]"
+                    className="text-display-xl text-fg-90 mb-16"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1] }}
@@ -108,7 +108,7 @@ export function AboutContent({ stats }: { stats: PackageStats }) {
                         I build in the open. Infrastructure this many teams depend on should be inspectable, and the parts that fail in production are rarely the parts anyone demos.
                     </p>
 
-                    <h2 className="text-display-m font-medium mb-6 mt-16 text-fg-90">Timeline</h2>
+                    <h2 className="text-display-m mb-6 mt-16 text-fg-90">Timeline</h2>
 
                     <div className="flex flex-col border-b border-line-8">
                         {[

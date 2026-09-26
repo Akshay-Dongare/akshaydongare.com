@@ -66,7 +66,7 @@ export function ParticleSection({ stats }: { stats: PackageStats }) {
                     className="max-w-[1400px] mx-auto w-full"
                 >
                     <h2
-                        className="text-display-xl text-fg-100 max-w-[800px] leading-[1.05]"
+                        className="text-display-xl text-fg-100 max-w-[800px]"
                         style={{ textShadow: 'var(--particle-halo)' }}
                     >
                         {/* The overlay is pointer-events-none so the mouse reaches the

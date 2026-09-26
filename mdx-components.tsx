@@ -4,7 +4,7 @@ import type { MDXComponents } from 'mdx/types'
 export function useMDXComponents(components: MDXComponents): MDXComponents {
     return {
         // Allows customizing built-in components, e.g. to add styling.
-        h1: ({ children }) => <h1 className="text-display-l font-sans tracking-tight text-[var(--color-charcoal)] mt-12 mb-6">{children}</h1>,
+        h1: ({ children }) => <h1 className="text-display-l font-sans text-[var(--color-charcoal)] mt-12 mb-6">{children}</h1>,
         h2: ({ children }) => <h2 className="text-display-m font-sans tracking-tight text-[var(--color-charcoal)] mt-10 mb-4">{children}</h2>,
         p: ({ children }) => <p className="text-body text-[var(--color-charcoal)] mb-6 opacity-90">{children}</p>,
         a: ({ href, children }) => <a href={href} className="text-body text-[var(--color-charcoal)] underline underline-offset-4 decoration-[var(--color-border)] hover:opacity-60 transition-opacity cursor-none">{children}</a>,
