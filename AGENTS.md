@@ -119,7 +119,7 @@ Google builds the result from the server HTML, so these hold it to what a recrui
 
 ### Branding
 
-**Logo:** typographical brutalist `[ AD ]` in monospace — Navbar (small, inline, inherits theme text color) and Footer (medium weight, paired with the Akshay Dongare wordmark). Do not revert to the old overlapping-circles letterform.
+**Logo:** typographical brutalist `[ AD ]` in monospace, in the Navbar (small, inline, inherits theme text color). The Footer carries the Akshay Dongare wordmark alone. Do not revert to the old overlapping-circles letterform.
 
 **Favicon:** the same mark in Geist Mono 700, parchment `#f2efe9` on void `#07090f`, as
 three files Next picks up by convention: `app/favicon.ico` (16, 32, 48), `app/icon.png` (192)
