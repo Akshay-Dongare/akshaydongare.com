@@ -33,7 +33,7 @@ export default function NotFound() {
                     This page doesn’t exist.
                 </h1>
 
-                <p className="text-body text-fg-65 leading-relaxed max-w-[560px] mb-16">
+                <p className="text-body text-fg-65 max-w-[560px] mb-16">
                     Either the address is wrong, or it points at something that used to be here.
                     Nothing on this site is behind a login, so it is usually the first one.
                 </p>

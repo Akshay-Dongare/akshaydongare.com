@@ -75,7 +75,7 @@ export function MissionSection() {
                             className="overflow-hidden"
                             inert={!approachOpen}
                         >
-                            <p className="text-body text-fg-75 leading-relaxed text-left max-w-[360px]">
+                            <p className="text-body text-fg-75 text-left max-w-[360px]">
                                 Provider routing, auth, retries, concurrency. The parts nobody demos are the parts that page you at 3am. That layer is what I work on, and I work on it in the open, because infrastructure this many teams depend on should be inspectable.
                             </p>
                         </motion.div>

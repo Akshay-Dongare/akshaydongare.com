@@ -39,7 +39,7 @@ export default function Error({
                     Something broke on my end.
                 </h1>
 
-                <p className="text-body text-fg-65 leading-relaxed max-w-[560px] mb-10">
+                <p className="text-body text-fg-65 max-w-[560px] mb-10">
                     Not your browser and not the address. Trying again usually works, because
                     most of what can fail here is the WebGL that draws the background.
                 </p>
