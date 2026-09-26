@@ -121,16 +121,12 @@
   --line-25: rgba(26, 28, 19, 0.28);
   --line-40: rgba(26, 28, 19, 0.40);
   --on-paper: #1a1c13;
-  --chip: rgba(250, 246, 238, 0.72);
-  /* ALL WORK is made of the cards' material, so it reads as more of the same without outweighing them. */
-  --more-bg: rgba(255, 253, 248, 0.72);
+  /* ALL WORK is the cards' paper in both modes, darkening one step on hover exactly as the pills do. */
+  --more-bg: #fffdf8;
   --more-ink: #1a1c13;
-  --more-edge: rgba(26, 28, 19, 0.14);
-  --more-bg-hover: rgba(255, 255, 255, 0.92);
+  --more-edge: transparent;
+  --more-bg-hover: #f1f0ea;
   --more-ink-hover: #1a1c13;
-  --chip-line: rgba(107, 42, 17, 0.28);
-  --chip-line-hover: rgba(107, 42, 17, 0.6);
-  --chip-hover: rgba(107, 42, 17, 0.08);
   --pill-ink: #faf6ee;
   --diff-add: #165626;
   --diff-del: #88282c;
@@ -146,16 +142,18 @@
   --nav-glass-on-light: rgba(250, 246, 238, 0.6);
   --particle-halo: 0 2px 24px rgba(250, 246, 238, 0.5);
   --tension-ring: rgba(26, 28, 19, 0.75);
-  /* The homepage cards' material; /work's pale ground takes the same opacity as the homepage's. */
-  --work-card: rgba(255, 253, 248, 0.72);
+  /* /work cards: opaque paper, separated by one soft shadow; hover deepens the shadow and nothing else. */
+  --work-card: #fffdf8;
+  --work-card-hover-bg: #fffdf8;
+  --work-card-edge: transparent;
+  --work-card-shadow: 0 4px 12px rgba(26, 28, 19, 0.06);
   --code-mask: linear-gradient(to bottom, transparent 0%, #000 24%, #000 88%, transparent 100%);
-  --work-card-hover: 0 8px 40px rgba(26, 28, 19, 0.08);
+  --work-card-hover: 0 4px 16px rgba(26, 28, 19, 0.12);
   --code-glow: none;
-  --card-shadow: 0 1px 2px rgba(26, 28, 19, 0.06), 0 10px 28px rgba(26, 28, 19, 0.08);
-  /* One surface for all four homepage Work cards, translucent so the section's gradient tints it; the logos carry the colour. */
-  --card: rgba(255, 253, 248, 0.72);
-  --card-edge: rgba(26, 28, 19, 0.08);
-  --card-sheen: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  /* The homepage Work cards: one opaque paper in both modes, one soft shadow, the logo as the only colour. */
+  --card: #fffdf8;
+  --card-edge: transparent;
+  --card-shadow: 0 4px 12px rgba(26, 28, 19, 0.06);
   --masthead-glow: radial-gradient(90% 70% at 50% -8%, rgba(213, 120, 76, 0.12) 0%, rgba(213, 120, 76, 0.065) 34%, rgba(213, 120, 76, 0.02) 60%, transparent 78%), radial-gradient(52% 44% at 18% 2%, rgba(124, 140, 75, 0.06) 0%, rgba(124, 140, 75, 0.017) 48%, transparent 74%);
   --spine-hero: linear-gradient(to bottom, #faf6ee 0%, #f3ecdd 100%);
   --depth-hero: linear-gradient(135deg, #faf6ee 0%, #f3ecdd 55%, #f5efe2 100%);
@@ -198,15 +196,6 @@
   --line-25: color-mix(in oklab, #ffffff 25%, transparent);
   --line-40: color-mix(in oklab, #ffffff 40%, transparent);
   --on-paper: var(--color-charcoal);
-  --chip: rgba(0, 0, 0, 0.3);
-  --more-bg: rgba(57, 69, 86, 0.88);
-  --more-ink: #ffffff;
-  --more-edge: rgba(255, 255, 255, 0.14);
-  --more-bg-hover: rgba(69, 82, 102, 0.94);
-  --more-ink-hover: #ffffff;
-  --chip-line: rgba(255, 255, 255, 0.25);
-  --chip-line-hover: rgba(255, 255, 255, 0.6);
-  --chip-hover: rgba(255, 255, 255, 0.1);
   --pill-ink: #ffffff;
   --diff-add: #7fd0a3;
   --diff-del: #e08b94;
@@ -221,17 +210,13 @@
   --nav-glass-on-light: rgba(242, 239, 233, 0.6);
   --particle-halo: 0 2px 24px rgba(7, 9, 15, 0.5);
   --tension-ring: rgba(255, 255, 255, 0.55);
-  /* The homepage slate, far less opaque: on /work's near-black ground 0.88 would read as heavy slabs. */
-  --work-card: rgba(57, 69, 86, 0.35);
+  /* On /work's near-black a card rises by lightness alone, one step and one more on hover, with no glow or lift. */
+  --work-card: var(--blend-surface);
+  --work-card-hover-bg: #232a36;
+  --work-card-shadow: none;
   --code-mask: linear-gradient(to bottom, transparent 0%, #000 12%, #000 88%, transparent 100%);
-  --work-card-hover: 0 8px 40px rgba(107, 159, 212, 0.07);
+  --work-card-hover: none;
   --code-glow: 0 0 12px rgba(255, 255, 255, 0.08);
-  --card-shadow: 0 10px 28px rgba(7, 9, 15, 0.18);
-  /* A mid slate: in dark mode these cards sit on the light end of the bridge, where near-black read as holes.
-     0.88 is as translucent as it goes before white/80 labels over the palest ground drop under 4.5:1. */
-  --card: rgba(57, 69, 86, 0.88);
-  --card-edge: rgba(255, 255, 255, 0.1);
-  --card-sheen: inset 0 1px 0 rgba(255, 255, 255, 0.07);
   --masthead-glow: radial-gradient(90% 70% at 50% -8%, rgba(107, 159, 212, 0.11) 0%, rgba(107, 159, 212, 0.06) 34%, rgba(107, 159, 212, 0.018) 60%, transparent 78%), radial-gradient(52% 44% at 18% 2%, rgba(141, 163, 181, 0.05) 0%, rgba(141, 163, 181, 0.014) 48%, transparent 74%);
   --spine-hero: linear-gradient(to bottom, var(--blend-void) 0%, var(--blend-deep) 100%);
   --depth-hero: linear-gradient(135deg, var(--blend-void) 0%, var(--blend-deep) 55%, #0a0e15 100%);
@@ -245,6 +230,53 @@
   --spine-contact: linear-gradient(to bottom, var(--blend-void) 0%, var(--blend-deep) 18%, #0e1928 42%, #0c1520 68%, var(--blend-void) 100%);
   --spine-footer: linear-gradient(to bottom, var(--blend-void) 0%, var(--blend-deep) 28%, var(--blend-deep) 62%, var(--blend-void) 100%);
   --spine-page: linear-gradient(to bottom, var(--blend-deep) 0%, var(--blend-void) 100%);
+}
+
+/* A surface that keeps its section's paper in both modes. In dark mode the homepage Work cards still sit on
+   the light arm of the bridge, so everything inside them takes the light ink ramp whatever <html> says. */
+.surface-paper {
+  color-scheme: light;
+  --fg-100: #1a1c13;
+  --fg-90: #1a1c13;
+  --fg-85: #1a1c13;
+  --fg-80: #272a1e;
+  --fg-75: #272a1e;
+  --fg-70: #272a1e;
+  --fg-65: #272a1e;
+  --fg-60: #3d422c;
+  --fg-55: #3d422c;
+  --fg-50: #3d422c;
+  --lbl-100: #1a1c13;
+  --lbl-90: #1a1c13;
+  --lbl-85: #1a1c13;
+  --lbl-80: #272a1e;
+  --lbl-75: #272a1e;
+  --lbl-70: #272a1e;
+  --lbl-65: #272a1e;
+  --lbl-60: #3d422c;
+  --lbl-55: #3d422c;
+  --lbl-50: #3d422c;
+  --line-5: rgba(26, 28, 19, 0.04);
+  --line-8: rgba(26, 28, 19, 0.10);
+  --line-20: rgba(26, 28, 19, 0.24);
+  --line-25: rgba(26, 28, 19, 0.28);
+  --line-40: rgba(26, 28, 19, 0.40);
+  --chip: rgba(26, 28, 19, 0.06);
+  --chip-hover: rgba(26, 28, 19, 0.1);
+  --chip-line: transparent;
+  --chip-line-hover: transparent;
+}
+
+/* Without the shadows some readers cannot see where a card ends, so asking for more contrast brings the edges back. */
+@media (prefers-contrast: more) {
+  :root {
+    --card-edge: rgba(26, 28, 19, 0.5);
+    --more-edge: rgba(26, 28, 19, 0.5);
+    --work-card-edge: rgba(26, 28, 19, 0.5);
+  }
+  [data-mode="dark"] {
+    --work-card-edge: rgba(255, 255, 255, 0.4);
+  }
 }
 
 @media (prefers-reduced-motion: no-preference) {

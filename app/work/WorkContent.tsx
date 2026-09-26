@@ -142,7 +142,7 @@ export function WorkContent({ stats }: { stats: PackageStats }) {
                     I mostly work on LLM infrastructure. Older projects are further down.
                 </motion.p>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-10">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     {ALL_PROJECTS.map((proj, i) => (
                         <motion.div
                             key={proj.title}
@@ -152,13 +152,13 @@ export function WorkContent({ stats }: { stats: PackageStats }) {
                         >
                             {/* The title link stretches over the card through its ::after, so the card stays one target while
                                 the description can hold links of its own; an <a> inside an <a> is invalid HTML. */}
-                            <div className="group relative h-full border border-line-8 rounded-lg p-8 md:p-10 cursor-none shadow-[var(--card-sheen)] hover:border-line-20 hover:-translate-y-1 hover:shadow-[var(--card-sheen),var(--work-card-hover)] transition-all duration-[300ms] ease-[cubic-bezier(0.25,0.1,0.25,1)] bg-[var(--work-card)]">
+                            <div className="group relative h-full border border-[var(--work-card-edge)] rounded-[20px] md:rounded-3xl p-6 md:p-8 cursor-none bg-[var(--work-card)] shadow-[var(--work-card-shadow)] hover:bg-[var(--work-card-hover-bg)] hover:shadow-[var(--work-card-hover)] transition-[background-color,box-shadow] duration-300 ease-[cubic-bezier(0,0,0.5,1)]">
                                 {/* A row of its own, since Tech Mahindra's 4:1 lockup broke titles inline. 40px holds the
                                     tallest mark, Harvard's shield, and the destination sits at its far end. */}
                                 <div className="flex h-10 items-center justify-between gap-4 mb-5">
                                     {proj.logo && <OrgLogo org={proj.logo} alt={proj.affiliation} />}
                                     <span aria-hidden="true" className="hidden lg:inline-flex shrink-0 whitespace-nowrap items-baseline gap-2 font-mono text-fg-60 lg:opacity-0 lg:-translate-x-4 lg:group-hover:translate-x-0 lg:group-hover:opacity-100 transition-all duration-300">
-                                        <span className="text-label text-lbl-50">{destinationLabel(proj.link)}</span>
+                                        <span className="text-label text-fg-60">{destinationLabel(proj.link)}</span>
                                         <span className="text-xl">[ → ]</span>
                                     </span>
                                 </div>
@@ -167,7 +167,7 @@ export function WorkContent({ stats }: { stats: PackageStats }) {
                                     <Link
                                         href={proj.link}
                                         aria-label={`${proj.title}${proj.affiliation ? `, ${proj.affiliation}` : ""}, on ${destinationLabel(proj.link).toLowerCase()}`}
-                                        className="cursor-none outline-none after:absolute after:inset-0 after:rounded-lg focus-visible:after:outline-2 focus-visible:after:outline-offset-2 focus-visible:after:outline-current"
+                                        className="cursor-none outline-none after:absolute after:inset-0 after:rounded-[20px] md:after:rounded-3xl focus-visible:after:outline-2 focus-visible:after:outline-offset-2 focus-visible:after:outline-current"
                                     >
                                         {proj.title.replaceAll(" · ", "\u00a0· ")}
                                     </Link>
@@ -179,7 +179,7 @@ export function WorkContent({ stats }: { stats: PackageStats }) {
 
                                 <div className="flex flex-wrap gap-3 mt-auto">
                                     {proj.tags.map(tag => (
-                                        <span key={tag} className="text-label text-lbl-50 bg-line-5 px-3 py-1.5 rounded-sm">
+                                        <span key={tag} className="text-label text-fg-60 bg-line-5 px-3 py-1.5 rounded-full">
                                             {tag}
                                         </span>
                                     ))}

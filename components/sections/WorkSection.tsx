@@ -23,13 +23,13 @@ const buildProjects = (stats: PackageStats) => [
         logo: "langchain" as const,
         role: (
             <>
-                <Link href={LITELLM_REPO} className="underline underline-offset-4 decoration-line-20 hover:text-fg-55 transition-colors cursor-none">langchain-litellm</Link>
+                <Link href={LITELLM_REPO} className="underline underline-offset-4 decoration-line-20 hover:decoration-current transition-colors cursor-none">langchain-litellm</Link>
                 {"\u00a0· creator and lead maintainer"}
             </>
         ),
         line: (
             <>
-                LangChain&apos;s official LiteLLM integration: one Python interface to 140+ model providers, developed inside the <Link href={LANGCHAIN_ORG} className="underline underline-offset-4 decoration-line-20 hover:text-fg-55 transition-colors cursor-none">langchain-ai</Link> organization.
+                LangChain&apos;s official LiteLLM integration: one Python interface to 140+ model providers, developed inside the <Link href={LANGCHAIN_ORG} className="underline underline-offset-4 decoration-line-20 hover:decoration-current transition-colors cursor-none">langchain-ai</Link> organization.
             </>
         ),
         pills: [
@@ -49,7 +49,7 @@ const buildProjects = (stats: PackageStats) => [
         logo: "harvard" as const,
         role: (
             <>
-                <Link href={GAMI_SITE} className="underline underline-offset-4 decoration-line-20 hover:text-fg-55 transition-colors cursor-none">Global Alliance for Medical Innovation</Link>
+                <Link href={GAMI_SITE} className="underline underline-offset-4 decoration-line-20 hover:decoration-current transition-colors cursor-none">Global Alliance for Medical Innovation</Link>
                 {"\u00a0· lead developer"}
             </>
         ),
@@ -83,11 +83,11 @@ export function WorkSection({ stats }: { stats: PackageStats }) {
                     </h2>
                 </motion.div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     {PROJECTS.map((project, i) => (
                         <motion.article
                             key={project.org}
-                            className="relative rounded-xl overflow-hidden border border-[var(--card-edge)] bg-[var(--card)] shadow-[var(--card-sheen),var(--card-shadow)]"
+                            className="surface-paper relative rounded-[20px] md:rounded-3xl overflow-hidden border border-[var(--card-edge)] bg-[var(--card)] shadow-[var(--card-shadow)]"
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
@@ -96,10 +96,10 @@ export function WorkSection({ stats }: { stats: PackageStats }) {
                             <div className="relative h-full p-6 md:p-8 flex flex-col gap-5">
                                 <div className="flex flex-col gap-2">
                                     <div className="flex items-center gap-3">
-                                        <OrgLogo org={project.logo} />
-                                        <h3 className="text-display-m text-fg-100 leading-none">{project.org}</h3>
+                                        <OrgLogo org={project.logo} paper className="[--logo-s:1.75rem] md:[--logo-s:2rem]" />
+                                        <h3 className="text-[1.5rem] md:text-[1.75rem] font-semibold leading-[1.1] tracking-[-0.01em] text-fg-100">{project.org}</h3>
                                     </div>
-                                    <p className="text-label text-lbl-80">{project.role}</p>
+                                    <p className="text-[0.9375rem] leading-snug text-fg-60">{project.role}</p>
                                 </div>
                                 <p className="text-body text-fg-90 max-w-[46ch]">{project.line}</p>
                                 {/* Each claim is its own link to the evidence; the name keeps the visible words (SC 2.5.3). */}

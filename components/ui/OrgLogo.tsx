@@ -20,7 +20,8 @@ const SIZE = "[--logo-s:2rem] md:[--logo-s:2.25rem]";
 
 // Decorative by default, since the name usually sits beside the mark; pass alt where it does not.
 // Served as is, since the optimiser's srcset stops at 2x; width and height only set the aspect ratio.
-export function OrgLogo({ org, className = SIZE, alt = "" }: { org: Org; className?: string; alt?: string }) {
+// paper pins a two-variant mark to its light-ground file, for a surface that stays paper in dark mode.
+export function OrgLogo({ org, className = SIZE, alt = "", paper = false }: { org: Org; className?: string; alt?: string; paper?: boolean }) {
     if (org === "self") {
         // Text in the nav's mono, so it takes ink or white from the mode; 0.49em gives it the same area.
         return (
@@ -36,6 +37,7 @@ export function OrgLogo({ org, className = SIZE, alt = "" }: { org: Org; classNa
     const mark = (src: string, variant = "") => (
         <Image src={src} alt={alt} width={logo.w} height={logo.h} unoptimized loading={loading} style={style} className={`${className} w-auto shrink-0 ${variant}`.trim()} />
     );
+    if (!("dark" in logo) || paper) return mark(logo.src);
     // Both variants ship and CSS shows the one for the mode, so it is right before hydration.
-    return "dark" in logo ? <>{mark(logo.src, "dark:hidden")}{mark(logo.dark, "light:hidden")}</> : mark(logo.src);
+    return <>{mark(logo.src, "dark:hidden")}{mark(logo.dark, "light:hidden")}</>;
 }
