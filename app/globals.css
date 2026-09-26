@@ -281,6 +281,17 @@
   }
 }
 
+/* Headings and short values balance their lines and paragraphs avoid a lone last word. The h1 is left alone:
+   balance would rewrap the hero's tuned three lines. */
+@layer base {
+  h2, h3, dd {
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
+  }
+}
+
 @media (prefers-reduced-motion: no-preference) {
   html {
     scroll-behavior: smooth;
