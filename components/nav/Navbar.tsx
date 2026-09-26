@@ -163,7 +163,8 @@ export function Navbar() {
                             <Link
                                 key={link.name}
                                 href={link.href}
-                                className={`text-[0.9rem] font-sans hover:opacity-60 transition-opacity duration-200 cursor-none ${textColorClass}`}
+                                aria-current={pathname === link.href ? "page" : undefined}
+                                className={`text-[0.9rem] font-sans hover:opacity-60 transition-opacity duration-200 cursor-none aria-[current=page]:underline aria-[current=page]:underline-offset-[6px] aria-[current=page]:decoration-1 ${textColorClass}`}
                             >
                                 {link.name}
                             </Link>
@@ -221,8 +222,9 @@ export function Navbar() {
                                 >
                                     <Link
                                         href={link.href}
+                                        aria-current={pathname === link.href ? "page" : undefined}
                                         onClick={() => setIsMobileMenuOpen(false)}
-                                        className="text-fg-100 text-display-m font-sans cursor-none hover:opacity-60 transition-opacity"
+                                        className="text-fg-100 text-display-m font-sans cursor-none hover:opacity-60 transition-opacity aria-[current=page]:underline aria-[current=page]:underline-offset-[8px] aria-[current=page]:decoration-2"
                                     >
                                         {link.name}
                                     </Link>
