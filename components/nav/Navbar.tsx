@@ -142,7 +142,7 @@ export function Navbar() {
                     <Link
                         href="/"
                         aria-label={pathname === "/" ? "Akshay Dongare, back to top" : "Akshay Dongare, home"}
-                        className="flex items-center cursor-none pointer-events-auto"
+                        className="flex items-center -m-3 p-3 cursor-none pointer-events-auto"
                         onClick={(e) => {
                             setIsMobileMenuOpen(false);
                             if (pathname === "/") {

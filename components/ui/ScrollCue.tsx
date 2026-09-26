@@ -23,7 +23,7 @@ export function ScrollCue({ tone = "auto" }: { tone?: "auto" | "paper" }) {
                 type="button"
                 onClick={toNext}
                 aria-label="Scroll to the next section"
-                className={`flex items-center gap-3 py-2 cursor-none text-label transition-colors ${ink}`}
+                className={`relative flex items-center gap-3 py-2 cursor-none text-label transition-colors after:absolute after:inset-x-0 after:-inset-y-1 after:content-[''] ${ink}`}
                 animate={{ y: [0, 4, 0] }}
                 transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
             >

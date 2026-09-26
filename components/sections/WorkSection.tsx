@@ -127,7 +127,7 @@ export function WorkSection({ stats }: { stats: PackageStats }) {
                                             key={pill.label}
                                             href={pill.href}
                                             aria-label={pill.name}
-                                            className="relative z-10 inline-flex items-center gap-2 cursor-none text-label text-lbl-100 bg-chip hover:bg-[var(--chip-hover)] shadow-[inset_0_0_0_1px_var(--chip-line)] hover:shadow-[inset_0_0_0_1px_var(--chip-line-hover)] transition-[background-color,box-shadow] duration-200 px-3 py-1.5 rounded-full"
+                                            className="relative z-10 inline-flex items-center gap-2 cursor-none after:absolute after:inset-x-0 after:-inset-y-1 after:content-[''] text-label text-lbl-100 bg-chip hover:bg-[var(--chip-hover)] shadow-[inset_0_0_0_1px_var(--chip-line)] hover:shadow-[inset_0_0_0_1px_var(--chip-line-hover)] transition-[background-color,box-shadow] duration-200 px-3 py-1.5 rounded-full"
                                         >
                                             {/* A no-break space keeps the arrow on the last word when a long pill wraps on a phone. */}
                                             <span>{pill.label}{"\u00a0→"}</span>

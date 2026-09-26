@@ -8,7 +8,7 @@ interface FooterLinkProps {
 
 function FooterLink({ href, label }: FooterLinkProps) {
     return (
-        <Link href={href} className="group flex items-center gap-2 cursor-none text-label text-lbl-55 hover:text-lbl-90 light:hover:text-fg-100 transition-colors duration-200">
+        <Link href={href} className="group flex items-center gap-2 py-2 -my-2 cursor-none text-label text-lbl-55 hover:text-lbl-90 light:hover:text-fg-100 transition-colors duration-200">
             <span>{label}</span>
             <span className="shrink-0 whitespace-nowrap text-fg-50 group-hover:text-fg-90 transition-colors duration-200">[<span className="inline-block mx-1 font-mono">→</span>]</span>
         </Link>
