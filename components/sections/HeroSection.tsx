@@ -101,7 +101,7 @@ export function HeroSection({ stats }: { stats: PackageStats }) {
                         <dd className="text-[1.0625rem] md:text-[1.1875rem] font-medium text-fg-90">
                             langchain-litellm, <Link
                                 href={PYPI_URL}
-                                className="whitespace-nowrap pointer-events-auto cursor-none hover:underline hover:underline-offset-4 hover:decoration-line-40"
+                                className="min-[375px]:whitespace-nowrap pointer-events-auto cursor-none hover:underline hover:underline-offset-4 hover:decoration-line-40"
                             >
                                 {stats.long}
                             </Link> downloads
