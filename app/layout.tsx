@@ -148,7 +148,7 @@ export default function RootLayout({
               </a>
             </div>
             <Navbar />
-            <main id="main" tabIndex={-1} className="min-h-screen outline-none">
+            <main id="main" className="min-h-screen">
               {children}
             </main>
             <Footer />
