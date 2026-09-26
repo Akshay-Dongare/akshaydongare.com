@@ -81,7 +81,7 @@ export function HeroSection({ stats }: { stats: PackageStats }) {
                         <span className="text-label text-lbl-70"><span aria-hidden="true">{"->"}</span> ai platform engineer{"\u00a0·"} llm{"\u00a0"}infrastructure</span>
                     </div>
 
-                    <h1 className="text-display-xl text-fg-100 font-sans leading-[1.05] tracking-[-0.02em] max-w-[14em]" style={{ fontSize: "clamp(min(2.8rem, 6.5svh), min(6vw, 9.5svh), 5.5rem)" }}>
+                    <h1 className="text-display-xl text-fg-100 font-sans max-w-[14em]" style={{ fontSize: "clamp(min(2.8rem, 6.5svh), min(6vw, 9.5svh), 5.5rem)" }}>
                         I build the layer between your application and the model, and I{"\u00a0"}make it hold.
                     </h1>
                 </motion.div>

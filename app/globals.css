@@ -381,8 +381,24 @@ html:not(.custom-cursor-active) .cursor-none {
   }
 }
 
-/* @utility, not @layer utilities: Tailwind sorts it with its own utilities, so lg:text-* and
-   leading-* beside it win. In @layer it came later in the sheet and silently beat both. */
+/* @utility, not @layer utilities: Tailwind sorts these with its own utilities, so a variant or a
+   single-property utility beside one wins. In @layer they came later in the sheet and beat both. */
+@utility text-display-xl {
+  font-size: clamp(2.8rem, 6vw, 5.5rem);
+  font-weight: 400;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+@utility text-display-l {
+  font-size: clamp(2rem, 4vw, 3.8rem);
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: -0.015em;
+}
+@utility text-display-m {
+  font-size: clamp(1.4rem, 2.5vw, 2.4rem);
+  font-weight: 400;
+}
 @utility text-body {
   /* 16px on phones (already ~40 chars/line there), scaling to 18px on desktop.
      Larger type in a fixed column also pulls characters-per-line down. */
@@ -390,41 +406,25 @@ html:not(.custom-cursor-active) .cursor-none {
   line-height: 1.6;
   font-weight: 400;
 }
+/* Typography only, no colour: one here ties the colour class beside it on specificity
+   and layer, so source order would pick the winner. Every call site sets its own. */
+/* 13px floor: at 10.4px the capitals subtend under 0.2 degrees, below where reading slows sharply. */
+@utility text-label {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.8125rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+@utility text-code {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.8rem;
+}
 
 @layer utilities {
-  .text-display-xl {
-    font-size: clamp(2.8rem, 6vw, 5.5rem);
-    font-weight: 400;
-    line-height: 1.05;
-    letter-spacing: -0.02em;
-  }
-  .text-display-l {
-    font-size: clamp(2rem, 4vw, 3.8rem);
-    font-weight: 400;
-    line-height: 1.1;
-    letter-spacing: -0.015em;
-  }
-  .text-display-m {
-    font-size: clamp(1.4rem, 2.5vw, 2.4rem);
-    font-weight: 400;
-  }
   /* A link in .text-body copy: the padding grows each line fragment to fill its 1.6 line box, a 24px target
      (SC 2.5.8) with no text moved. Below 0.11em a 16px fragment stays under 24px; above 0.146em it outgrows an 18px line. */
   .link-in-text {
     padding-block: 0.125em;
-  }
-  /* Typography only, no colour: one here ties the colour class beside it on specificity
-     and layer, so source order would pick the winner. Every call site sets its own. */
-  /* 13px floor: at 10.4px the capitals subtend under 0.2 degrees, below where reading slows sharply. */
-  .text-label {
-    font-family: var(--font-geist-mono), monospace;
-    font-size: 0.8125rem;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-  }
-  .text-code {
-    font-family: var(--font-geist-mono), monospace;
-    font-size: 0.8rem;
   }
 }
 

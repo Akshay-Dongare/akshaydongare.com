@@ -82,7 +82,7 @@ export function WorkSection({ stats }: { stats: PackageStats }) {
                     viewport={{ once: true }}
                     transition={{ duration: 0.35 }}
                 >
-                    <h2 className="text-display-l text-on-paper max-w-[600px] text-right leading-[1.05]">
+                    <h2 className="text-display-l text-on-paper max-w-[600px] text-right">
                         What I’ve built, and what it holds up under
                     </h2>
                 </motion.div>

@@ -53,7 +53,7 @@ export function ContactSection() {
                 <div className="relative w-full max-w-[1400px] mx-auto flex flex-col gap-8 lg:gap-0 lg:flex-row lg:justify-between lg:items-start">
 
                     <motion.h2
-                        className="text-display-xl text-fg-100 max-w-[800px] leading-[1.05]"
+                        className="text-display-xl text-fg-100 max-w-[800px]"
                         initial={{ opacity: 0, y: 30 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true, margin: "-10%" }}

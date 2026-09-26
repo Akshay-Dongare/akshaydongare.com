@@ -20,7 +20,7 @@ export function ContactContent() {
             <div className="w-full max-w-[1000px] px-6 md:px-12 lg:px-20">
 
                 <motion.h1
-                    className="text-display-xl tracking-tight text-fg-90 mb-6"
+                    className="text-display-xl text-fg-90 mb-6"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1] }}

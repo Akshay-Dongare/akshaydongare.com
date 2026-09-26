@@ -21,7 +21,7 @@ export function AboutSection({ stats }: { stats: PackageStats }) {
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true, margin: "-10%" }}
                         transition={{ duration: 0.35 }}
-                        className="text-display-l text-on-paper mb-10 max-w-[720px] leading-tight"
+                        className="text-display-l text-on-paper mb-10 max-w-[720px]"
                     >
                         I maintain <span className="whitespace-nowrap">langchain-litellm</span>, LangChain’s official interface to 140+ model providers, downloaded <Link
                             href={PYPI_URL}

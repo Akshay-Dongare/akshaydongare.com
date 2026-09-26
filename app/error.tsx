@@ -35,7 +35,7 @@ export default function Error({
 
                 <p className="text-label text-lbl-55 mb-6">[ ERROR ]</p>
 
-                <h1 className="text-display-xl text-fg-90 mb-8 leading-[1.05]">
+                <h1 className="text-display-xl text-fg-90 mb-8">
                     Something broke on my end.
                 </h1>
 
