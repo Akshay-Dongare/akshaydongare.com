@@ -155,7 +155,7 @@ export function WorkSection({ stats }: { stats: PackageStats }) {
                     viewport={{ once: true }}
                     transition={{ duration: 0.35 }}
                 >
-                    <p className="text-display-l text-fg-100">
+                    <p className="text-display-l text-fg-100 md:text-balance">
                         Open source you can read. Production work you can check.
                     </p>
                 </motion.div>
