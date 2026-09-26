@@ -413,16 +413,8 @@ html:not(.custom-cursor-active) .cursor-none {
   .link-in-text {
     padding-block: 0.125em;
   }
-  /* Typography only, deliberately no colour. It used to set --color-muted, which
-     silently beat every text-white/NN sitting next to it: same specificity, same
-     @layer, and this rule comes later in the sheet. Every .text-label on the site
-     rendered #8a8a8a whatever the markup asked for. Mostly that looked fine on the
-     dark canvas and hid the bug, but AboutSection's "MORE ABOUT ME" asks for
-     --color-charcoal on the light mist-to-parchment gradient, and #8a8a8a there
-     measured 2.78:1 at 10.4px — an SC 1.4.3 AA failure that the authored #1c1c1c
-     would have cleared at ~14:1. Callers set their own colour; the two that did not
-     were checked (ExpandToggle always passes one, and the Footer tagline's <p>s carry
-     text-white/70 themselves). */
+  /* Typography only, no colour: one here ties the colour class beside it on specificity
+     and layer, so source order would pick the winner. Every call site sets its own. */
   /* 13px floor: at 10.4px the capitals subtend under 0.2 degrees, below where reading slows sharply. */
   .text-label {
     font-family: var(--font-geist-mono), monospace;
