@@ -281,6 +281,18 @@
   }
 }
 
+/* With transparency effects turned off in the OS, the bar is solid; the 0.6 glass stays for everyone else. */
+@media (prefers-reduced-transparency: reduce) {
+  :root, [data-mode="light"] {
+    --nav-glass: #faf6ee;
+    --nav-glass-on-light: #faf6ee;
+  }
+  [data-mode="dark"] {
+    --nav-glass: #07090f;
+    --nav-glass-on-light: #f2efe9;
+  }
+}
+
 /* Headings and short values balance their lines and paragraphs avoid a lone last word. The h1 is left alone:
    balance would rewrap the hero's tuned three lines. */
 @layer base {

@@ -66,7 +66,7 @@ export function Navbar() {
     const bgClass = isMobileMenuOpen
         ? "bg-transparent"
         : isScrolled
-            ? (theme === "dark" ? "bg-[var(--nav-glass)] backdrop-blur-md" : "bg-[var(--nav-glass-on-light)] backdrop-blur-md")
+            ? (theme === "dark" ? "bg-[var(--nav-glass)] backdrop-blur-md [@media(prefers-reduced-transparency:reduce)]:backdrop-blur-none" : "bg-[var(--nav-glass-on-light)] backdrop-blur-md [@media(prefers-reduced-transparency:reduce)]:backdrop-blur-none")
             : "bg-transparent";
 
     // Prevent scrolling when mobile menu is open
