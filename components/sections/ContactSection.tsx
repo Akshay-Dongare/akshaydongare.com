@@ -59,7 +59,7 @@ export function ContactSection() {
                         viewport={{ once: true, margin: "-10%" }}
                         transition={{ duration: 0.35 }}
                     >
-                        Tell me what you&apos;re building.
+                        Tell me what you’re building.
                     </motion.h2>
 
                     <div className="flex flex-col items-start lg:items-end gap-1 pointer-events-auto">

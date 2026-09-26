@@ -31,7 +31,7 @@ const buildProjects = (stats: PackageStats) => [
         ),
         line: (
             <>
-                LangChain&apos;s official LiteLLM integration: one Python interface to 140+ model providers, developed inside the <Link href={LANGCHAIN_ORG} className="relative z-10 underline underline-offset-4 decoration-line-20 hover:decoration-current transition-colors cursor-none">langchain-ai</Link> organization.
+                LangChain’s official LiteLLM integration: one Python interface to 140+ model providers, developed inside the <Link href={LANGCHAIN_ORG} className="relative z-10 underline underline-offset-4 decoration-line-20 hover:decoration-current transition-colors cursor-none">langchain-ai</Link> organization.
             </>
         ),
         pills: [
@@ -44,7 +44,7 @@ const buildProjects = (stats: PackageStats) => [
         slug: "iso",
         logo: "iso" as const,
         role: "Companion · applied AI engineer",
-        line: "Designed the agentic graph patterns ISO's standards assistant runs on, and the evaluation that keeps its answers on official ISO sources.",
+        line: "Designed the agentic graph patterns ISO’s standards assistant runs on, and the evaluation that keeps its answers on official ISO sources.",
         pills: [{ label: "Grounded in ISO sources", href: LINKEDIN_EXPERIENCE, name: "Grounded in ISO sources: the ISO role on LinkedIn" }],
     },
     {
@@ -83,7 +83,7 @@ export function WorkSection({ stats }: { stats: PackageStats }) {
                     transition={{ duration: 0.35 }}
                 >
                     <h2 className="text-display-l text-on-paper max-w-[600px] text-right leading-[1.05]">
-                        What I&apos;ve built, and what it holds up under
+                        What I’ve built, and what it holds up under
                     </h2>
                 </motion.div>
 

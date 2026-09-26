@@ -76,7 +76,7 @@ export function ParticleSection({ stats }: { stats: PackageStats }) {
                             className="whitespace-nowrap pointer-events-auto cursor-none hover:underline hover:underline-offset-[10px] hover:decoration-line-40 transition-colors"
                         >
                             {stats.monthlyLong}
-                        </Link> installs a month means someone else&apos;s production depends on your defaults.
+                        </Link> installs a month means someone else’s production depends on your defaults.
                     </h2>
                 </motion.div>
             </div>

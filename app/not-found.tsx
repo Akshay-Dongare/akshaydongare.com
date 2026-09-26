@@ -30,7 +30,7 @@ export default function NotFound() {
                 <p className="text-label text-lbl-55 mb-6">[ 404 ]</p>
 
                 <h1 className="text-display-xl text-fg-90 mb-8 leading-[1.05]">
-                    This page doesn&apos;t exist.
+                    This page doesn’t exist.
                 </h1>
 
                 <p className="text-body text-fg-65 leading-relaxed max-w-[560px] mb-16">

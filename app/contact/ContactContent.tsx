@@ -25,7 +25,7 @@ export function ContactContent() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1] }}
                 >
-                    Let&apos;s talk.
+                    Let’s talk.
                 </motion.h1>
 
                 <motion.p

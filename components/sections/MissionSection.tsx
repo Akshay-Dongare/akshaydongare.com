@@ -44,7 +44,7 @@ export function MissionSection() {
                         className="w-full md:w-2/3 max-w-[800px]"
                     >
                         <h2 className="text-display-xl text-fg-100">
-                            Most LLM systems don&apos;t fail at the model. They fail at the plumbing.
+                            Most LLM systems don’t fail at the model. They fail at the plumbing.
                         </h2>
                     </motion.div>
 
