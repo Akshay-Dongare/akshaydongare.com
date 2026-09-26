@@ -176,10 +176,11 @@ export function CodeSection() {
                     style={{ y: codeY }}
                     className="w-full md:w-1/2"
                 >
+                    {/* Named by its visible label plus a hidden PR title, so the two cannot drift apart (SC 2.5.3). Below md the link
+                        is the scroller, since browsers make a scroller with nothing focusable inside a Tab stop of its own. */}
                     <Link
                         href={PR_URL}
-                        aria-label="Read pull request 161 on GitHub: remove global litellm module mutations from _client_params"
-                        className="group block pointer-events-auto cursor-none"
+                        className="group block pointer-events-auto cursor-none max-md:overflow-x-auto max-md:overscroll-x-contain max-md:-mx-6 max-md:px-6 max-md:focus-visible:-outline-offset-2"
                     >
                         {/* Visible at rest rather than on hover: touch has no hover, and the
                             code has to look clickable before anyone taps it. */}
@@ -187,12 +188,13 @@ export function CodeSection() {
                             Read this diff on GitHub
                             <span aria-hidden="true" className="shrink-0 whitespace-nowrap text-fg-55 group-hover:text-fg-90 transition-colors">[ &rarr; ]</span>
                         </span>
-                    <pre className="font-mono text-[0.75rem] leading-relaxed whitespace-pre max-md:overflow-x-auto max-md:overscroll-x-contain max-md:pointer-events-auto max-md:-mx-6 max-md:px-6">
+                        <span className="sr-only">: pull request 161, remove global litellm module mutations from _client_params</span>
+                    <pre aria-hidden="true" className="font-mono text-[0.75rem] leading-relaxed whitespace-pre max-md:w-max">
                         <code className="block w-max"><DiffLines source={DIFF} /></code>
                     </pre>
 
                     {/* Second hunk of the same PR, not a repeat of the first */}
-                    <pre className="font-mono text-[0.75rem] leading-relaxed whitespace-pre mt-12 max-md:overflow-x-auto max-md:overscroll-x-contain max-md:pointer-events-auto max-md:-mx-6 max-md:px-6">
+                    <pre aria-hidden="true" className="font-mono text-[0.75rem] leading-relaxed whitespace-pre mt-12 max-md:w-max">
                         <code className="block w-max"><DiffLines source={TEST} /></code>
                     </pre>
                     </Link>
