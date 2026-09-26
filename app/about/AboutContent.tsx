@@ -27,7 +27,7 @@ export function AboutContent({ stats }: { stats: PackageStats }) {
                 </motion.h1>
 
                 <motion.div
-                    className="relative mb-16 mx-auto w-full max-w-[320px] aspect-[4/5] rounded-xl overflow-hidden"
+                    className="relative mb-16 mx-auto w-full max-w-[320px] aspect-[4/5] rounded-[20px] md:rounded-3xl overflow-hidden"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.35, delay: 0.1, ease: [0.25, 0.1, 0.25, 1] }}
