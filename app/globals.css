@@ -292,6 +292,11 @@
   }
 }
 
+/* Keyboard focus, Page Down and find-in-page stop clear of the 80px fixed bar (WCAG 2.2 SC 2.4.11). */
+html {
+  scroll-padding-top: 96px;
+}
+
 @media (prefers-reduced-motion: no-preference) {
   html {
     scroll-behavior: smooth;

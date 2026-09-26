@@ -11,7 +11,8 @@ export function ScrollCue({ tone = "auto" }: { tone?: "auto" | "paper" }) {
         const here = e.currentTarget.closest("section");
         const next = sections[sections.indexOf(here as Element) + 1];
         const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-        next?.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
+        // An explicit scroll, because scrollIntoView would honour the nav's scroll padding and stop 96px short.
+        if (next) window.scrollTo({ top: next.getBoundingClientRect().top + window.scrollY, behavior: reduced ? "auto" : "smooth" });
     };
 
     const ink = tone === "paper" ? "text-on-paper/75 hover:text-on-paper" : "text-lbl-55 hover:text-lbl-90 light:hover:text-fg-100";
