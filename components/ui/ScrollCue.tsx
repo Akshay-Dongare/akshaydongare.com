@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import { motion } from "framer-motion";
 
 // The far bottom-left of every homepage section but the last, bobbing as one unit so it reads as a prompt; a click scrolls on.
 // tone "paper" is for sections that end on a light ground in dark mode (Particle, About).
@@ -19,17 +18,16 @@ export function ScrollCue({ tone = "auto" }: { tone?: "auto" | "paper" }) {
 
     return (
         <div className="absolute left-[clamp(1rem,2.5vw,2rem)] bottom-[clamp(1rem,3vw,2rem)] z-20">
-            <motion.button
+            {/* The bob is a CSS animation (.cue-bob in globals.css), so it runs on the compositor rather than in a JS loop. */}
+            <button
                 type="button"
                 onClick={toNext}
                 aria-label="Scroll to the next section"
-                className={`relative flex items-center gap-3 py-2 cursor-none text-label transition-colors after:absolute after:inset-x-0 after:-inset-y-1 after:content-[''] ${ink}`}
-                animate={{ y: [0, 4, 0] }}
-                transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
+                className={`cue-bob relative flex items-center gap-3 py-2 cursor-none text-label transition-colors after:absolute after:inset-x-0 after:-inset-y-1 after:content-[''] ${ink}`}
             >
                 <span>Scroll</span>
                 <span aria-hidden="true" className="leading-none">&#8595;</span>
-            </motion.button>
+            </button>
         </div>
     );
 }

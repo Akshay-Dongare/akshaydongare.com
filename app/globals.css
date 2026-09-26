@@ -292,6 +292,20 @@
   }
 }
 
+/* The scroll cue's bob: 4px over 1.6s, easing in and out on each half, as the Framer loop it replaced did. */
+@keyframes cue-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(4px); }
+}
+.cue-bob {
+  animation: cue-bob 1.6s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .cue-bob {
+    animation: none;
+  }
+}
+
 /* Keyboard focus, Page Down and find-in-page stop clear of the 80px fixed bar (WCAG 2.2 SC 2.4.11). */
 html {
   scroll-padding-top: 96px;
