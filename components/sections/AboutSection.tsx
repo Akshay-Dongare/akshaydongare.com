@@ -23,9 +23,9 @@ export function AboutSection({ stats }: { stats: PackageStats }) {
                         transition={{ duration: 0.35 }}
                         className="text-display-l text-on-paper mb-10 max-w-[720px] leading-tight"
                     >
-                        I maintain langchain-litellm, LangChain&apos;s official interface to 140+ model providers, downloaded <Link
+                        I maintain <span className="whitespace-nowrap">langchain-litellm</span>, LangChain&apos;s official interface to 140+ model providers, downloaded <Link
                             href={PYPI_URL}
-                            className="hover:underline hover:underline-offset-[6px] hover:decoration-on-paper/40 transition-colors cursor-none"
+                            className="whitespace-nowrap hover:underline hover:underline-offset-[6px] hover:decoration-on-paper/40 transition-colors cursor-none"
                         >
                             {stats.long}
                         </Link> times and counting.

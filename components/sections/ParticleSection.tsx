@@ -73,7 +73,7 @@ export function ParticleSection({ stats }: { stats: PackageStats }) {
                             particle field; the link has to opt back in explicitly. */}
                         <Link
                             href={PEPY_URL}
-                            className="pointer-events-auto cursor-none hover:underline hover:underline-offset-[10px] hover:decoration-line-40 transition-colors"
+                            className="whitespace-nowrap pointer-events-auto cursor-none hover:underline hover:underline-offset-[10px] hover:decoration-line-40 transition-colors"
                         >
                             {stats.monthlyLong}
                         </Link> installs a month means someone else&apos;s production depends on your defaults.

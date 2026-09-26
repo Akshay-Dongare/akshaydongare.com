@@ -96,18 +96,18 @@ export function HeroSection({ stats }: { stats: PackageStats }) {
                 >
                     <dl className="grid grid-cols-[auto_1fr] gap-x-5 gap-y-2.5 items-baseline">
                         <dt className="text-label text-lbl-60">AI systems for</dt>
-                        <dd className="text-[1.0625rem] md:text-[1.1875rem] font-medium text-fg-90">Airbnb · ISO · Harvard University</dd>
+                        <dd className="text-[1.0625rem] md:text-[1.1875rem] font-medium text-fg-90">Airbnb · ISO · Harvard{"\u00a0"}University</dd>
                         <dt className="text-label text-lbl-60">Creator of</dt>
                         <dd className="text-[1.0625rem] md:text-[1.1875rem] font-medium text-fg-90">
                             langchain-litellm, <Link
                                 href={PYPI_URL}
-                                className="pointer-events-auto cursor-none hover:underline hover:underline-offset-4 hover:decoration-line-40"
+                                className="whitespace-nowrap pointer-events-auto cursor-none hover:underline hover:underline-offset-4 hover:decoration-line-40"
                             >
                                 {stats.long}
                             </Link> downloads
                         </dd>
                         <dt className="text-label text-lbl-60">Available</dt>
-                        <dd className="text-[1.0625rem] md:text-[1.1875rem] font-medium text-fg-90">Full-time from 11 January 2027</dd>
+                        <dd className="text-[1.0625rem] md:text-[1.1875rem] font-medium text-fg-90">Full-time from 11{"\u00a0"}January{"\u00a0"}2027</dd>
                     </dl>
 
                     <p className="hidden lg:block text-label text-lbl-60 leading-relaxed text-right">
