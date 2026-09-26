@@ -141,8 +141,14 @@ export default function RootLayout({
       >
         <BootSequence>
           <CursorProvider>
+            {/* The first tab stop skips the seven header controls; data-nosnippet sits on the div, where Google honours it. */}
+            <div data-nosnippet>
+              <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[120] focus:rounded-full focus:px-4 focus:py-2 focus:bg-[var(--page-bg)] focus:text-fg-100 text-label cursor-none">
+                Skip to content
+              </a>
+            </div>
             <Navbar />
-            <main className="min-h-screen">
+            <main id="main" tabIndex={-1} className="min-h-screen outline-none">
               {children}
             </main>
             <Footer />
