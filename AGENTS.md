@@ -117,9 +117,42 @@ Google builds the result from the server HTML, so these hold it to what a recrui
 - **Site name.** The WebSite JSON-LD pairs `name: "Akshay Dongare"` with the domain as
   `alternateName`, Google's documented fallback when it is not confident in the name.
 
+### Accessible names and targets
+
+**A name starts with the words on screen.** SC 2.5.3 requires the visible text to be in the name, and
+Understanding 2.5.3 recommends it come first, because voice control users say what they read. So an
+`aria-label` or a hidden tail starts with the visible text and adds any context after it, as the claim
+pills do after a colon. axe checks containment as a plain substring with punctuation stripped, so the
+Navbar's `[ AD ]` is named `AD: Akshay Dongare, home`, or `AD: Akshay Dongare, back to top` on the
+homepage, where it scrolls instead, without the brackets a screen reader would read out. Do not pass the
+rule by putting `aria-hidden` on the visible text: axe goes quiet while "click AD" still fails.
+
+**The Code link is named by its content and is the phone scroller.** It wraps the label and both diff
+`<pre>`s, so a tap anywhere opens the PR. Its name is the visible label plus an `sr-only` tail with the
+PR number and title, so the two cannot drift apart, and the `<pre>`s are `aria-hidden`, or the whole diff
+would be the name. Below `md` the link carries `overflow-x-auto` and the `-mx-6 px-6` bleed, and the
+`<pre>`s never scroll. Chrome and Firefox make a scroller with nothing focusable inside a Tab stop of its
+own, so a scrolling `<pre>` would add a second stop, one screen readers cannot see; as the scroller, the
+link is the only stop. On phones the label scrolls with the diff, the focus ring sits 2px inside because
+the bleed puts the link's edges on the overlay's clip, and the scrollbar falls below the overlay's fold,
+so a mouse scrolls it with shift and the wheel. Do not put `tabindex="-1"` on the `<pre>`s instead: HTML
+forbids a `tabindex` descendant in an `<a>`, and axe cannot judge it either way, because it skips
+`aria-hidden` elements; only a Tab walk finds a hidden stop.
+
+**Links in `.text-body` copy fill their line (`.link-in-text`).** SC 2.5.8 exempts links in a sentence
+and stock axe skips them, but the Vercel Toolbar's audit flagged Harvard University on /work. When it
+fits on one line it is a 21px-tall box 22px from the tail of the GAMI link: forcing axe's target-size
+checks onto the paragraph failed it at 110 of 301 widths, and found two /about links failing the same
+way. `padding-block: 0.125em` makes each fragment 24.5px at 16px and 28px at 18px, inside the 1.6 line
+box, and moves no text, because vertical
+padding on an inline box does not change line boxes. The window is narrow: under 0.11em a 16px fragment
+stays below 24px, and over 0.146em an 18px one outgrows its line. Recompute it if `.text-body`'s
+line-height or the font changes, and never meet a target by raising line-height or using inline-block,
+which reflows the copy.
+
 ### Branding
 
-**Logo:** typographical brutalist `[ AD ]` in monospace — Navbar (small, inline, inherits theme text color) and Footer (medium weight, paired with the Akshay Dongare wordmark). Do not revert to the old overlapping-circles letterform.
+**Logo:** typographical brutalist `[ AD ]` in monospace, in the Navbar (small, inline, inherits theme text color). The Footer carries the Akshay Dongare wordmark alone. Do not revert to the old overlapping-circles letterform. Its accessible name is under Accessible names and targets.
 
 **Favicon:** the same mark in Geist Mono 700, parchment `#f2efe9` on void `#07090f`, as
 three files Next picks up by convention: `app/favicon.ico` (16, 32, 48), `app/icon.png` (192)

@@ -31,7 +31,7 @@ const buildProjects = (stats: PackageStats) => [
         ),
         line: (
             <>
-                LangChain’s official LiteLLM integration: one Python interface to 140+ model providers, developed inside the <Link href={LANGCHAIN_ORG} className="relative z-10 underline underline-offset-4 decoration-line-20 hover:decoration-current transition-colors cursor-none">langchain-ai</Link> organization.
+                LangChain’s official LiteLLM integration: one Python interface to 140+ model providers, developed inside the <Link href={LANGCHAIN_ORG} className="link-in-text relative z-10 underline underline-offset-4 decoration-line-20 hover:decoration-current transition-colors cursor-none">langchain-ai</Link> organization.
             </>
         ),
         pills: [

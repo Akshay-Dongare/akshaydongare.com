@@ -405,6 +405,11 @@ html:not(.custom-cursor-active) .cursor-none {
     line-height: 1.6;
     font-weight: 400;
   }
+  /* A link in .text-body copy: the padding grows each line fragment to fill its 1.6 line box, a 24px target
+     (SC 2.5.8) with no text moved. Below 0.11em a 16px fragment stays under 24px; above 0.146em it outgrows an 18px line. */
+  .link-in-text {
+    padding-block: 0.125em;
+  }
   /* Typography only, deliberately no colour. It used to set --color-muted, which
      silently beat every text-white/NN sitting next to it: same specificity, same
      @layer, and this rule comes later in the sheet. Every .text-label on the site
