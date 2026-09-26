@@ -14,7 +14,7 @@ export function AboutContent({ stats }: { stats: PackageStats }) {
             style={{ background: 'var(--spine-page)' }}
             data-theme="dark"
         >
-            {/* One column for title, portrait and body; 20px body keeps the wider measure near 80 characters. */}
+            {/* One column for title, portrait and body; 20px body from lg holds the 740px measure near 80 characters. */}
             <div className="max-w-[820px] mx-auto px-6 md:px-10">
 
                 <motion.h1
@@ -58,32 +58,32 @@ export function AboutContent({ stats }: { stats: PackageStats }) {
                     <p>
                         I created <Link
                             href="https://github.com/langchain-ai/langchain-litellm"
-                            className="text-fg-85 underline underline-offset-4 decoration-line-20 hover:text-fg-55 transition-colors cursor-none"
+                            className="link-in-text text-fg-85 underline underline-offset-4 decoration-line-20 hover:text-fg-55 transition-colors cursor-none"
                         >
                             langchain-litellm
                         </Link> and still lead its maintenance. It began as my own repository and now lives inside the <Link
                             href={LANGCHAIN_ORG}
-                            className="text-fg-85 underline underline-offset-4 decoration-line-20 hover:text-fg-55 transition-colors cursor-none"
+                            className="link-in-text text-fg-85 underline underline-offset-4 decoration-line-20 hover:text-fg-55 transition-colors cursor-none"
                         >
                             langchain-ai
                         </Link> organization as LangChain’s official LiteLLM integration, with its own page in the LangChain docs and an entry in the Python API reference. One interface to 140+ model providers, plus router-backed load balancing, embeddings and OCR loading. <Link
                             href={PYPI_URL}
-                            className="text-fg-85 hover:underline hover:underline-offset-4 hover:decoration-line-40 hover:text-fg-70 transition-colors cursor-none"
+                            className="link-in-text text-fg-85 hover:underline hover:underline-offset-4 hover:decoration-line-40 hover:text-fg-70 transition-colors cursor-none"
                         >
                             {stats.long}
                         </Link> downloads across {stats.releases} releases, and around {stats.monthlyLong} every month. I also contribute upstream to <Link
                             href="https://github.com/langchain-ai/langchain/pulls?q=is%3Apr+author%3AAkshay-Dongare+"
-                            className="text-fg-85 underline underline-offset-4 decoration-line-20 hover:text-fg-55 transition-colors cursor-none"
+                            className="link-in-text text-fg-85 underline underline-offset-4 decoration-line-20 hover:text-fg-55 transition-colors cursor-none"
                         >
                             LangChain
                         </Link>, <Link
                             href="https://github.com/langchain-ai/langchain-community/pulls?q=is%3Apr+author%3AAkshay-Dongare+"
-                            className="text-fg-85 underline underline-offset-4 decoration-line-20 hover:text-fg-55 transition-colors cursor-none"
+                            className="link-in-text text-fg-85 underline underline-offset-4 decoration-line-20 hover:text-fg-55 transition-colors cursor-none"
                         >
                             langchain-community
                         </Link> and the <Link
                             href="https://github.com/langchain-ai/docs/pulls?q=is%3Apr+author%3AAkshay-Dongare+"
-                            className="text-fg-85 underline underline-offset-4 decoration-line-20 hover:text-fg-55 transition-colors cursor-none"
+                            className="link-in-text text-fg-85 underline underline-offset-4 decoration-line-20 hover:text-fg-55 transition-colors cursor-none"
                         >
                             LangChain documentation
                         </Link>

@@ -11,7 +11,7 @@ import { OrgLogo, type Org } from "@/components/ui/OrgLogo";
 type Project = { title: string; desc: React.ReactNode; tags: string[]; link: string; logo?: Org; affiliation?: string };
 
 // Links inside a description sit above the card's stretched title link, so both stay clickable.
-const INLINE = "relative z-10 text-fg-85 underline underline-offset-4 decoration-line-20 hover:text-fg-55 transition-colors cursor-none";
+const INLINE = "link-in-text relative z-10 text-fg-85 underline underline-offset-4 decoration-line-20 hover:text-fg-55 transition-colors cursor-none";
 
 const buildProjects = (stats: PackageStats): Project[] => [
     {
@@ -173,7 +173,7 @@ export function WorkContent({ stats }: { stats: PackageStats }) {
                                     </Link>
                                 </h2>
 
-                                <p className="text-body text-fg-55 mb-10 leading-relaxed">
+                                <p className="text-body text-fg-55 mb-10">
                                     {proj.desc}
                                 </p>
 

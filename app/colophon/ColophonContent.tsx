@@ -23,7 +23,7 @@ export function ColophonContent() {
                 </motion.h1>
 
                 <motion.div
-                    className="max-w-none text-body text-fg-65 leading-relaxed space-y-8"
+                    className="max-w-none text-body text-fg-65 space-y-8"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.35, delay: 0.05, ease: [0.25, 0.1, 0.25, 1] }}
@@ -63,7 +63,7 @@ export function ColophonContent() {
 
                     <h2 className="text-display-m mt-16 mb-4 text-fg-85">Source</h2>
                     <p>
-                        I believe in learning through shared code. If you&apos;re curious about how specific components or animations were built, the <Link href="https://github.com/Akshay-Dongare/akshaydongare.com" className="text-fg-80 underline underline-offset-4 decoration-line-20 hover:text-fg-50 transition-colors cursor-none">full source code</Link> for this website is on GitHub.
+                        I believe in learning through shared code. If you&apos;re curious about how specific components or animations were built, the <Link href="https://github.com/Akshay-Dongare/akshaydongare.com" className="link-in-text text-fg-80 underline underline-offset-4 decoration-line-20 hover:text-fg-50 transition-colors cursor-none">full source code</Link> for this website is on GitHub.
                     </p>
 
                 </motion.div>

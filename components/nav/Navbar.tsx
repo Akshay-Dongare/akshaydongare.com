@@ -135,13 +135,11 @@ export function Navbar() {
                 <div data-nosnippet className="relative max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 h-[80px] flex items-center justify-between">
 
                     {/* LOGO - Left */}
-                    {/* On a sub-page this navigates home, which App Router already scrolls to
-                        the top. On the homepage itself, linking to the route you are already
-                        on is a no-op, so the logo felt dead — scroll instead. aria-label
-                        because "[ AD ]" reads as punctuation to a screen reader. */}
+                    {/* On "/" a link home is a no-op, so the logo scrolls to the top instead. The name opens with the
+                        visible "AD" so voice control can say it (SC 2.5.3), and leaves out the brackets. */}
                     <Link
                         href="/"
-                        aria-label={pathname === "/" ? "Akshay Dongare, back to top" : "Akshay Dongare, home"}
+                        aria-label={pathname === "/" ? "AD: Akshay Dongare, back to top" : "AD: Akshay Dongare, home"}
                         className="flex items-center cursor-none pointer-events-auto"
                         onClick={(e) => {
                             setIsMobileMenuOpen(false);

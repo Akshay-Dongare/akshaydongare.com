@@ -326,6 +326,16 @@ html:not(.custom-cursor-active) .cursor-none {
   cursor: revert;
 }
 
+/* @utility, not @layer utilities: Tailwind sorts it with its own utilities, so lg:text-* and
+   leading-* beside it win. In @layer it came later in the sheet and silently beat both. */
+@utility text-body {
+  /* 16px on phones (already ~40 chars/line there), scaling to 18px on desktop.
+     Larger type in a fixed column also pulls characters-per-line down. */
+  font-size: clamp(1rem, 0.9rem + 0.45vw, 1.125rem);
+  line-height: 1.6;
+  font-weight: 400;
+}
+
 @layer utilities {
   .text-display-xl {
     font-size: clamp(2.8rem, 6vw, 5.5rem);
@@ -342,12 +352,10 @@ html:not(.custom-cursor-active) .cursor-none {
     font-size: clamp(1.4rem, 2.5vw, 2.4rem);
     font-weight: 400;
   }
-  .text-body {
-    /* 16px on phones (already ~40 chars/line there), scaling to 18px on desktop.
-       Larger type in a fixed column also pulls characters-per-line down. */
-    font-size: clamp(1rem, 0.9rem + 0.45vw, 1.125rem);
-    line-height: 1.6;
-    font-weight: 400;
+  /* A link in .text-body copy: the padding grows each line fragment to fill its 1.6 line box, a 24px target
+     (SC 2.5.8) with no text moved. Below 0.11em a 16px fragment stays under 24px; above 0.146em it outgrows an 18px line. */
+  .link-in-text {
+    padding-block: 0.125em;
   }
   /* Typography only, no colour: one here ties the colour class beside it on specificity
      and layer, so source order would pick the winner. Every call site sets its own. */
