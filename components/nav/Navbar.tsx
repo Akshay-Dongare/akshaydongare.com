@@ -66,7 +66,7 @@ export function Navbar() {
     const bgClass = isMobileMenuOpen
         ? "bg-transparent"
         : isScrolled
-            ? (theme === "dark" ? "bg-[var(--nav-glass)] backdrop-blur-md" : "bg-[var(--nav-glass-on-light)] backdrop-blur-md")
+            ? (theme === "dark" ? "bg-[var(--nav-glass)] backdrop-blur-md [@media(prefers-reduced-transparency:reduce)]:backdrop-blur-none" : "bg-[var(--nav-glass-on-light)] backdrop-blur-md [@media(prefers-reduced-transparency:reduce)]:backdrop-blur-none")
             : "bg-transparent";
 
     // Prevent scrolling when mobile menu is open
@@ -140,7 +140,7 @@ export function Navbar() {
                     <Link
                         href="/"
                         aria-label={pathname === "/" ? "AD: Akshay Dongare, back to top" : "AD: Akshay Dongare, home"}
-                        className="flex items-center cursor-none pointer-events-auto"
+                        className="flex items-center -m-3 p-3 cursor-none pointer-events-auto"
                         onClick={(e) => {
                             setIsMobileMenuOpen(false);
                             if (pathname === "/") {
@@ -161,7 +161,8 @@ export function Navbar() {
                             <Link
                                 key={link.name}
                                 href={link.href}
-                                className={`text-[0.9rem] font-sans hover:opacity-60 transition-opacity duration-200 cursor-none ${textColorClass}`}
+                                aria-current={pathname === link.href ? "page" : undefined}
+                                className={`text-[0.9rem] font-sans hover:opacity-60 transition-opacity duration-200 cursor-none aria-[current=page]:underline aria-[current=page]:underline-offset-[6px] aria-[current=page]:decoration-1 ${textColorClass}`}
                             >
                                 {link.name}
                             </Link>
@@ -219,8 +220,9 @@ export function Navbar() {
                                 >
                                     <Link
                                         href={link.href}
+                                        aria-current={pathname === link.href ? "page" : undefined}
                                         onClick={() => setIsMobileMenuOpen(false)}
-                                        className="text-fg-100 text-display-m font-sans cursor-none hover:opacity-60 transition-opacity"
+                                        className="text-fg-100 text-display-m font-sans cursor-none hover:opacity-60 transition-opacity aria-[current=page]:underline aria-[current=page]:underline-offset-[8px] aria-[current=page]:decoration-2"
                                     >
                                         {link.name}
                                     </Link>

@@ -28,12 +28,12 @@ export function PrivacyContent() {
                     transition={{ duration: 0.35, delay: 0.05, ease: [0.25, 0.1, 0.25, 1] }}
                 >
                     <p>
-                        This is my personal portfolio and playground. I don&apos;t believe in invasive tracking, unnecessary cookies, or monetizing your attention.
+                        This is my personal portfolio and playground. I don’t believe in invasive tracking, unnecessary cookies, or monetizing your attention.
                     </p>
 
                     <h2 className="text-display-m mt-16 mb-4 text-fg-85">Data Collection</h2>
                     <p>
-                        I do not collect personal data, and there is no analytics here. No page-view counter, no session recording, no ad network, no tracker, and nothing at all that loads from another origin: every script, style and font on this site is served from this domain. Two things can be written to your browser. One sessionStorage entry called bootPlayed remembers that the intro animation has already run, so you do not sit through it a second time, and it disappears when you close the tab. If you use the Light / Dark switch, one localStorage entry called mode remembers your choice until you clear this site&apos;s data. Neither holds an identifier. There are no cookies. If that ever changes, this page changes first.
+                        I do not collect personal data, and there is no analytics here. No page-view counter, no session recording, no ad network, no tracker, and nothing at all that loads from another origin: every script, style and font on this site is served from this domain. Two things can be written to your browser. One sessionStorage entry called bootPlayed remembers that the intro animation has already run, so you do not sit through it a second time, and it disappears when you close the tab. If you use the Light / Dark switch, one localStorage entry called mode remembers your choice until you clear this site’s data. Neither holds an identifier. There are no cookies. If that ever changes, this page changes first.
                     </p>
 
                     <h2 className="text-display-m mt-16 mb-4 text-fg-85">Communication</h2>
@@ -47,7 +47,8 @@ export function PrivacyContent() {
                     </p>
 
                     <p className="mt-16 text-fg-50 font-mono text-sm">
-                        Last updated: {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+                        {/* Set by hand when the policy text changes; computing it on the client broke hydration each new month. */}
+                        Last updated: September 2026
                     </p>
                 </motion.div>
 

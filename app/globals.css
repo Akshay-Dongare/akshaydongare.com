@@ -126,6 +126,7 @@
   --more-ink: #1a1c13;
   --more-edge: transparent;
   --more-bg-hover: #f1f0ea;
+  --more-hover-edge: rgba(26, 28, 19, 0.14);
   --more-ink-hover: #1a1c13;
   --pill-ink: #faf6ee;
   --diff-add: #165626;
@@ -142,17 +143,20 @@
   --nav-glass-on-light: rgba(250, 246, 238, 0.6);
   --particle-halo: 0 2px 24px rgba(250, 246, 238, 0.5);
   --tension-ring: rgba(26, 28, 19, 0.75);
-  /* /work cards: opaque paper, separated by one soft shadow; hover deepens the shadow and nothing else. */
+  /* /work cards: opaque paper, separated by one soft shadow. On hover every card sinks: the fill drops a step
+     below the ground, a hairline edge appears and the shadow goes. */
   --work-card: #fffdf8;
-  --work-card-hover-bg: #fffdf8;
+  --work-card-hover-bg: #f4f1ea;
+  --work-card-hover-edge: rgba(26, 28, 19, 0.12);
   --work-card-edge: transparent;
   --work-card-shadow: 0 4px 12px rgba(26, 28, 19, 0.06);
   --code-mask: linear-gradient(to bottom, transparent 0%, #000 24%, #000 88%, transparent 100%);
-  --work-card-hover: 0 4px 16px rgba(26, 28, 19, 0.12);
   /* The homepage Work cards: one opaque paper in both modes, one soft shadow, the logo as the only colour. */
   --card: #fffdf8;
   --card-edge: transparent;
   --card-shadow: 0 4px 12px rgba(26, 28, 19, 0.06);
+  --card-hover-bg: #f4f1ea;
+  --card-hover-edge: rgba(26, 28, 19, 0.12);
   --masthead-glow: radial-gradient(90% 70% at 50% -8%, rgba(213, 120, 76, 0.12) 0%, rgba(213, 120, 76, 0.065) 34%, rgba(213, 120, 76, 0.02) 60%, transparent 78%), radial-gradient(52% 44% at 18% 2%, rgba(124, 140, 75, 0.06) 0%, rgba(124, 140, 75, 0.017) 48%, transparent 74%);
   --spine-hero: linear-gradient(to bottom, #faf6ee 0%, #f3ecdd 100%);
   --depth-hero: linear-gradient(135deg, #faf6ee 0%, #f3ecdd 55%, #f5efe2 100%);
@@ -209,12 +213,12 @@
   --nav-glass-on-light: rgba(242, 239, 233, 0.6);
   --particle-halo: 0 2px 24px rgba(7, 9, 15, 0.5);
   --tension-ring: rgba(255, 255, 255, 0.55);
-  /* On /work's near-black a card rises by lightness alone, one step and one more on hover, with no glow or lift. */
+  /* On /work's near-black a card rises by lightness alone; on hover it sinks below the page with a hairline edge. */
   --work-card: var(--blend-surface);
-  --work-card-hover-bg: #232a36;
+  --work-card-hover-bg: #0b0c13;
+  --work-card-hover-edge: rgba(255, 255, 255, 0.1);
   --work-card-shadow: none;
   --code-mask: linear-gradient(to bottom, transparent 0%, #000 12%, #000 88%, transparent 100%);
-  --work-card-hover: none;
   --masthead-glow: radial-gradient(90% 70% at 50% -8%, rgba(107, 159, 212, 0.11) 0%, rgba(107, 159, 212, 0.06) 34%, rgba(107, 159, 212, 0.018) 60%, transparent 78%), radial-gradient(52% 44% at 18% 2%, rgba(141, 163, 181, 0.05) 0%, rgba(141, 163, 181, 0.014) 48%, transparent 74%);
   --spine-hero: linear-gradient(to bottom, var(--blend-void) 0%, var(--blend-deep) 100%);
   --depth-hero: linear-gradient(135deg, var(--blend-void) 0%, var(--blend-deep) 55%, #0a0e15 100%);
@@ -277,6 +281,48 @@
   }
 }
 
+/* With transparency effects turned off in the OS, the bar is solid; the 0.6 glass stays for everyone else. */
+@media (prefers-reduced-transparency: reduce) {
+  :root, [data-mode="light"] {
+    --nav-glass: #faf6ee;
+    --nav-glass-on-light: #faf6ee;
+  }
+  [data-mode="dark"] {
+    --nav-glass: #07090f;
+    --nav-glass-on-light: #f2efe9;
+  }
+}
+
+/* Headings and short values balance their lines and paragraphs avoid a lone last word. The h1 is left alone:
+   balance would rewrap the hero's tuned three lines. */
+@layer base {
+  h2, h3, dd {
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
+  }
+}
+
+/* The scroll cue's bob: 4px over 1.6s, easing in and out on each half, as the Framer loop it replaced did. */
+@keyframes cue-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(4px); }
+}
+.cue-bob {
+  animation: cue-bob 1.6s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .cue-bob {
+    animation: none;
+  }
+}
+
+/* Keyboard focus, Page Down and find-in-page stop clear of the 80px fixed bar (WCAG 2.2 SC 2.4.11). */
+html {
+  scroll-padding-top: 96px;
+}
+
 @media (prefers-reduced-motion: no-preference) {
   html {
     scroll-behavior: smooth;
@@ -311,10 +357,12 @@ body {
    motion and is using a mouse, and anyone on a touchscreen laptop driving it with a
    mouse, since maxTouchPoints > 0 is enough to make the component bail. The dot itself
    is parked at -100,-100 in that state, so nothing replaces what the CSS took away. */
-html.custom-cursor-active body,
-html.custom-cursor-active :is(a, button, [role="button"], input, select, textarea),
-html.custom-cursor-active .cursor-none {
-  cursor: none;
+@media (forced-colors: none) {
+  html.custom-cursor-active body,
+  html.custom-cursor-active :is(a, button, [role="button"], input, select, textarea),
+  html.custom-cursor-active .cursor-none {
+    cursor: none;
+  }
 }
 
 /* Tailwind's own .cursor-none utility is unconditional and is on 24 elements, so it has
@@ -324,6 +372,13 @@ html.custom-cursor-active .cursor-none {
    cascade regardless of specificity, which is what lets it beat the utility. */
 html:not(.custom-cursor-active) .cursor-none {
   cursor: revert;
+}
+
+/* High Contrast can switch on mid-visit, after the cursor started, so the native pointer comes back here too. */
+@media (forced-colors: active) {
+  .cursor-none {
+    cursor: revert;
+  }
 }
 
 /* @utility, not @layer utilities: Tailwind sorts it with its own utilities, so lg:text-* and
@@ -347,6 +402,7 @@ html:not(.custom-cursor-active) .cursor-none {
     font-size: clamp(2rem, 4vw, 3.8rem);
     font-weight: 400;
     line-height: 1.1;
+    letter-spacing: -0.015em;
   }
   .text-display-m {
     font-size: clamp(1.4rem, 2.5vw, 2.4rem);

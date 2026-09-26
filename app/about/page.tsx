@@ -7,7 +7,7 @@ import { AboutContent } from "./AboutContent";
 // client component because of the scroll and reveal animations.
 export const metadata: Metadata = pageMetadata({
     title: "About",
-    description: "Akshay Dongare is an AI platform engineer in Raleigh, North Carolina, and the creator and lead maintainer of langchain-litellm, LangChain's official LiteLLM integration.",
+    description: "Akshay Dongare is an AI platform engineer in Raleigh, North Carolina, and the creator and lead maintainer of langchain-litellm, LangChain’s official LiteLLM integration.",
     path: "/about",
 });
 

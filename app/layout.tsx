@@ -27,10 +27,10 @@ export async function generateMetadata(): Promise<Metadata> {
   // Name, employers, figure, in that order: phones cut near 110 characters and still show the first two.
   const description =
     `Akshay Dongare, AI platform engineer. AI systems for Airbnb, ISO and Harvard University. ` +
-    `Creator of LangChain's LiteLLM integration, with ${stats.long} downloads.`;
+    `Creator of LangChain’s LiteLLM integration, with ${stats.long} downloads.`;
   // Shorter line for link previews, which truncate around 160-200 characters.
   const shareDescription =
-    `Creator and lead maintainer of langchain-litellm, LangChain's official LiteLLM integration. ` +
+    `Creator and lead maintainer of langchain-litellm, LangChain’s official LiteLLM integration. ` +
     `${stats.long} downloads and counting.`;
 
   return {
@@ -141,8 +141,14 @@ export default function RootLayout({
       >
         <BootSequence>
           <CursorProvider>
+            {/* The first tab stop skips the seven header controls; data-nosnippet sits on the div, where Google honours it. */}
+            <div data-nosnippet>
+              <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[120] focus:rounded-full focus:px-4 focus:py-2 focus:bg-[var(--page-bg)] focus:text-fg-100 text-label cursor-none">
+                Skip to content
+              </a>
+            </div>
             <Navbar />
-            <main className="min-h-screen">
+            <main id="main" tabIndex={-1} className="min-h-screen outline-none">
               {children}
             </main>
             <Footer />

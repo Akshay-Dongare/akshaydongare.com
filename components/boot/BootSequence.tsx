@@ -180,7 +180,7 @@ export function BootSequence({ children }: { children: React.ReactNode }) {
                                 style={{ transform: "scaleX(0)" }}
                             />
                             <span className="text-[0.6rem] tracking-[0.1em] md:text-[0.7rem] md:tracking-[0.18em] text-fg-55 font-mono">
-                                {"->"} ai platform engineer . llm infrastructure
+                                {"->"} ai platform engineer{"\u00a0·"} llm{"\u00a0"}infrastructure
                             </span>
                         </div>
                     </div>

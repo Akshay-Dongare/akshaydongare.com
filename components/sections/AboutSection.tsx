@@ -23,9 +23,9 @@ export function AboutSection({ stats }: { stats: PackageStats }) {
                         transition={{ duration: 0.35 }}
                         className="text-display-l text-on-paper mb-10 max-w-[720px] leading-tight"
                     >
-                        I maintain langchain-litellm, LangChain&apos;s official interface to 140+ model providers, downloaded <Link
+                        I maintain <span className="whitespace-nowrap">langchain-litellm</span>, LangChain’s official interface to 140+ model providers, downloaded <Link
                             href={PYPI_URL}
-                            className="hover:underline hover:underline-offset-[6px] hover:decoration-on-paper/40 transition-colors cursor-none"
+                            className="whitespace-nowrap hover:underline hover:underline-offset-[6px] hover:decoration-on-paper/40 transition-colors cursor-none"
                         >
                             {stats.long}
                         </Link> times and counting.
@@ -38,9 +38,9 @@ export function AboutSection({ stats }: { stats: PackageStats }) {
                         transition={{ duration: 0.35, delay: 0.05 }}
                         className=""
                     >
-                        <Link href="/about" className="group flex items-center gap-2 cursor-none text-label text-on-paper">
+                        <Link href="/about" className="group flex items-center gap-2 py-3 -my-3 cursor-none text-label text-on-paper">
                             <span className="opacity-80 group-hover:opacity-100 transition-opacity">MORE ABOUT ME</span>
-                            <span className="shrink-0 whitespace-nowrap opacity-80 group-hover:opacity-100 transition-opacity">[ → ]</span>
+                            <span aria-hidden="true" className="shrink-0 whitespace-nowrap opacity-80 group-hover:opacity-100 transition-opacity">[ → ]</span>
                         </Link>
                     </motion.div>
 
@@ -48,15 +48,16 @@ export function AboutSection({ stats }: { stats: PackageStats }) {
 
                 {/* RIGHT COLUMN - 40% */}
                 <motion.div
-                    className="w-full md:w-[40%] flex justify-end items-end h-[60vh] md:h-auto min-h-[500px]"
+                    className="w-full md:w-[40%] flex justify-end items-end"
                     initial={{ opacity: 0, y: 40 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, margin: "-10%" }}
                     transition={{ duration: 0.35, delay: 0.1 }}
                 >
-                    {/* Card container */}
-                    <div className="w-full h-full max-w-[480px] rounded-xl overflow-hidden group shadow-lg">
-                        <div className="w-full h-full relative transition-transform duration-[600ms] ease-[cubic-bezier(0.25,0.1,0.25,1)] group-hover:scale-[1.02]">
+                    {/* A fixed 4:5 frame, the source's own shape and the /about portrait's, on the cards' surface language:
+                        the same corners and soft ink shadow, and no hover zoom, since the photo is not a link. */}
+                    <div className="relative w-full aspect-[4/5] max-w-[480px] rounded-[20px] md:rounded-3xl overflow-hidden shadow-[var(--card-shadow)]">
+                        <div className="w-full h-full relative">
                             {/* No priority: this sits below the fold, so the default lazy
                                 load is correct. `fill` supplies absolute/inset-0/w-full/h-full
                                 itself, so only the object-fit classes remain. */}

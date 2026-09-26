@@ -36,7 +36,10 @@ export function CursorProvider({ children }: { children: React.ReactNode }) {
         const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
         const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-        if (isTouchDevice || prefersReducedMotion) return;
+        // Forced colours repaint the dot in the page colour and drop its halo, so it would vanish with the pointer hidden.
+        const forcedColors = window.matchMedia('(forced-colors: active)').matches;
+
+        if (isTouchDevice || prefersReducedMotion || forcedColors) return;
 
         // globals.css hides the native pointer only while this class is present, so the
         // early return above can never strand a mouse user with no cursor at all.
@@ -132,7 +135,7 @@ export function CursorProvider({ children }: { children: React.ReactNode }) {
             <MotionConfig reducedMotion="user">{children}</MotionConfig>
             {isReady && (
                 <motion.div
-                    className="fixed top-0 left-0 pointer-events-none z-[9999] rounded-full"
+                    className="fixed top-0 left-0 pointer-events-none z-[9999] rounded-full forced-colors:hidden"
                     style={{
                         x: cursorX,
                         y: cursorY,

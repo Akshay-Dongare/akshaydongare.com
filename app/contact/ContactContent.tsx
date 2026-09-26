@@ -20,16 +20,16 @@ export function ContactContent() {
             <div className="w-full max-w-[1000px] px-6 md:px-12 lg:px-20">
 
                 <motion.h1
-                    className="text-display-xl tracking-tight text-fg-90 mb-6 text-center"
+                    className="text-display-xl tracking-tight text-fg-90 mb-6"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1] }}
                 >
-                    Let&apos;s talk.
+                    Let’s talk.
                 </motion.h1>
 
                 <motion.p
-                    className="text-body text-fg-55 text-center max-w-[480px] mx-auto mb-20"
+                    className="text-body text-fg-55 max-w-[560px] mb-20"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.35, delay: 0.05, ease: [0.25, 0.1, 0.25, 1] }}
@@ -49,11 +49,12 @@ export function ContactContent() {
                                 href={link.href}
                                 className="group flex justify-between items-center gap-4 py-8 md:py-12 border-t border-line-8 cursor-none"
                             >
-                                <span className="text-display-m text-fg-80 group-hover:text-fg-50 transition-colors duration-300">
-                                    {link.label}
+                                {/* The address may break after its @ on a 320px screen; <wbr> is not copied with it. */}
+                                <span className="min-w-0 text-display-m text-fg-80 group-hover:text-fg-50 transition-colors duration-300">
+                                    {link.label.includes("@") ? <>{link.label.split("@")[0]}@<wbr />{link.label.split("@")[1]}</> : link.label}
                                 </span>
 
-                                <span className="hidden md:block shrink-0 whitespace-nowrap font-mono text-fg-60 opacity-0 -translate-x-8 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-[400ms] ease-[cubic-bezier(0.25,0.1,0.25,1)]">
+                                <span aria-hidden="true" className="hidden md:block shrink-0 whitespace-nowrap font-mono text-fg-60 opacity-0 -translate-x-8 group-hover:translate-x-0 group-hover:opacity-100 group-focus-visible:translate-x-0 group-focus-visible:opacity-100 transition-[opacity,translate] duration-[400ms] ease-[cubic-bezier(0.25,0.1,0.25,1)]">
                                     [ → ]
                                 </span>
                             </Link>
