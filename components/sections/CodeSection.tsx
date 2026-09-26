@@ -187,27 +187,17 @@ export function CodeSection() {
                             Read this diff on GitHub
                             <span aria-hidden="true" className="shrink-0 whitespace-nowrap text-fg-55 group-hover:text-fg-90 transition-colors">[ &rarr; ]</span>
                         </span>
-                    <pre className="font-mono text-[0.75rem] leading-relaxed whitespace-pre max-md:overflow-x-auto max-md:overscroll-x-contain max-md:pointer-events-auto max-md:-mx-6 max-md:px-6" style={{ textShadow: "var(--code-glow)" }}>
+                    <pre className="font-mono text-[0.75rem] leading-relaxed whitespace-pre max-md:overflow-x-auto max-md:overscroll-x-contain max-md:pointer-events-auto max-md:-mx-6 max-md:px-6">
                         <code className="block w-max"><DiffLines source={DIFF} /></code>
                     </pre>
 
                     {/* Second hunk of the same PR, not a repeat of the first */}
-                    <pre className="font-mono text-[0.75rem] leading-relaxed whitespace-pre mt-12 max-md:overflow-x-auto max-md:overscroll-x-contain max-md:pointer-events-auto max-md:-mx-6 max-md:px-6" style={{ textShadow: "var(--code-glow)" }}>
+                    <pre className="font-mono text-[0.75rem] leading-relaxed whitespace-pre mt-12 max-md:overflow-x-auto max-md:overscroll-x-contain max-md:pointer-events-auto max-md:-mx-6 max-md:px-6">
                         <code className="block w-max"><DiffLines source={TEST} /></code>
                     </pre>
                     </Link>
                 </motion.div>
 
-                {/* Dramatic silhouette element lower right */}
-                <motion.div
-                    className="absolute bottom-[15%] right-[10%] w-[200px] h-[300px] opacity-40 mix-blend-screen light:hidden"
-                    initial={{ opacity: 0 }}
-                    whileInView={{ opacity: 0.4 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.4, delay: 0.14 }}
-                >
-                    <div className="w-full h-full bg-gradient-to-t from-[rgba(255,255,255,0.1)] to-transparent blur-3xl rounded-[100%]" />
-                </motion.div>
             </div>
 
             <ScrollCue />

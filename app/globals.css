@@ -149,7 +149,6 @@
   --work-card-shadow: 0 4px 12px rgba(26, 28, 19, 0.06);
   --code-mask: linear-gradient(to bottom, transparent 0%, #000 24%, #000 88%, transparent 100%);
   --work-card-hover: 0 4px 16px rgba(26, 28, 19, 0.12);
-  --code-glow: none;
   /* The homepage Work cards: one opaque paper in both modes, one soft shadow, the logo as the only colour. */
   --card: #fffdf8;
   --card-edge: transparent;
@@ -216,7 +215,6 @@
   --work-card-shadow: none;
   --code-mask: linear-gradient(to bottom, transparent 0%, #000 12%, #000 88%, transparent 100%);
   --work-card-hover: none;
-  --code-glow: 0 0 12px rgba(255, 255, 255, 0.08);
   --masthead-glow: radial-gradient(90% 70% at 50% -8%, rgba(107, 159, 212, 0.11) 0%, rgba(107, 159, 212, 0.06) 34%, rgba(107, 159, 212, 0.018) 60%, transparent 78%), radial-gradient(52% 44% at 18% 2%, rgba(141, 163, 181, 0.05) 0%, rgba(141, 163, 181, 0.014) 48%, transparent 74%);
   --spine-hero: linear-gradient(to bottom, var(--blend-void) 0%, var(--blend-deep) 100%);
   --depth-hero: linear-gradient(135deg, var(--blend-void) 0%, var(--blend-deep) 55%, #0a0e15 100%);
