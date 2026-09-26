@@ -40,7 +40,10 @@ There is no test suite.
 `npm run dev` can keep serving a pre-edit `app/globals.css`, even across a restart: Turbopack's
 cache in `.next/dev/cache/turbopack` held one while TSX edits beside it hot-reloaded. The chunk
 name carries no content hash, so fetch the served CSS and check that the edited rule moved; if it
-did not, stop the server and clear that directory.
+did not, stop the server and clear that directory. `npm run build` does the same from
+`.next/cache/turbopack`: on Next 16.3.5, after a `git switch`, it emitted the previous build's
+`globals.css` beside current TSX. Check the built chunk too, and move that directory aside if the
+rule did not move.
 
 ## Architecture
 
@@ -318,8 +321,8 @@ The `--blend-*` token family defines the unified scroll palette:
 
 The old `--color-cream`, `--color-steel`, etc. tokens are still defined in `globals.css` but are **not applied to any page** — all sub-pages and the Footer now use the deep obsidian dark canvas.
 
-**Typography utilities in `@layer utilities` must not declare `color`.** `.text-label`
-did, and it silently beat every `text-white/NN` written beside it: same specificity,
+**Typography utilities must not declare `color`.** `.text-label` did while it sat in
+`@layer utilities`, and it silently beat every `text-white/NN` written beside it: same specificity,
 same layer, and it comes later in the sheet, so the markup's colour lost. Every
 `.text-label` on the site rendered `#8a8a8a` regardless of what the class list asked
 for. On the dark canvas that happened to look plausible, which is why it survived; on
@@ -336,9 +339,18 @@ it declares, responsive variants included. `.text-body` did this to /about: its
 single-property utility beside it wins. The move also brought back a dead `leading-relaxed`
 beside `text-body` on ten other call sites. Those were deleted, and every other page measured
 identical at 375 and 1440: font size, line height, weight, tracking and family on every
-element, plus page height. The display classes and `.text-label` are still in the layer, so
-`font-medium`, `tracking-*` or `leading-*` beside one of them does nothing today; check which
-properties the class declares before writing an override next to it.
+element, plus page height.
+
+The display classes, `.text-label` and `.text-code` followed, so `@layer utilities` holds only
+`.link-in-text`, which no call site overrides. The move woke six dead overrides. The owner kept one:
+the Footer wordmark renders its `font-medium tracking-tight leading-none`, 500 on -0.025em and 1.0.
+The other five were deleted so each heading matches its siblings on the same class: the /about
+Timeline h2 stays 400, the home About and Work headings stay on 1.1, /contact's h1 stays at -0.02em,
+and the unused MDX h1 stays on the display-l ladder's -0.015em. Seven copies of a class's own value
+(`leading-[1.05]`, one `tracking-[-0.02em]`) went too. Across every page, the 404 and the open phone
+menu at 375 and 1440, only the wordmark changed, and each page got shorter by exactly its two-line
+leading cut, 4.5px and 8.6px. Measured on `npm run build` and `next start`, with each build's CSS
+checked as the note under Commands says.
 
 ### Blended Scroll Journey (Home Page)
 
