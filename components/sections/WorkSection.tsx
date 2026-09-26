@@ -143,7 +143,7 @@ export function WorkSection({ stats }: { stats: PackageStats }) {
                 <div className="mt-6 flex justify-end">
                     <Link href="/work" className="group flex items-center gap-2 cursor-none text-label shadow-[inset_0_0_0_1px_var(--more-edge)] bg-[var(--more-bg)] text-[var(--more-ink)] hover:bg-[var(--more-bg-hover)] hover:text-[var(--more-ink-hover)] hover:shadow-[inset_0_0_0_1px_var(--more-hover-edge)] transition-[background-color,color,box-shadow] duration-300 px-4 py-2.5 rounded-full">
                         <span>ALL WORK</span>
-                        <span className="shrink-0 whitespace-nowrap">[ → ]</span>
+                        <span aria-hidden="true" className="shrink-0 whitespace-nowrap">[ → ]</span>
                     </Link>
                 </div>
 

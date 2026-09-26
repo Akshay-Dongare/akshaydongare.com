@@ -57,7 +57,7 @@ export default function Error({
                         className="text-label text-lbl-80 hover:text-lbl-100 light:hover:text-fg-100 transition-colors cursor-none inline-flex items-center gap-2"
                     >
                         Try again
-                        <span className="shrink-0 whitespace-nowrap text-fg-55">[ &rarr; ]</span>
+                        <span aria-hidden="true" className="shrink-0 whitespace-nowrap text-fg-55">[ &rarr; ]</span>
                     </button>
                 </div>
 
@@ -75,7 +75,7 @@ export default function Error({
                             <span className="text-display-m text-fg-80 group-hover:text-fg-100 transition-colors duration-300">
                                 {d.label}
                             </span>
-                            <span className="hidden md:block shrink-0 whitespace-nowrap text-label text-lbl-50 group-hover:text-lbl-80 light:group-hover:text-fg-100 transition-colors duration-300">
+                            <span aria-hidden="true" className="hidden md:block shrink-0 whitespace-nowrap text-label text-lbl-50 group-hover:text-lbl-80 light:group-hover:text-fg-100 transition-colors duration-300">
                                 [ &rarr; ]
                             </span>
                         </Link>

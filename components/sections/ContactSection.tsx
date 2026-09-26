@@ -68,7 +68,7 @@ export function ContactSection() {
                             className="group flex items-center gap-2 cursor-none text-label text-fg-100 min-h-[44px] py-3"
                         >
                             <span className="opacity-80 light:opacity-100 group-hover:opacity-100 transition-opacity">CONNECT</span>
-                            <span className="shrink-0 whitespace-nowrap opacity-60 light:opacity-100 group-hover:opacity-100 transition-opacity">[ → ]</span>
+                            <span aria-hidden="true" className="shrink-0 whitespace-nowrap opacity-60 light:opacity-100 group-hover:opacity-100 transition-opacity">[ → ]</span>
                         </Link>
 
                     </div>

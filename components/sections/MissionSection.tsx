@@ -65,7 +65,7 @@ export function MissionSection() {
                             className="group flex items-center gap-2 py-2 -my-2 cursor-none text-label text-lbl-55 hover:text-lbl-90 light:hover:text-fg-100 transition-colors"
                         >
                             <span>APPROACH</span>
-                            <span className="shrink-0 whitespace-nowrap">[ {approachOpen ? "−" : "+"} ]</span>
+                            <span aria-hidden="true" className="shrink-0 whitespace-nowrap">[ {approachOpen ? "−" : "+"} ]</span>
                         </button>
                         <motion.div
                             id="mission-approach-panel"
