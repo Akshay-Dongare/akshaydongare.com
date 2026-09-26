@@ -293,10 +293,10 @@
   }
 }
 
-/* Headings and short values balance their lines and paragraphs avoid a lone last word. The h1 is left alone:
-   balance would rewrap the hero's tuned three lines. */
+/* Headings balance their lines and paragraphs avoid a lone last word. The h1 is left alone, since balance would
+   rewrap the hero's tuned three lines, and so are the hero's dd rows, where it started a line with the separator. */
 @layer base {
-  h2, h3, dd {
+  h2, h3 {
     text-wrap: balance;
   }
   p {
