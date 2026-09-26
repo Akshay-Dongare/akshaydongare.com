@@ -173,7 +173,7 @@ export function WorkContent({ stats }: { stats: PackageStats }) {
                                     </Link>
                                 </h2>
 
-                                <p className="text-body text-fg-55 mb-10 leading-relaxed">
+                                <p className="text-body text-fg-55 mb-10">
                                     {proj.desc}
                                 </p>
 
