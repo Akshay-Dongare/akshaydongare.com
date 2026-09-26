@@ -18,11 +18,11 @@ export function ModeToggle({ className = "" }: { className?: string }) {
             aria-checked={mode === "dark"}
             aria-label="Dark mode"
             onClick={() => setMode(mode === "dark" ? "light" : "dark")}
-            className={`relative inline-flex h-7 w-[52px] shrink-0 items-center rounded-full p-[3px] cursor-none transition-colors duration-300 light:bg-[#1a1c13] dark:bg-[#f2efe9] dark:ring-1 dark:ring-black/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current ${className}`}
+            className={`relative inline-flex h-7 w-[52px] shrink-0 items-center rounded-full p-[3px] cursor-none forced-colors:border transition-colors duration-300 light:bg-[#1a1c13] dark:bg-[#f2efe9] dark:ring-1 dark:ring-black/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current ${className}`}
         >
             <span
                 aria-hidden="true"
-                className="flex h-[22px] w-[22px] items-center justify-center rounded-full transition-transform duration-300 ease-[cubic-bezier(0.25,0.1,0.25,1)] motion-reduce:transition-none light:translate-x-0 light:bg-[#faf6ee] light:text-[#1a1c13] dark:translate-x-6 dark:bg-[#07090f] dark:text-white"
+                className="flex h-[22px] w-[22px] items-center justify-center rounded-full forced-colors:border transition-transform duration-300 ease-[cubic-bezier(0.25,0.1,0.25,1)] motion-reduce:transition-none light:translate-x-0 light:bg-[#faf6ee] light:text-[#1a1c13] dark:translate-x-6 dark:bg-[#07090f] dark:text-white"
             >
                 <svg viewBox="0 0 24 24" className="h-3.5 w-3.5 dark:hidden" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round">
                     <circle cx="12" cy="12" r="4" />

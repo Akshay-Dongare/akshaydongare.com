@@ -326,10 +326,12 @@ body {
    motion and is using a mouse, and anyone on a touchscreen laptop driving it with a
    mouse, since maxTouchPoints > 0 is enough to make the component bail. The dot itself
    is parked at -100,-100 in that state, so nothing replaces what the CSS took away. */
-html.custom-cursor-active body,
-html.custom-cursor-active :is(a, button, [role="button"], input, select, textarea),
-html.custom-cursor-active .cursor-none {
-  cursor: none;
+@media (forced-colors: none) {
+  html.custom-cursor-active body,
+  html.custom-cursor-active :is(a, button, [role="button"], input, select, textarea),
+  html.custom-cursor-active .cursor-none {
+    cursor: none;
+  }
 }
 
 /* Tailwind's own .cursor-none utility is unconditional and is on 24 elements, so it has
@@ -339,6 +341,13 @@ html.custom-cursor-active .cursor-none {
    cascade regardless of specificity, which is what lets it beat the utility. */
 html:not(.custom-cursor-active) .cursor-none {
   cursor: revert;
+}
+
+/* High Contrast can switch on mid-visit, after the cursor started, so the native pointer comes back here too. */
+@media (forced-colors: active) {
+  .cursor-none {
+    cursor: revert;
+  }
 }
 
 @layer utilities {
