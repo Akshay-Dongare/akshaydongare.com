@@ -47,7 +47,8 @@ export function PrivacyContent() {
                     </p>
 
                     <p className="mt-16 text-fg-50 font-mono text-sm">
-                        Last updated: {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+                        {/* Set by hand when the policy text changes; computing it on the client broke hydration each new month. */}
+                        Last updated: September 2026
                     </p>
                 </motion.div>
 
