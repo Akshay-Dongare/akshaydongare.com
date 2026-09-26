@@ -49,8 +49,9 @@ export function ContactContent() {
                                 href={link.href}
                                 className="group flex justify-between items-center gap-4 py-8 md:py-12 border-t border-line-8 cursor-none"
                             >
-                                <span className="text-display-m text-fg-80 group-hover:text-fg-50 transition-colors duration-300">
-                                    {link.label}
+                                {/* The address may break after its @ on a 320px screen; <wbr> is not copied with it. */}
+                                <span className="min-w-0 text-display-m text-fg-80 group-hover:text-fg-50 transition-colors duration-300">
+                                    {link.label.includes("@") ? <>{link.label.split("@")[0]}@<wbr />{link.label.split("@")[1]}</> : link.label}
                                 </span>
 
                                 <span aria-hidden="true" className="hidden md:block shrink-0 whitespace-nowrap font-mono text-fg-60 opacity-0 -translate-x-8 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-[400ms] ease-[cubic-bezier(0.25,0.1,0.25,1)]">
