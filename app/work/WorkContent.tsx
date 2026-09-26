@@ -8,7 +8,8 @@ import { GAMI_AWARD_POST, GAMI_SITE, HARVARD_SITE, LINKEDIN_EXPERIENCE, LITELLM_
 import { OrgLogo, type Org } from "@/components/ui/OrgLogo";
 
 // affiliation names the organisation for cards whose title does not, so it is not left to the logo alone.
-type Project = { title: string; desc: React.ReactNode; tags: string[]; link: string; logo?: Org; affiliation?: string };
+// id is the anchor the homepage cards link to.
+type Project = { title: string; desc: React.ReactNode; tags: string[]; link: string; logo?: Org; affiliation?: string; id?: string };
 
 // Links inside a description sit above the card's stretched title link, so both stay clickable.
 const INLINE = "relative z-10 text-fg-85 underline underline-offset-4 decoration-line-20 hover:text-fg-55 transition-colors cursor-none";
@@ -16,6 +17,7 @@ const INLINE = "relative z-10 text-fg-85 underline underline-offset-4 decoration
 const buildProjects = (stats: PackageStats): Project[] => [
     {
         title: "langchain-litellm",
+        id: "langchain-litellm",
         logo: "langchain",
         desc: `Creator and lead maintainer of LangChain's official LiteLLM integration. Started as my own repository; now developed and released inside the langchain-ai organization, with its own page in the LangChain docs and an entry in the Python API reference. One interface to 140+ providers, plus router-backed load balancing, embeddings and OCR loading. ${stats.long} downloads across ${stats.releases} releases, and around ${stats.monthlyLong} every month.`,
         tags: ["PYTHON", "PYPI", "CREATOR", "MAINTAINER"],
@@ -23,6 +25,7 @@ const buildProjects = (stats: PackageStats): Project[] => [
     },
     {
         title: "Airbnb · AI Platform",
+        id: "airbnb",
         logo: "airbnb",
         desc: "The team already used the package I maintain, which is how they found me. Their internal LLM gateway, used by roughly 28 services, could not safely serve two providers in one process, because configuration lived in process-wide globals. I moved it to per-model registries resolved per request, giving a structural concurrency guarantee rather than a lock, and put an expiry-aware cache behind the auth path. Thirteen changes across ten repos, zero consumer migrations, and a test suite that went from 17 to 144. Two calls in two months; the rest was async.",
         tags: ["PYTHON", "LLM GATEWAY", "CONCURRENCY", "CONTRACT"],
@@ -30,6 +33,7 @@ const buildProjects = (stats: PackageStats): Project[] => [
     },
     {
         title: "Harvard University · Kenya Blood Donation Assistant",
+        id: "harvard",
         logo: "harvard",
         desc: (
             <>
@@ -44,6 +48,7 @@ const buildProjects = (stats: PackageStats): Project[] => [
     },
     {
         title: "ISO · Companion",
+        id: "iso",
         logo: "iso",
         desc: "Applied AI engineer on Companion, the assistant the International Organization for Standardization builds for its own standards work. I designed the agentic graph patterns it runs on, which is what let it scale without maintenance cost scaling with it, and ran the comparative evaluation behind its web search layer so answers come from official ISO sources rather than the open web. Started the architecture documentation and refactored the legacy codebase while I was in there.",
         tags: ["LANGGRAPH", "AGENTS", "RETRIEVAL", "CONTRACT"],
@@ -152,12 +157,15 @@ export function WorkContent({ stats }: { stats: PackageStats }) {
                         >
                             {/* The title link stretches over the card through its ::after, so the card stays one target while
                                 the description can hold links of its own; an <a> inside an <a> is invalid HTML. */}
-                            <div className="group relative h-full border border-[var(--work-card-edge)] rounded-[20px] md:rounded-3xl p-6 md:p-8 cursor-none bg-[var(--work-card)] shadow-[var(--work-card-shadow)] hover:bg-[var(--work-card-hover-bg)] hover:shadow-[var(--work-card-hover)] transition-[background-color,box-shadow] duration-300 ease-[cubic-bezier(0,0,0.5,1)]">
+                            <div
+                                id={proj.id}
+                                className="group relative h-full scroll-mt-28 border border-[var(--work-card-edge)] rounded-[20px] md:rounded-3xl p-6 md:p-8 cursor-none bg-[var(--work-card)] shadow-[var(--work-card-shadow)] hover:bg-[var(--work-card-hover-bg)] hover:border-[var(--work-card-hover-edge)] hover:shadow-none target:bg-[var(--work-card-hover-bg)] target:border-[var(--work-card-hover-edge)] target:shadow-none transition-[background-color,border-color,box-shadow] duration-300 ease-[cubic-bezier(0,0,0.5,1)]"
+                            >
                                 {/* A row of its own, since Tech Mahindra's 4:1 lockup broke titles inline. 40px holds the
                                     tallest mark, Harvard's shield, and the destination sits at its far end. */}
                                 <div className="flex h-10 items-center justify-between gap-4 mb-5">
                                     {proj.logo && <OrgLogo org={proj.logo} alt={proj.affiliation} />}
-                                    <span aria-hidden="true" className="hidden lg:inline-flex shrink-0 whitespace-nowrap items-baseline gap-2 font-mono text-fg-60 lg:opacity-0 lg:-translate-x-4 lg:group-hover:translate-x-0 lg:group-hover:opacity-100 transition-all duration-300">
+                                    <span aria-hidden="true" className="hidden lg:inline-flex shrink-0 whitespace-nowrap items-baseline gap-2 font-mono text-fg-60 lg:opacity-0 lg:-translate-x-4 lg:group-hover:translate-x-0 lg:group-hover:opacity-100 lg:group-target:translate-x-0 lg:group-target:opacity-100 transition-all duration-300">
                                         <span className="text-label text-fg-60">{destinationLabel(proj.link)}</span>
                                         <span className="text-xl">[ → ]</span>
                                     </span>

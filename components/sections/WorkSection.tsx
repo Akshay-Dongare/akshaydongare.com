@@ -13,6 +13,7 @@ import { OrgLogo } from "@/components/ui/OrgLogo";
 const buildProjects = (stats: PackageStats) => [
     {
         org: "Airbnb",
+        slug: "airbnb",
         logo: "airbnb" as const,
         role: "AI Platform · contract",
         line: "Made the internal LLM gateway about 28 services use safe to serve two providers in one process. Shipped as a version bump, so no consumer had to migrate.",
@@ -20,16 +21,17 @@ const buildProjects = (stats: PackageStats) => [
     },
     {
         org: "LangChain",
+        slug: "langchain-litellm",
         logo: "langchain" as const,
         role: (
             <>
-                <Link href={LITELLM_REPO} className="underline underline-offset-4 decoration-line-20 hover:decoration-current transition-colors cursor-none">langchain-litellm</Link>
+                <Link href={LITELLM_REPO} className="relative z-10 underline underline-offset-4 decoration-line-20 hover:decoration-current transition-colors cursor-none">langchain-litellm</Link>
                 {"\u00a0· creator and lead maintainer"}
             </>
         ),
         line: (
             <>
-                LangChain&apos;s official LiteLLM integration: one Python interface to 140+ model providers, developed inside the <Link href={LANGCHAIN_ORG} className="underline underline-offset-4 decoration-line-20 hover:decoration-current transition-colors cursor-none">langchain-ai</Link> organization.
+                LangChain&apos;s official LiteLLM integration: one Python interface to 140+ model providers, developed inside the <Link href={LANGCHAIN_ORG} className="relative z-10 underline underline-offset-4 decoration-line-20 hover:decoration-current transition-colors cursor-none">langchain-ai</Link> organization.
             </>
         ),
         pills: [
@@ -39,6 +41,7 @@ const buildProjects = (stats: PackageStats) => [
     },
     {
         org: "ISO",
+        slug: "iso",
         logo: "iso" as const,
         role: "Companion · applied AI engineer",
         line: "Designed the agentic graph patterns ISO's standards assistant runs on, and the evaluation that keeps its answers on official ISO sources.",
@@ -46,10 +49,11 @@ const buildProjects = (stats: PackageStats) => [
     },
     {
         org: "Harvard University",
+        slug: "harvard",
         logo: "harvard" as const,
         role: (
             <>
-                <Link href={GAMI_SITE} className="underline underline-offset-4 decoration-line-20 hover:decoration-current transition-colors cursor-none">Global Alliance for Medical Innovation</Link>
+                <Link href={GAMI_SITE} className="relative z-10 underline underline-offset-4 decoration-line-20 hover:decoration-current transition-colors cursor-none">Global Alliance for Medical Innovation</Link>
                 {"\u00a0· lead developer"}
             </>
         ),
@@ -87,7 +91,7 @@ export function WorkSection({ stats }: { stats: PackageStats }) {
                     {PROJECTS.map((project, i) => (
                         <motion.article
                             key={project.org}
-                            className="surface-paper relative rounded-[20px] md:rounded-3xl overflow-hidden border border-[var(--card-edge)] bg-[var(--card)] shadow-[var(--card-shadow)]"
+                            className="surface-paper group relative rounded-[20px] md:rounded-3xl overflow-hidden border border-[var(--card-edge)] bg-[var(--card)] shadow-[var(--card-shadow)] hover:bg-[var(--card-hover-bg)] hover:border-[var(--card-hover-edge)] hover:shadow-none transition-[background-color,border-color,box-shadow] duration-300 ease-[cubic-bezier(0,0,0.5,1)]"
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
@@ -97,7 +101,21 @@ export function WorkSection({ stats }: { stats: PackageStats }) {
                                 <div className="flex flex-col gap-2">
                                     <div className="flex items-center gap-3">
                                         <OrgLogo org={project.logo} paper className="[--logo-s:1.75rem] md:[--logo-s:2rem]" />
-                                        <h3 className="text-[1.5rem] md:text-[1.75rem] font-semibold leading-[1.1] tracking-[-0.01em] text-fg-100">{project.org}</h3>
+                                        {/* The name's link stretches over the card through its ::after, so the whole card opens this
+                                            entry on /work while the pills and inline links above it keep their own targets. */}
+                                        <h3 className="text-[1.5rem] md:text-[1.75rem] font-semibold leading-[1.1] tracking-[-0.01em] text-fg-100">
+                                            <Link
+                                                href={`/work#${project.slug}`}
+                                                aria-label={`${project.org}, the full entry on the work page`}
+                                                className="cursor-none outline-none after:absolute after:inset-0 after:rounded-[20px] md:after:rounded-3xl focus-visible:after:outline-2 focus-visible:after:outline-offset-2 focus-visible:after:outline-current"
+                                            >
+                                                {project.org}
+                                            </Link>
+                                        </h3>
+                                        <span aria-hidden="true" className="ml-auto hidden lg:inline-flex shrink-0 whitespace-nowrap items-baseline gap-2 font-mono text-fg-60 lg:opacity-0 lg:-translate-x-4 lg:group-hover:translate-x-0 lg:group-hover:opacity-100 transition-all duration-300">
+                                            <span className="text-label">WORK</span>
+                                            <span className="text-xl">[ → ]</span>
+                                        </span>
                                     </div>
                                     <p className="text-[0.9375rem] leading-snug text-fg-60">{project.role}</p>
                                 </div>
@@ -109,7 +127,7 @@ export function WorkSection({ stats }: { stats: PackageStats }) {
                                             key={pill.label}
                                             href={pill.href}
                                             aria-label={pill.name}
-                                            className="inline-flex items-center gap-2 cursor-none text-label text-lbl-100 bg-chip hover:bg-[var(--chip-hover)] shadow-[inset_0_0_0_1px_var(--chip-line)] hover:shadow-[inset_0_0_0_1px_var(--chip-line-hover)] transition-[background-color,box-shadow] duration-200 px-3 py-1.5 rounded-full"
+                                            className="relative z-10 inline-flex items-center gap-2 cursor-none text-label text-lbl-100 bg-chip hover:bg-[var(--chip-hover)] shadow-[inset_0_0_0_1px_var(--chip-line)] hover:shadow-[inset_0_0_0_1px_var(--chip-line-hover)] transition-[background-color,box-shadow] duration-200 px-3 py-1.5 rounded-full"
                                         >
                                             {/* A no-break space keeps the arrow on the last word when a long pill wraps on a phone. */}
                                             <span>{pill.label}{"\u00a0→"}</span>
@@ -123,7 +141,7 @@ export function WorkSection({ stats }: { stats: PackageStats }) {
 
                 {/* Its own pill: the ground behind this spot shifts between breakpoints, so the pill carries its contrast. */}
                 <div className="mt-6 flex justify-end">
-                    <Link href="/work" className="group flex items-center gap-2 cursor-none text-label shadow-[inset_0_0_0_1px_var(--more-edge)] bg-[var(--more-bg)] text-[var(--more-ink)] hover:bg-[var(--more-bg-hover)] hover:text-[var(--more-ink-hover)] transition-colors px-4 py-2.5 rounded-full">
+                    <Link href="/work" className="group flex items-center gap-2 cursor-none text-label shadow-[inset_0_0_0_1px_var(--more-edge)] bg-[var(--more-bg)] text-[var(--more-ink)] hover:bg-[var(--more-bg-hover)] hover:text-[var(--more-ink-hover)] hover:shadow-[inset_0_0_0_1px_var(--more-hover-edge)] transition-[background-color,color,box-shadow] duration-300 px-4 py-2.5 rounded-full">
                         <span>ALL WORK</span>
                         <span className="shrink-0 whitespace-nowrap">[ → ]</span>
                     </Link>
