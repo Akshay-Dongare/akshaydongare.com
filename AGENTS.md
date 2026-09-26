@@ -198,7 +198,9 @@ at 0.72 in light, and in dark a mid slate `#394556` at 0.88, because in dark mod
 light end of the bridge, where near-black read as holes. 0.88 is as clear as dark goes before white/80
 labels over the palest ground drop under 4.5:1. ALL WORK is made of the same material in both modes
 rather than an inverted solid: it is a way to more of the same, and a solid ink pill outweighed the
-cards it follows.
+cards it follows. /work's cards take the same material: paper at 0.72 in light, and in dark the same slate
+at only 0.35, because /work's ground is near-black and 0.88 there reads as heavy slabs; it settles a
+step above the page instead.
 
 **Text never uses white or black utilities.** `text-fg-NN` replaces `text-white/NN`: in dark it
 is the same `color-mix` Tailwind emits for `text-white/NN`, in light a solid ink by role (NN 85
