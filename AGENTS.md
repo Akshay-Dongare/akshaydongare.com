@@ -212,6 +212,16 @@ solid outweighed the cards. /work shares the geometry: opaque paper in light, an
 Apple-style elevation, `#1c2230`, rising to `#232a36` on hover with no glow, lift or border.
 `prefers-contrast: more` brings back a visible edge on all of them.
 
+**Every card is a link, and every card sinks on hover.** The four homepage cards open their entry on
+/work (`/work#airbnb`, `#langchain-litellm`, `#iso`, `#harvard`), and each /work card opens its evidence,
+both through the same stretched link: the title's `<a>` covers the card with its `::after`, and any link
+inside a card takes `relative z-10` to stay above it. Do not wrap a card in an `<a>`; that nests links.
+On hover a card sinks rather than lifts: its fill drops one step below the ground (`--card-hover-bg`
+`#f4f1ea` on paper, `--work-card-hover-bg` `#0b0c13` on /work's dark), a hairline edge appears, the
+shadow goes, and the destination label (WORK, LINKEDIN, GITHUB) slides in. ALL WORK does the same.
+Arriving at `/work#…` shows that card in the same state through `:target`, so a reader sees where
+they landed; `scroll-mt-28` keeps it clear of the nav.
+
 **Text never uses white or black utilities.** `text-fg-NN` replaces `text-white/NN`: in dark it
 is the same `color-mix` Tailwind emits for `text-white/NN`, in light a solid ink by role (NN 85
 and up `#1a1c13`, 65 to 80 `#272a1e`, 50 to 60 `#3d422c`). `text-lbl-NN` is the same on
