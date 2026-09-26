@@ -14,7 +14,7 @@ interface PillButtonProps {
 export function PillButton({ href, onClick, children, theme, className = "" }: PillButtonProps) {
     const isDarkBg = theme === "dark";
 
-    const baseClasses = "inline-flex items-center justify-center rounded-full border-[1.5px] px-[1.2rem] py-[0.45rem] text-[0.85rem] font-sans transition-all duration-200 ease-in-out cursor-none relative overflow-hidden group";
+    const baseClasses = "inline-flex items-center justify-center rounded-full border-[1.5px] px-[1.2rem] py-[0.45rem] text-[0.85rem] font-sans transition-colors duration-200 ease-in-out cursor-none relative overflow-hidden group";
 
     const themeClasses = theme === undefined
         ? "border-fg-100 text-fg-100 hover:bg-fg-100 hover:text-[var(--page-bg)]"

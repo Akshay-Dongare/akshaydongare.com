@@ -165,7 +165,7 @@ export function WorkContent({ stats }: { stats: PackageStats }) {
                                     tallest mark, Harvard's shield, and the destination sits at its far end. */}
                                 <div className="flex h-10 items-center justify-between gap-4 mb-5">
                                     {proj.logo && <OrgLogo org={proj.logo} alt={proj.affiliation} />}
-                                    <span aria-hidden="true" className="hidden lg:inline-flex shrink-0 whitespace-nowrap items-baseline gap-2 font-mono text-fg-60 lg:opacity-0 lg:-translate-x-4 lg:group-hover:translate-x-0 lg:group-hover:opacity-100 lg:group-target:translate-x-0 lg:group-target:opacity-100 lg:group-has-[h2_a:focus-visible]:translate-x-0 lg:group-has-[h2_a:focus-visible]:opacity-100 transition-all duration-300">
+                                    <span aria-hidden="true" className="hidden lg:inline-flex shrink-0 whitespace-nowrap items-baseline gap-2 font-mono text-fg-60 lg:opacity-0 lg:-translate-x-4 lg:group-hover:translate-x-0 lg:group-hover:opacity-100 lg:group-target:translate-x-0 lg:group-target:opacity-100 lg:group-has-[h2_a:focus-visible]:translate-x-0 lg:group-has-[h2_a:focus-visible]:opacity-100 transition-[opacity,translate] duration-300">
                                         <span className="text-label text-fg-60">{destinationLabel(proj.link)}</span>
                                         <span className="text-xl">[ → ]</span>
                                     </span>

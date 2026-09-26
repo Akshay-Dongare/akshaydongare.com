@@ -112,7 +112,7 @@ export function WorkSection({ stats }: { stats: PackageStats }) {
                                                 {project.org}
                                             </Link>
                                         </h3>
-                                        <span aria-hidden="true" className="ml-auto hidden lg:inline-flex shrink-0 whitespace-nowrap items-baseline gap-2 font-mono text-fg-60 lg:opacity-0 lg:-translate-x-4 lg:group-hover:translate-x-0 lg:group-hover:opacity-100 lg:group-has-[h3_a:focus-visible]:translate-x-0 lg:group-has-[h3_a:focus-visible]:opacity-100 transition-all duration-300">
+                                        <span aria-hidden="true" className="ml-auto hidden lg:inline-flex shrink-0 whitespace-nowrap items-baseline gap-2 font-mono text-fg-60 lg:opacity-0 lg:-translate-x-4 lg:group-hover:translate-x-0 lg:group-hover:opacity-100 lg:group-has-[h3_a:focus-visible]:translate-x-0 lg:group-has-[h3_a:focus-visible]:opacity-100 transition-[opacity,translate] duration-300">
                                             <span className="text-label">WORK</span>
                                             <span className="text-xl">[ → ]</span>
                                         </span>

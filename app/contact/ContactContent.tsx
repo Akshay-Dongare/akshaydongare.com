@@ -54,7 +54,7 @@ export function ContactContent() {
                                     {link.label.includes("@") ? <>{link.label.split("@")[0]}@<wbr />{link.label.split("@")[1]}</> : link.label}
                                 </span>
 
-                                <span aria-hidden="true" className="hidden md:block shrink-0 whitespace-nowrap font-mono text-fg-60 opacity-0 -translate-x-8 group-hover:translate-x-0 group-hover:opacity-100 group-focus-visible:translate-x-0 group-focus-visible:opacity-100 transition-all duration-[400ms] ease-[cubic-bezier(0.25,0.1,0.25,1)]">
+                                <span aria-hidden="true" className="hidden md:block shrink-0 whitespace-nowrap font-mono text-fg-60 opacity-0 -translate-x-8 group-hover:translate-x-0 group-hover:opacity-100 group-focus-visible:translate-x-0 group-focus-visible:opacity-100 transition-[opacity,translate] duration-[400ms] ease-[cubic-bezier(0.25,0.1,0.25,1)]">
                                     [ → ]
                                 </span>
                             </Link>
