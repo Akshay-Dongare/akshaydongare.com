@@ -37,6 +37,11 @@ moved inside the effect, and the directive then started reporting as unused.
 
 There is no test suite.
 
+`npm run dev` can keep serving a pre-edit `app/globals.css`, even across a restart: Turbopack's
+cache in `.next/dev/cache/turbopack` held one while TSX edits beside it hot-reloaded. The chunk
+name carries no content hash, so fetch the served CSS and check that the edited rule moved; if it
+did not, stop the server and clear that directory.
+
 ## Architecture
 
 ### Tech Stack
@@ -210,6 +215,15 @@ alt, rather than leaving the affiliation to a picture.
 depends on `lang="en"` on `<html>`. WCAG 1.4.8 advises against justified text, but only at AAA, so
 it stays on this one page and does not spread without asking.
 
+**/about body is 20px from `lg`, on 1.625 leading** (`lg:text-[1.25rem] leading-relaxed` over
+`.text-body`), at the owner's request. At 1440 the 740px column runs a median 78 to 81 characters a
+line at 20px against 86 to 88 at 18px, and WCAG 1.4.8 (AAA) caps a line at 80. Below `lg` the size is
+`.text-body`'s 16 to 18px, so from 820 to 1023px, where the column is already 740px, lines still run
+86 to 88. `.link-in-text` needs no recompute for it: the 24px floor does not depend on line height,
+and the 1.625 line lifts the ceiling from 0.146em to 0.160em at 18px, so at 20px a link fragment is
+31px inside a 32.5px line. Both classes sat in the markup for a long time without rendering; the
+`@utility` note under Color System says why.
+
 ### Modes
 
 Light, "Daylight Folio", is the default; dark is the original "Deep Obsidian" site behind a
@@ -302,6 +316,19 @@ for. On the dark canvas that happened to look plausible, which is why it survive
 the light `mist → parchment` gradient, `AboutSection`'s "MORE ABOUT ME" measured
 2.78:1 at 10.4px against the `#1c1c1c` it asked for, which clears ~13.7:1. If a
 utility needs a default colour, give it to the call sites instead.
+
+**A custom class that call sites override belongs in `@utility`, not `@layer utilities`.**
+Tailwind emits its own utilities into the same layer at the same specificity, and the
+hand-written block comes later in the sheet, so it beats any Tailwind utility on a property
+it declares, responsive variants included. `.text-body` did this to /about: its
+`lg:text-[1.25rem]` and `leading-relaxed` were in the markup, and the page rendered 18px on
+1.6. As `@utility`, Tailwind sorts it among its own utilities, so a variant or a
+single-property utility beside it wins. The move also brought back a dead `leading-relaxed`
+beside `text-body` on ten other call sites. Those were deleted, and every other page measured
+identical at 375 and 1440: font size, line height, weight, tracking and family on every
+element, plus page height. The display classes and `.text-label` are still in the layer, so
+`font-medium`, `tracking-*` or `leading-*` beside one of them does nothing today; check which
+properties the class declares before writing an override next to it.
 
 ### Blended Scroll Journey (Home Page)
 

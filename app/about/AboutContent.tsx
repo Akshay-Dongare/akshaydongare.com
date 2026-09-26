@@ -14,7 +14,7 @@ export function AboutContent({ stats }: { stats: PackageStats }) {
             style={{ background: 'var(--spine-page)' }}
             data-theme="dark"
         >
-            {/* One column for title, portrait and body; 20px body keeps the wider measure near 80 characters. */}
+            {/* One column for title, portrait and body; 20px body from lg holds the 740px measure near 80 characters. */}
             <div className="max-w-[820px] mx-auto px-6 md:px-10">
 
                 <motion.h1
