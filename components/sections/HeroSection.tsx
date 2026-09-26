@@ -78,7 +78,7 @@ export function HeroSection({ stats }: { stats: PackageStats }) {
                 >
                     <div className="flex flex-col gap-1.5 mb-6">
                         <span className="text-[0.95rem] font-mono text-fg-90 tracking-[0.15em] uppercase">[ Akshay Dongare ]</span>
-                        <span className="text-label text-lbl-70"><span aria-hidden="true">{"->"}</span> ai platform engineer . llm infrastructure</span>
+                        <span className="text-label text-lbl-70"><span aria-hidden="true">{"->"}</span> ai platform engineer{"\u00a0·"} llm{"\u00a0"}infrastructure</span>
                     </div>
 
                     <h1 className="text-display-xl text-fg-100 font-sans leading-[1.05] tracking-[-0.02em] max-w-[14em]" style={{ fontSize: "clamp(min(2.8rem, 6.5svh), min(6vw, 9.5svh), 5.5rem)" }}>
