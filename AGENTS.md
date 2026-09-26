@@ -64,30 +64,35 @@ In dark mode the Navbar (`components/nav/Navbar.tsx`) adapts its text and backgr
 
 ### External Links
 
-Every outbound link opens in place. No `target="_blank"` anywhere, including the
-citation links that back the download figures.
+Every link opens in place. No `target="_blank"` anywhere, including the links on the download
+figures. Re-tested in September 2026 against the argument that a new tab keeps the reader on the
+site, and upheld:
 
-This was researched rather than assumed, and the split it replaced (evidence
-links in a new tab, destinations in place) was wrong. NN/g's *Opening Links in
-New Browser Windows and Tabs* (2020) is explicit — "For the most part, always
-open links in the same browser tab or window" — and its mobile finding is the
-exact complaint this site hit: "Mobile users were more annoyed when links opened
-in new tabs, as they couldn't use the Back button to return to the previous
-screen." A reader who genuinely wants a second tab long-presses or Cmd-clicks;
-forcing one removes their choice and buys them nothing.
+- No evidence says a new tab retains readers. Cloud Four (2024) looked and found not even
+  anecdotes, and `_blank` opens the tab in front, so the portfolio leaves the screen either way.
+- A quick check followed by a return is a case NN/g's *Opening Links in New Browser Windows and
+  Tabs* (2020) says to keep in the same tab, and readers under time pressure, which recruiters are,
+  minded new tabs most.
+- On desktop Chrome, Back in a new tab does nothing: its back-to-opener feature is off by default.
+- Recruiters often arrive from LinkedIn, Gmail or Slack, whose in-app browsers ignore or break
+  `target="_blank"`.
+- The figures repeat the same destinations (four links to PyPI, two to pepy), so new tabs would
+  stack duplicates.
+- JAWS and NVDA announce nothing when a link opens a new tab.
+- A reader who wants a tab already long-presses or Cmd-clicks; forcing one takes that choice away.
 
-Two site-specific reasons it is clearly right here. Five of the nine former
-`_blank` links resolve to the *same* pepy URL, two of them adjacent in the hero,
-so a curious phone reader could stack four tabs on one page before leaving the
-homepage. And Back is cheap: the site is bfcache-eligible (no `no-store` on the
-document, no `unload`/`beforeunload` handlers, no WebSocket or IndexedDB), so
-returning restores scroll and Framer's `once: true` animation state without a
-remount.
+NN/g's mobile finding, that users could not go Back from a new tab, no longer holds: Chrome for
+Android and iOS Safari now close a link-opened tab on Back. Do not cite it as the reason.
 
-Do not "fix" this by reintroducing `_blank` for citations. Note also that an
-unannounced new tab is *not* a WCAG failure at any enforceable level — SC 3.2.5
-Change on Request is AAA, and SC 3.2.1/3.2.2 govern focus and input, not link
-activation. This is a usability decision, not a conformance one.
+Back is cheap: the site is bfcache-eligible (no `no-store` on the document, no
+`unload`/`beforeunload` handlers, no WebSocket or IndexedDB), so returning restores scroll and
+Framer's `once: true` animation state without a remount.
+
+Do not "fix" this by reintroducing `_blank` for citations. An unannounced new tab is not a WCAG
+failure at any enforceable level: SC 3.2.5 Change on Request is AAA, and SC 3.2.1/3.2.2 govern
+focus and input, not link activation, so this is a usability decision, not a conformance one. The
+one exception the evidence supports is a PDF on desktop. If a resume PDF is ever added, prefer an
+HTML resume; failing that, say "opens in a new tab" in the visible link text.
 
 ### Search
 
