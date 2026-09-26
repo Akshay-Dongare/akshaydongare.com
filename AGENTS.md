@@ -194,18 +194,23 @@ theme-color meta; viewport metadata would be re-inserted as light on every navig
 to inline, so dark mode renders as it did before the switcher existed. Section backgrounds are
 `var(--spine-*)`, the parallax layers `var(--depth-*)`. The intended dark differences are
 `color-scheme: dark`, so native scrollbars match the page; the Code label at the 13px floor instead of
-9.9px; the code overlay's fade at its foot; the claim pills; and the Work cards and ALL WORK button below.
+9.9px; the code overlay's fade at its foot; and the Work cards and ALL WORK, which stay paper in both
+modes (below).
 
-**Work cards and ALL WORK.** The four homepage cards share one surface, `var(--card)` with a
-`var(--card-edge)` hairline and a faint top sheen, so the logos carry the colour; a gradient per card
-read as muddy in both modes. The surface is translucent so the section's own gradient tints it: paper
-at 0.72 in light, and in dark a mid slate `#394556` at 0.88, because in dark mode the cards sit on the
-light end of the bridge, where near-black read as holes. 0.88 is as clear as dark goes before white/80
-labels over the palest ground drop under 4.5:1. ALL WORK is made of the same material in both modes
-rather than an inverted solid: it is a way to more of the same, and a solid ink pill outweighed the
-cards it follows. /work's cards take the same material: paper at 0.72 in light, and in dark the same slate
-at only 0.35, because /work's ground is near-black and 0.88 there reads as heavy slabs; it settles a
-step above the page instead.
+**Work cards and ALL WORK.** Built to Apple's published principles (the HIG and the WWDC25 design
+sessions): content first, colour used sparingly, no glass on the content layer, depth from one soft
+shadow. The four homepage cards are one opaque paper, `#fffdf8`, in both modes, with no edge, sheen,
+gradient or glow, so the company logo is the only colour on a card. A card follows its section's
+theme, not the page's: in dark mode the Work section is still the light arm of the bridge, and every
+dark treatment tried (near-black, mid slate, a slate-to-navy gradient with a glow) read as slabs or
+as flashy against it. The `.surface-paper` scope in globals.css gives everything inside the card the
+light ink ramp whatever `<html>` says, and `OrgLogo`'s `paper` prop pins LangChain to its light-ground
+file, because the `dark:` and `light:` variants still key on `<html>`. Names are 24 to 28px semibold,
+the role line is 15px sentence-case sans, the pills are flat 6% ink capsules, and corners are 20px,
+24px from `md`. ALL WORK is the same paper, darkening one step on hover as the pills do; an inverted
+solid outweighed the cards. /work shares the geometry: opaque paper in light, and in dark one step of
+Apple-style elevation, `#1c2230`, rising to `#232a36` on hover with no glow, lift or border.
+`prefers-contrast: more` brings back a visible edge on all of them.
 
 **Text never uses white or black utilities.** `text-fg-NN` replaces `text-white/NN`: in dark it
 is the same `color-mix` Tailwind emits for `text-white/NN`, in light a solid ink by role (NN 85
@@ -368,8 +373,9 @@ pill's accessible name calls it the package on PyPI, not a citation for the figu
 
 **Type floor.** `.text-label` is 13px, and nothing a reader needs goes below it. At 10.4px
 the capitals subtend under 0.2 degrees, where reading slows sharply (Legge and Bigelow 2011).
-Card text is measured, not eyeballed, over the palest ground each translucent card can sit on: in dark
-white/80 labels clear 5.26:1 over parchment, and in light the rust labels clear 9.0:1 over olive.
+Card text is measured, not eyeballed. Every card fill is opaque, so contrast no longer depends on the
+ground: ink on the paper cards clears 16.9:1, the role line 10.3:1 and a pill 15.1:1; on /work's dark
+`#1c2230` the white/55 body clears 5.75:1, and the tags use white/60 because white/50 fails on hover.
 
 ### Particle Systems (Two Distinct Components — Narrative Escalation)
 
