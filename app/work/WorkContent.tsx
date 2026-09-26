@@ -159,7 +159,7 @@ export function WorkContent({ stats }: { stats: PackageStats }) {
                                 the description can hold links of its own; an <a> inside an <a> is invalid HTML. */}
                             <div
                                 id={proj.id}
-                                className="group relative h-full scroll-mt-28 border border-[var(--work-card-edge)] rounded-[20px] md:rounded-3xl p-6 md:p-8 cursor-none bg-[var(--work-card)] shadow-[var(--work-card-shadow)] hover:bg-[var(--work-card-hover-bg)] hover:border-[var(--work-card-hover-edge)] hover:shadow-none target:bg-[var(--work-card-hover-bg)] target:border-[var(--work-card-hover-edge)] target:shadow-none transition-[background-color,border-color,box-shadow] duration-300 ease-[cubic-bezier(0,0,0.5,1)]"
+                                className="group relative flex flex-col h-full scroll-mt-28 border border-[var(--work-card-edge)] rounded-[20px] md:rounded-3xl p-6 md:p-8 cursor-none bg-[var(--work-card)] shadow-[var(--work-card-shadow)] hover:bg-[var(--work-card-hover-bg)] hover:border-[var(--work-card-hover-edge)] hover:shadow-none target:bg-[var(--work-card-hover-bg)] target:border-[var(--work-card-hover-edge)] target:shadow-none transition-[background-color,border-color,box-shadow] duration-300 ease-[cubic-bezier(0,0,0.5,1)]"
                             >
                                 {/* A row of its own, since Tech Mahindra's 4:1 lockup broke titles inline. 40px holds the
                                     tallest mark, Harvard's shield, and the destination sits at its far end. */}
