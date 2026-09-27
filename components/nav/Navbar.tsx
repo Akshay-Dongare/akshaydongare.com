@@ -78,11 +78,8 @@ export function Navbar() {
         }
     }, [isMobileMenuOpen]);
 
-    // The panel is a sibling of <main>, not a modal, so with it open the tab order ran
-    // straight on into the page behind it: links a sighted user cannot see and a keyboard
-    // user cannot get back out of. inert takes that subtree out of the tab order AND out
-    // of the accessibility tree with one attribute, which cannot drift out of sync with
-    // the panel's contents the way a hand-rolled focus trap does.
+    // The panel is a sibling of <main>, not a native <dialog>, so inert on main and footer keeps Tab and the
+    // accessibility tree inside it, and cannot drift from the panel's contents the way a hand-rolled focus trap can.
     useEffect(() => {
         if (!isMobileMenuOpen) return;
         const main = document.querySelector("main");
@@ -108,8 +105,7 @@ export function Navbar() {
         };
     }, [isMobileMenuOpen]);
 
-    // Escape dismisses the menu. Without this the only exits were the four
-    // nav links, since the panel used to paint over its own close button.
+    // Escape dismisses the menu, as a modal dialog is expected to.
     useEffect(() => {
         if (!isMobileMenuOpen) return;
         const onKey = (e: KeyboardEvent) => {

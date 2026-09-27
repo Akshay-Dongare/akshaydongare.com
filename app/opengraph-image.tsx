@@ -7,9 +7,8 @@ export const alt = "Akshay Dongare, AI Platform Engineer";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-// Pinned so the build is reproducible. Wrapped in a fallback below: if the CDN
-// is unreachable the card still renders in ImageResponse's default face rather
-// than failing the build.
+// Pinned so the build is reproducible. If the CDN is unreachable, loadGeist returns null and the card
+// renders in ImageResponse's default face rather than failing the build.
 const GEIST_TTF =
     "https://cdn.jsdelivr.net/npm/geist@1.3.1/dist/fonts/geist-sans/Geist-Regular.ttf";
 
@@ -47,10 +46,8 @@ export default async function OpengraphImage() {
                     padding: "68px 76px",
                     backgroundColor: "#0d1117",
                     backgroundImage:
-                        // Literal hexes on purpose: this renders through Satori, which has no document and
-                        // therefore no :root to resolve a CSS custom property against. var() here
-                        // silently produces no gradient. Keep these in step with --blend-void/--blend-deep
-                        // in app/globals.css by hand.
+                        // Literal hexes: Satori has no :root, so var() renders no gradient. Keep in step
+                        // with --blend-void and --blend-deep by hand (AGENTS.md, Color System).
                         "linear-gradient(135deg, #07090f 0%, #0d1117 55%, #0a0e15 100%)",
                     ...(geist ? { fontFamily: "Geist" } : {}),
                 }}

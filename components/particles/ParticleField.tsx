@@ -6,73 +6,46 @@ import { useReducedMotion } from "framer-motion";
 import * as THREE from "three";
 import { generateSilhouetteParticles, generateParticleSizes } from "@/lib/particleData";
 
-// ── Model ──────────────────────────────────────────────────────────────────
-// The cursor does not touch particles. It writes into a coarse displacement
-// field — a wake — and every particle reads that field and glides toward
-// `base + wake` with a first-order lag. Two consequences:
-//
-//   1. The persistence lives in the FIELD, which decays smoothly (exp, tau
-//      below) and blooms outward as it fades. Motion keeps living after the
-//      cursor leaves.
-//   2. No particle has an oscillatory mode any more. A first-order tracker
-//      cannot overshoot, so nothing rings. The old model was a spring at
-//      k=0.028, D=0.91 — damping ratio 0.288, ~1.6 visible bounces per
-//      particle, 5,000 of them ringing out of phase. That was the jelly.
-//
-// The character it is protecting is unchanged: tangential silk flow around the
-// cursor path, never repulsion.
+// ── Model: sources write a decaying wake field, and each particle glides toward base + wake ──
+// A first-order lag cannot overshoot, so nothing rings. Silk flow, never repulsion; AGENTS.md, Particle Systems.
 
 const PARTICLE_COUNT   = 5000;
-const INFLUENCE_RADIUS = 2.2;    // world-space reach of the cursor — as before
+const INFLUENCE_RADIUS = 2.2;    // world-space reach of each wake source
 
 // ── The wake field ─────────────────────────────────────────────────────────
 const GRID_W          = 64;      // cells across; ~0.33 world units at 16:9
 const GRID_H          = 40;
 const GRID_MARGIN     = INFLUENCE_RADIUS;  // grid overhangs the viewport by one reach
 const FIELD_TAU       = 0.42;    // seconds for the wake to fall to 1/e — the shape of the tail
-const FIELD_FLOOR     = 0.70;    // magnitude bled per second ON TOP of the decay, so the wake
-                                 // reaches EXACTLY zero in finite time instead of trailing an
-                                 // invisible asymptote. Pure exponential decay settled slower
-                                 // than the old spring did (1.68s vs 1.07s) even with no
-                                 // bouncing at all; this is what buys the settle axis back.
-const FIELD_DIFFUSION = 0.13;    // 5-point blur, per SECOND at 60fps. Scaled by dt below and
-                                 // then clamped: an explicit 5-point stencil goes unstable above
-                                 // 0.25, and MAX_DT * 60 * this would reach 0.39.
+const FIELD_FLOOR     = 0.70;    // magnitude bled per second ON TOP of the decay, so the wake reaches EXACTLY
+                                 // zero in finite time; decay alone takes 1.68s to settle. AGENTS.md, Particle Systems.
+const FIELD_DIFFUSION = 0.13;    // 5-point blur per SECOND at 60fps, scaled by dt and clamped below 0.25,
+                                 // where the explicit stencil goes unstable; MAX_DT * 60 * this reaches 0.39.
 const DIFFUSION_HALO  = 5;       // cells of headroom around a splat for the bloom to spread into
 const MAX_DISPLACE    = 1.00;    // world units the field can pull the silk at full speed
-const SPEED_HALF      = 4.5;     // world units/sec at which the speed term reaches half its range.
-                                 // Was 7.0, which meant an ordinary unhurried drag sat near the
-                                 // bottom of the curve and read as barely responsive.
+const SPEED_HALF      = 4.5;     // world units/sec at which the speed term reaches half its range. At 7.0
+                                 // an unhurried drag sits near the bottom of the curve and reads as unresponsive.
 const DEPOSIT_TAU     = 0.055;   // seconds for the field to reach the cursor's demand
 const TRAIL_OFFSET    = 0.55;    // splat centre sits this far behind the hand → comet, not disc
 const DRAG_ALONG      = 0.45;    // share of the wake that follows the cursor's heading
-const INWARD          = 0.22;    // silk drapes toward the hand — same 0.22 as before
-const IDLE_FLOOR      = 0.40;    // amplitude every input gets before speed is considered, so a
-                                 // resting cursor, a drifting ambient source and a finger between
-                                 // gestures all read alike. This is the single number that makes
-                                 // desktop and mobile feel the same; the speed term only adds.
+const INWARD          = 0.22;    // silk drapes toward the hand; 0.22 is part of the protected character, AGENTS.md
+const IDLE_FLOOR      = 0.40;    // amplitude every source gets before speed, so a resting cursor, the drift and a
+                                 // finger read alike; the single liveliness dial. AGENTS.md, Particle Systems.
 const PRESS_KICK      = 0.30;    // extra reach on pointerdown, so a click or tap visibly lands
 const PRESS_TAU       = 0.30;    // seconds for that kick to fall to 1/e
 const IDLE_SPEED      = 0.30;    // world units/sec below which the cursor counts as at rest
 const LIFT            = 0.22;    // z lift proportional to local wake magnitude
 const FIELD_EPS       = 2e-4;    // below this the field is zeroed and the whole system sleeps
 
-// ── The particle tracker ───────────────────────────────────────────────────
 // ── Ambient source ─────────────────────────────────────────────────────────
-// A phone never moves a pointer, and R3F parks `mouse` at (0,0) when nothing has.
-// The previous model let that phantom cursor push the nebula's bright centre forever;
-// excluding touch fixed the stuck push and left the field perceptually still on mobile,
-// where the only motion left was a 0.022-unit breath, roughly two pixels. This restores
-// the life without reintroducing a fixed point: a source that wanders a slow Lissajous
-// path, so it is never parked anywhere, feeding exactly the same deposit code a real
-// cursor feeds. It also covers a desktop before its first mouse move, and after the
-// pointer leaves the canvas.
+// Source 0: a Lissajous drift that never parks, so phones and idle desktops get a wake. AGENTS.md, Particle Systems.
 const AMBIENT_OMEGA = 0.38;      // rad/sec on the x term; y runs at 0.73x for an open path
 const AMBIENT_RX    = 0.30;      // share of the world box half-width the path sweeps
 const AMBIENT_RY    = 0.22;
 
+// ── The particle tracker ───────────────────────────────────────────────────
 const FOLLOW_TAU = 0.10;         // seconds; scaled per particle over [0.70, 1.40]
-const MAX_DT     = 0.05;         // same 3-frame clamp the old dtScale had
+const MAX_DT     = 0.05;         // 3-frame dt clamp at 60fps; caps the tracker gain at 0.55 (AGENTS.md)
 
 // Golden-ratio fraction — a low-discrepancy sequence, so consecutive indices get
 // very different values and the lag spread is even without needing Math.random().
@@ -100,21 +73,12 @@ function PointCloud({ color = "#8da3b5", reduced = false, blend = "add", fade = 
         return ops;
     }, []);
 
-    // Per-particle size scalar — 70% fine grain [0.75, 1.0], 30% structural nodes [1.5, 2.5].
-    // Node probability is higher where positions are densely packed (core, spiral strands,
-    // filament anchors) so additive blending stacks them into brilliant glowing pools.
+    // Per-particle size scalar, 70% fine grain and 30% structural nodes. Nodes favour dense strands
+    // so additive blending stacks them into glowing pools; AGENTS.md, Particle Systems.
     const particleSizes = useMemo(() => generateParticleSizes(PARTICLE_COUNT), []);
 
-    // Breathing phase table + per-thread lag, rolled once at mount.
-    //
-    // The breathing terms are sin(w*t + phi_i). Splitting them with the angle-sum
-    // identity — sin(a+b) = sin a cos b + cos a sin b — moves the three per-particle
-    // trig calls out of the frame loop and into this table: three sin/cos pairs per
-    // frame TOTAL, plus six array reads per particle. Same numbers, 15,000 fewer
-    // Math.sin calls every frame. That saving is what pays for the field.
-    //
-    // `follow` is each thread's own lag multiplier. Identical lags would make the
-    // cloud move as one rigid sheet; spreading them is what makes it read as fabric.
+    // Phase table: the angle-sum identity takes 15,000 Math.sin calls a frame out of the loop, which pays
+    // for the field. `follow` spreads each thread's lag, or the cloud moves as one rigid sheet, not fabric.
     const [phase, follow] = useMemo(() => {
         const p = new Float32Array(PARTICLE_COUNT * 6);
         const f = new Float32Array(PARTICLE_COUNT);
@@ -140,22 +104,16 @@ function PointCloud({ color = "#8da3b5", reduced = false, blend = "add", fade = 
     const bounds  = useRef({ x0: 0, x1: 0, y0: 0, y1: 0, live: false });
     const prev    = useRef({ x: 0, y: 0, valid: false });
     const present = useRef(false);
-    // A decaying impulse so a click or a tap visibly lands. Without it a press does nothing
-    // at all on desktop, because a stationary cursor produces no path length and therefore
-    // no speed term, and the only thing separating a click from a hover is the event.
+    // A decaying impulse so a click or a tap visibly lands: a stationary cursor has no speed term,
+    // so without it a press on desktop does nothing.
     const press   = useRef(0);
 
-    // Pointer presence. Without this, R3F's `mouse` sits at (0,0) — the bright nucleus —
-    // on any device that never moves a pointer, and the old resting-cursor push was
-    // applied there forever. Touch is excluded outright, so a phone gets no wake, no grid
-    // pass and no field sampling at all. `valid` is cleared on leave so that re-entering
-    // the canvas somewhere else cannot register as one enormous single-frame cursor jump.
+    // Pointer presence gates source 1; without it R3F's stale `mouse`, (0,0) until a move, pins the wake to one point.
+    // `valid` clears on leave so re-entering elsewhere cannot read as one huge single-frame cursor jump.
     useEffect(() => {
         const el = gl.domElement;
-        // enter discards the stale position so the first frame back measures no travel;
-        // move only marks presence — it must NOT touch `valid`, or every frame would
-        // start from a fresh sample, the cursor would read as motionless, and the swirl
-        // would never fire at all.
+        // enter and down discard the stale position so the first frame back measures no travel. move must NOT
+        // touch `valid`, or every frame starts fresh, the cursor reads as motionless and the swirl never fires.
         const enter = () => {
             present.current = true;
             prev.current.valid = false;
@@ -196,9 +154,8 @@ function PointCloud({ color = "#8da3b5", reduced = false, blend = "add", fade = 
         return geo;
     }, [positions, particleOpacities, particleSizes]);
 
-    // Soft Gaussian circles via GLSL + additive blending = holographic ghost glow.
-    // On the dark top of the Particle section, particles accumulate into bright clusters
-    // where the silhouette is dense; on the light bottom they fade gracefully.
+    // Soft Gaussian circles. Additive in dark, so dense silhouette regions stack into bright clusters
+    // on the section's dark top; the vertex shader fades them out over its light bottom.
     const material = useMemo(() => new THREE.ShaderMaterial({
         transparent: true,
         depthWrite:  false,
@@ -268,9 +225,8 @@ function PointCloud({ color = "#8da3b5", reduced = false, blend = "add", fade = 
         const time = state.clock.getElapsedTime();
         const dt   = Math.min(delta, MAX_DT);
 
-        // Coming back from frameloop="never" (scrolled away) hands us one frame with a
-        // delta of seconds. Rather than let a stale wake sit frozen in the section
-        // waiting to be scrolled back to, drop it and start clean.
+        // Resuming from frameloop="never" (scrolled away) hands one frame a delta of seconds, so drop the
+        // stale wake and start clean rather than leave it frozen in the section.
         if (delta > 0.25 && b.live) {
             W.fill(0);
             b.live = false;
@@ -290,15 +246,12 @@ function PointCloud({ color = "#8da3b5", reduced = false, blend = "add", fade = 
         let peak = 0;
 
         // ── 1. The wake decays and blooms ───────────────────────────────────
-        // Exponential decay is the tail; the 5-point blur is why the wake softens
-        // and spreads as it goes rather than just dimming in place.
+        // Exponential decay is the tail; the 5-point blur spreads and softens it rather than dimming it in place.
         if (b.live) {
             const decay = Math.exp(-dt / FIELD_TAU);
             const bleed = FIELD_FLOOR * dt;
-            // Diffusion was the one term still measured in frames rather than seconds, so
-            // the wake bloomed about twice as wide at 120fps as at 30 for the same gesture.
-            // The clamp is not optional: without it a long frame drives the stencil past
-            // its 0.25 stability limit and the field oscillates cell to cell.
+            // Scaled by dt so the bloom is as wide at 120fps as at 30. The clamp is not optional: past 0.25
+            // the stencil oscillates cell to cell. AGENTS.md, Particle Systems.
             const diff = Math.min(FIELD_DIFFUSION * dt * 60, 0.24);
             const { x0, x1, y0, y1 } = b;
 
@@ -318,10 +271,8 @@ function PointCloud({ color = "#8da3b5", reduced = false, blend = "add", fade = 
                     let nx = (cx + diff * (W[l] + W[r] + W[u] + W[d] - 4 * cx)) * decay;
                     let ny = (cy + diff * (W[l + 1] + W[r + 1] + W[u + 1] + W[d + 1] - 4 * cy)) * decay;
 
-                    // Constant bleed on the magnitude. Scaling both components by the same
-                    // factor keeps the direction exact, and the cell lands on a true zero
-                    // rather than creeping toward one — which is also what lets the whole
-                    // system detect that it is finished and go back to sleep.
+                    // Constant bleed on the magnitude. One factor on both components keeps the direction
+                    // exact, and a true zero is what lets the system detect it is finished and sleep.
                     let m = (nx < 0 ? -nx : nx) + (ny < 0 ? -ny : ny);
                     if (m <= bleed) {
                         nx = 0; ny = 0; m = 0;
@@ -375,15 +326,8 @@ function PointCloud({ color = "#8da3b5", reduced = false, blend = "add", fade = 
         press.current *= Math.exp(-dt / PRESS_TAU);
         if (press.current < 1e-3) press.current = 0;
 
-        // TWO sources, both deposited every frame. The drift is the field's own life and it
-        // never stops; a hand does not replace it, it disturbs it. Source 0 is the drift,
-        // source 1 is the pointer and exists only while one is over the canvas.
-        //
-        // This also deletes a whole class of bug. Every jerk and teleport in this file came
-        // from handing a single source back and forth between the drift and the cursor, so
-        // the path needed rebasing onto wherever control changed hands. With the drift
-        // running continuously there is no handover left to smooth: the ambient path is
-        // evaluated absolutely again, and the rebasing machinery is gone.
+        // TWO sources every frame: 0 is the drift, which never stops, and 1 is the pointer while one is over
+        // the canvas. Never merge them into one switched source; AGENTS.md, Particle Systems, says why.
         const ax = (t: number) => Math.sin(t * AMBIENT_OMEGA) * halfW * AMBIENT_RX;
         const ay = (t: number) => Math.sin(t * AMBIENT_OMEGA * 0.73 + 1.3) * halfH * AMBIENT_RY;
         const nSources = present.current ? 2 : 1;
@@ -405,15 +349,11 @@ function PointCloud({ color = "#8da3b5", reduced = false, blend = "add", fade = 
             if (speed > IDLE_SPEED) {
                 ux = mvx / pathLen;
                 uy = mvy / pathLen;
-                tanW  = 1;              // tangential — the documented silk swirl, still dominant
+                tanW  = 1;              // tangential: the documented silk swirl, and the dominant term
                 dragW = DRAG_ALONG;     // and some of it is dragged along the hand's heading
                 radW  = -INWARD;        // drapes toward the hand, never away from it
-                // Saturating demand: fast gestures pull further, but never past MAX_DISPLACE,
-                // so there is no accumulation runaway and no clamp discontinuity.
-                // Floor plus a saturating speed term. Moving is therefore always at least
-                // as strong as resting, which the old two-branch version could not promise:
-                // ambient sat at a pinned 0.32 while a slow drag computed 0.12, so drifting
-                // looked livelier than dragging.
+                // Floor plus a saturating speed term: moving is never weaker than resting, and fast gestures
+                // approach MAX_DISPLACE without a runaway or a clamp step. AGENTS.md, Particle Systems.
                 reach = IDLE_FLOOR + (MAX_DISPLACE - IDLE_FLOOR) * speed / (speed + SPEED_HALF)
                       + (isPointer ? PRESS_KICK * press.current : 0);
                 // A fast flick can cross more than a radius in one frame; substep so it
@@ -424,17 +364,15 @@ function PointCloud({ color = "#8da3b5", reduced = false, blend = "add", fade = 
             } else {
                 tanW  = 0;
                 dragW = 0;
-                radW  = 1;              // resting hand: a barely-there radial breath, as before
+                radW  = 1;              // resting hand: a barely-there radial breath
                 reach = IDLE_FLOOR * (0.82 + 0.18 * Math.sin(time * 0.9))
                       + (isPointer ? PRESS_KICK * press.current : 0);
                 steps = 1;
                 blend = 1 - Math.exp(-dt / (DEPOSIT_TAU * 6));
             }
 
-            // The press kick is added on top of a curve that already approaches MAX_DISPLACE,
-            // so a click during a fast drag could ask for 1.3 and make MAX_DISPLACE a lie.
-            // Clamp it: the kick then does its work where it is actually wanted, on a
-            // stationary press, and cannot stack into something the cap was meant to prevent.
+            // The press kick sits on a curve already near MAX_DISPLACE, so a click mid-drag could ask for 1.3.
+            // The clamp keeps the cap true; the kick shows where it is wanted, on a stationary press.
             if (reach > MAX_DISPLACE) reach = MAX_DISPLACE;
 
             const R2 = INFLUENCE_RADIUS * INFLUENCE_RADIUS;
@@ -481,8 +419,7 @@ function PointCloud({ color = "#8da3b5", reduced = false, blend = "add", fade = 
                         const q       = 1 - dist / INFLUENCE_RADIUS;
                         const falloff = q * q * (3 - 2 * q);
 
-                        // Rotating the radial 90° gives the orbital current. This is the
-                        // same construction as before — it just lands in the field now.
+                        // Rotating the radial 90° gives the orbital current, written into the field.
                         const dirX = tanW * -ny + radW * nx + dragW * ux;
                         const dirY = tanW *  nx + radW * ny + dragW * uy;
                         const dl   = Math.sqrt(dirX * dirX + dirY * dirY);
@@ -526,8 +463,7 @@ function PointCloud({ color = "#8da3b5", reduced = false, blend = "add", fade = 
             const ox = orig[i3];
             const oy = orig[i3 + 1];
 
-            // Breathing base — bit-for-bit the same layered sines as before, just
-            // evaluated through the phase table instead of three Math.sin calls.
+            // Breathing base: three layered sines, read through the phase table instead of three Math.sin calls.
             const bx = ox           + (sa1 * ph[i6]     + ca1 * ph[i6 + 1]) * 0.022;
             const by = oy           + (ca2 * ph[i6 + 2] - sa2 * ph[i6 + 3]) * 0.022;
             const bz = orig[i3 + 2] + (sa3 * ph[i6 + 4] + ca3 * ph[i6 + 5]) * 0.012;
@@ -537,9 +473,8 @@ function PointCloud({ color = "#8da3b5", reduced = false, blend = "add", fade = 
             let tz = bz;
 
             if (hasWake && ox > wx0 && ox < wx1 && oy > wy0 && oy < wy1) {
-                // Sampled at the REST position, not the current one. That keeps the
-                // lookup a pure function of the field: a particle can never drag its own
-                // sample around, so there is no feedback path and nothing to amplify.
+                // Sampled at the REST position, so a particle can never drag its own sample around:
+                // no feedback path, nothing to amplify. AGENTS.md, Particle Systems.
                 let gx = (ox - minX) * invCW - 0.5;
                 let gy = (oy - minY) * invCH - 0.5;
                 if (gx < 0) gx = 0; else if (gx > GRID_W - 1.001) gx = GRID_W - 1.001;
@@ -571,9 +506,8 @@ function PointCloud({ color = "#8da3b5", reduced = false, blend = "add", fade = 
                 tz = bz + ((dxw < 0 ? -dxw : dxw) + (dyw < 0 ? -dyw : dyw)) * LIFT;
             }
 
-            // Exponential approach. k is frame-rate corrected and dt is clamped, so
-            // k * lag stays well under 1 at any frame rate: the move is monotonic and
-            // cannot overshoot, which is the entire point of the redesign.
+            // Exponential approach. k is frame-rate corrected and dt is clamped, so k * lag stays under 1
+            // at any frame rate and the move is monotonic: it cannot overshoot. AGENTS.md, Particle Systems.
             const k = kBase * lag[i];
             pos[i3]     += (tx - pos[i3])     * k;
             pos[i3 + 1] += (ty - pos[i3 + 1]) * k;
@@ -587,11 +521,8 @@ function PointCloud({ color = "#8da3b5", reduced = false, blend = "add", fade = 
 }
 
 export function ParticleField({ color = "#8da3b5", className = "", active = true, blend = "add", fade = DARK_FADE }: { color?: string; className?: string; active?: boolean; blend?: "add" | "normal"; fade?: [number, number] }) {
-    // Reduced motion: render the field once and then stop, rather than removing it.
-    // The particles are this section's visual content, so a still frame keeps the
-    // composition while the movement — which is the part that triggers vestibular
-    // symptoms — goes away entirely. frameloop "demand" draws on mount and then only
-    // when something invalidates, so there is no ongoing CPU, GPU or battery cost.
+    // Reduced motion draws one still frame rather than removing the field: it keeps the composition and drops
+    // the movement, which triggers vestibular symptoms. "demand" then has no ongoing CPU, GPU or battery cost.
     const reduced = !!useReducedMotion();
     return (
         <div className={`w-full h-full pointer-events-auto absolute inset-0 z-0 ${className}`}>
@@ -599,10 +530,8 @@ export function ParticleField({ color = "#8da3b5", className = "", active = true
                 camera={{ position: [0, 0, 10], fov: 50 }}
                 gl={{ alpha: true, antialias: false, powerPreference: "high-performance" }}
                 dpr={[1, 1.5]}
-                // "never" stops the render loop without tearing down the GL context, the
-                    // geometry or the simulation state, so scrolling back costs nothing to
-                    // resume. Before this the canvas kept running at 60fps for the rest of the
-                    // visit once it had been seen once, six screens away from the viewport.
+                // "never" stops the render loop but keeps the GL context, geometry and simulation state,
+                    // so scrolling back resumes for free and an offscreen canvas does not render at 60fps.
                     frameloop={reduced ? "demand" : active ? "always" : "never"}
             >
                 <PointCloud color={color} reduced={reduced} blend={blend} fade={fade} />

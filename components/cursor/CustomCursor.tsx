@@ -26,9 +26,8 @@ export function CursorProvider({ children }: { children: React.ReactNode }) {
     const cursorY = useSpring(-100, { stiffness: 2000, damping: 40, mass: 0.1 });
 
     useEffect(() => {
-        // The cursor dot is client-only by definition: it tracks a pointer that does not
-        // exist on the server, and rendering it during SSR would put a stray element in the
-        // static HTML. Flipping a mount flag once is the standard gate for that.
+        // Client-only: the dot tracks a pointer the server does not have, and an SSR render would leave a stray
+        // element in the static HTML. Flipping a mount flag once is the standard gate for that.
         // eslint-disable-next-line react-hooks/set-state-in-effect
         setIsReady(true);
 
@@ -169,12 +168,8 @@ export function CursorProvider({ children }: { children: React.ReactNode }) {
 
     return (
         <CursorContext.Provider value={{ setHoverState: setIsHovering }}>
-            {/* One switch for every Framer Motion animation on the site. Only the two WebGL
-                fields honoured prefers-reduced-motion before this; every reveal, every
-                whileInView slide, every layout animation and every scroll-linked parallax
-                ran regardless. reducedMotion="user" disables transform and layout animation
-                while leaving opacity alone, so content still fades in and simply does not
-                move, which is the outcome SC 2.3.3 asks for. */}
+            {/* One switch for every Framer Motion animation: reducedMotion="user" drops transform and layout
+                animation but keeps opacity, so content still fades in without moving, as SC 2.3.3 asks. */}
             <MotionConfig reducedMotion="user">{children}</MotionConfig>
             {isReady && (
                 <motion.div

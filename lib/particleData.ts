@@ -1,15 +1,5 @@
-// Two exports for ParticleField:
-//   generateSilhouetteParticles — base XYZ positions (Float32Array, stride 3)
-//   generateParticleSizes       — per-particle aSize scalars (Float32Array, stride 1)
-//
-// Both use the same four-population structure so particle indices align:
-//   0        … coreN-1              → nebula core       (20%)
-//   coreN    … coreN+spiralN-1      → Fibonacci spiral  (40%)
-//   coreN+spiralN … -filamentN-1   → sinuous filaments  (28%)
-//   rest                            → cosmic dust        (12%)
-//
-// Defines initial positions and sizes only. The motion, shader and blending
-// live in components/particles/ParticleField.tsx.
+// Rest positions and aSize scalars for ParticleField. Both exports share the four populations' index ranges so each
+// size fits its particle (AGENTS.md, Particle Systems); motion, shader and blending live in ParticleField.tsx.
 
 export function generateSilhouetteParticles(count: number = 5000): Float32Array {
     const positions = new Float32Array(count * 3);
@@ -28,12 +18,8 @@ export function generateSilhouetteParticles(count: number = 5000): Float32Array 
         positions[idx++] = z;
     };
 
-    // ── 1. Nebula core — area-weighted disc haze (20%) ────────────────────
-    // r = R·√u gives a uniform areal density: f(r) ∝ r, so particles-per-unit-
-    // area is constant everywhere in the disc. The centre is naturally sparse
-    // (small area = few particles) with no hard cutoff and no forced ring.
-    // P(r < 0.1) ≈ (0.1/2.2)² ≈ 0.002 → ~2 particles within r=0.1 total —
-    // far below the additive-blending blowout threshold.
+    // ── 1. Nebula core: area-weighted disc haze (20%) ─────────────────────
+    // r = R·√u gives uniform areal density, so the centre is too sparse (P(r < 0.1) ≈ 0.002) to blow out additively.
     const coreN = Math.floor(count * 0.20);
     for (let i = 0; i < coreN; i++) {
         const r = 2.2 * Math.sqrt(Math.random()); // uniform over disc area, r ∈ [0, 2.2]
@@ -48,13 +34,7 @@ export function generateSilhouetteParticles(count: number = 5000): Float32Array 
     }
 
     // ── 2. Fibonacci / Fermat spiral arms (40%) ─────────────────────────────
-    // r = c·√n (Fermat), θ = n·golden_angle → natural arm-like clustering without
-    // explicit branch logic. Two mechanisms create dark voids and luminous strands:
-    //   a) rUndulate: sinusoidal deviation ripples each arm inward and outward.
-    //   b) densityWave: a slow sine across the index modulates the lateral XY
-    //      scatter width; in wave troughs (≈0) particles are tightly bunched
-    //      (bright additive cluster); in peaks (≈1) they are spread wide (dark void).
-    // Z is layered with two independent frequencies for thick volumetric depth.
+    // Golden-angle placement forms arms with no branch logic; rUndulate and densityWave carve strands and voids.
     const spiralN = Math.floor(count * 0.40);
     for (let i = 0; i < spiralN; i++) {
         const t     = i / spiralN;                             // normalised index [0,1)
@@ -69,17 +49,15 @@ export function generateSilhouetteParticles(count: number = 5000): Float32Array 
         // Density wave: slow sine over the full spiral index
         const densityWave = Math.sin(i * 0.033) * 0.50 + 0.50; // [0, 1]
 
-        // XY scatter: wide in void zones, very tight in bright strands so that
-        // the large node particles (added via aSize) stack densely and the
-        // additive blending merges them into brilliant glowing pools.
+        // XY scatter: wide in void zones, very tight in bright strands, so the large aSize nodes stack densely
+        // there and additive blending merges them into glowing pools.
         const xyScatter = (1.0 - densityWave) * 0.92 + 0.04;
 
         const r           = rBase + rUndulate + (Math.random() - 0.5) * xyScatter;
         const lateralJitter = (Math.random() - 0.5) * xyScatter;
 
-        // Z: two sinusoidal layers give plankton-in-deep-ocean volumetric thickness.
-        // Dense zones stay in a thin Z slab (well-defined glowing ribbon);
-        // void zones scatter deep in Z (tiny, faint dots receding into the dark).
+        // Z: two sinusoidal layers for volumetric depth. Dense zones stay in a thin slab (a defined glowing ribbon);
+        // void zones scatter deep in Z, so they shrink to faint dots receding into the dark.
         const zRibbon = Math.sin(θ * 3.6 + i * 0.019) * 1.25
                       + Math.cos(θ * 1.5 + i * 0.012) * 0.65;
         const zNoise  = densityWave > 0.45
@@ -94,13 +72,7 @@ export function generateSilhouetteParticles(count: number = 5000): Float32Array 
     }
 
     // ── 3. Sinuous branching filaments (28%) ────────────────────────────────
-    // Seven arms radiate outward. Each arm is a parametric curve:
-    //   centreline: linear march in a base angle + sinusoidal lateral sway (sway = amp·sin(…))
-    //   scatter:    power-law radial displacement from the centreline — most particles
-    //               hug the strand tightly; the outermost are gossamer-thin halos.
-    // Power-bias on t (t = rand^0.7) slightly favours the outer half of each arm so
-    // the tips are not barren — combined with sparser scatter at high t this gives a
-    // natural taper without hard truncation.
+    // Seven swaying arms with power-law scatter; t = rand^0.7 favours the outer half so the tips are not barren.
     const filamentN = Math.floor(count * 0.28);
     const NUM_ARMS  = 7;
     const perArm    = Math.floor(filamentN / NUM_ARMS);
@@ -128,8 +100,8 @@ export function generateSilhouetteParticles(count: number = 5000): Float32Array 
             const cx   = t * len * Math.cos(angle) + sway * Math.cos(perp);
             const cy   = t * len * Math.sin(angle) + sway * Math.sin(perp);
 
-            // Radial scatter: cube-root power-law — almost all particles < 0.25 units
-            // from centreline; a tiny fraction extend to 0.40 as ethereal halos
+            // Radial scatter: a rand^2.8 power law, so ~85% of particles sit under 0.25 units from the centreline
+            // and a tiny fraction extend to 0.40 as ethereal halos
             const scatter      = Math.pow(Math.random(), 2.80) * 0.40;
             const scatterAngle = Math.random() * TWO_PI;
 
@@ -145,11 +117,8 @@ export function generateSilhouetteParticles(count: number = 5000): Float32Array 
         }
     }
 
-    // ── 4. Cosmic dust — sparse outer annulus (remaining ≈ 12%) ─────────────
-    // Particles beyond the main structure (r ∈ [2.2, 7.2]).
-    // The annular floor (r ≥ 2.2) keeps the bright core region clean.
-    // Power bias on radius (r = rand^0.55 * 5.0 + 2.2) slightly clusters
-    // them just outside the main body rather than uniformly at the far edge.
+    // ── 4. Cosmic dust: sparse outer annulus (remaining ≈ 12%) ──────────────
+    // The r ≥ 2.2 floor keeps the bright core clean; rand^0.55 clusters dust near the body, not at the far edge.
     while (idx < count * 3) {
         const r = 2.2 + Math.pow(Math.random(), 0.55) * 5.0;
         const θ = Math.random() * TWO_PI;
@@ -160,18 +129,8 @@ export function generateSilhouetteParticles(count: number = 5000): Float32Array 
     return positions;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// generateParticleSizes
-// Returns a per-particle aSize scalar that the vertex shader multiplies into
-// gl_PointSize. Uses the same population boundaries as generateSilhouetteParticles
-// so indices align and each particle's size matches its structural role:
-//   node  (≈30%): aSize ∈ [1.50, 2.50] — prominent filament anchors
-//   grain (≈70%): aSize ∈ [0.75, 1.00] — fine-dust background texture
-//
-// Node probability is elevated in regions that will be bright under additive
-// blending (core nucleus, spiral dense-wave zones, filament strands), so the
-// large particles stack exactly where glow accumulation is already strongest.
-// ─────────────────────────────────────────────────────────────────────────────
+// aSize multiplies gl_PointSize, on generateSilhouetteParticles' index ranges. Nodes (about 30%) are likelier where
+// additive glow is already strongest, so large particles stack on the bright structure. AGENTS.md, Particle Systems.
 export function generateParticleSizes(count: number = 5000): Float32Array {
     const sizes     = new Float32Array(count);
     const coreN     = Math.floor(count * 0.20);
@@ -189,9 +148,8 @@ export function generateParticleSizes(count: number = 5000): Float32Array {
             sizes[i] = Math.random() < 0.50 ? node() : grain();
 
         } else if (i < coreN + spiralN) {
-            // Spiral: node probability scales with the same densityWave used for
-            // position scatter, so large particles land on the tight bright strands
-            // rather than in the wide void zones.
+            // Spiral: node probability follows the same densityWave as the position scatter, so large
+            // particles land on the tight bright strands rather than in the wide void zones.
             const localIdx    = i - coreN;
             const densityWave = Math.sin(localIdx * 0.033) * 0.50 + 0.50; // [0, 1]
             const pNode       = 0.10 + densityWave * 0.40; // [0.10, 0.50], avg ≈ 0.30

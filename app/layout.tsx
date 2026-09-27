@@ -36,9 +36,8 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     // Required for the generated opengraph-image to resolve to an absolute URL.
     metadataBase: new URL("https://akshaydongare.com"),
-    // Collapses query-string variants onto the clean URL, so /?x=1 and
-    // /?utm_source=linkedin are indexed as the page itself rather than as
-    // duplicates. "./" resolves per route, so /about canonicalises to /about.
+    // Collapses query-string variants such as /?utm_source=linkedin onto the clean URL, so they index as the page.
+    // "./" resolves per route, so /about canonicalises to /about.
     alternates: { canonical: "./" },
     // default covers the homepage; template gives every other route its own title
     // while keeping the name in it, which is the string we want to rank for.
@@ -60,12 +59,8 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-// Tells Google that the site, the GitHub account, the LinkedIn profile, the YouTube
-// channel and the Instagram account are ONE person. Without sameAs it sees five
-// unconnected entities and has to guess, which is why searching his name returns
-// scattered links rather than one cluster. Only claims that are true today: no
-// alumniOf, because the degree is not finished until December 2026, and no worksFor,
-// because the Airbnb engagement was a contract that has ended.
+// sameAs tells Google the site and these four profiles are one person, not five entities it has to guess between.
+// Only true claims: no alumniOf until the degree finishes in December 2026, no worksFor as the Airbnb contract is over.
 const personJsonLd = {
   "@context": "https://schema.org",
   "@type": "Person",
@@ -117,13 +112,8 @@ export default function RootLayout({
         <meta name="theme-color" content="#faf6ee" suppressHydrationWarning />
         <script dangerouslySetInnerHTML={{ __html: modeScript }} />
         <script dangerouslySetInnerHTML={{ __html: bootSkipScript }} />
-        {/* Without JS the page is a black rectangle: the boot mask is in the server HTML
-            and is only ever torn down from an effect, and Framer emits inline opacity:0
-            on 17 reveal elements that nothing is left to animate in. That is what a
-            visitor sees with scripting off, behind a proxy or extension that blocks the
-            bundle, or when a stale cached document asks for a chunk a deploy has since
-            replaced. A stylesheet !important outranks a non-important inline style, so
-            this reveals the content instead. */}
+        {/* With no JS (scripting off, a blocked bundle, a stale page missing its chunk) the boot mask and Framer's
+            inline opacity:0 never clear; a stylesheet !important beats a non-important inline style, so this does. */}
         <noscript>
           <style>{`.boot-mask{display:none!important}[style*="opacity:0"]{opacity:1!important;transform:none!important}`}</style>
         </noscript>

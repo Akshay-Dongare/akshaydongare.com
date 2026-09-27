@@ -4,11 +4,8 @@ import React, { useRef, useState, useEffect } from "react";
 import { motion, useInView } from "framer-motion";
 import dynamic from "next/dynamic";
 
-// three.js + R3F is ~935KB parsed. Statically imported, it sat in this route's initial
-// script set, so the boot mask could not lift and the LCP headline could not paint until
-// a quarter-megabyte of WebGL engine had downloaded and compiled, for a canvas nobody had
-// scrolled to yet. ssr:false changes no behaviour: the mount is already gated behind
-// shouldRenderParticles, which starts false and only flips once the section is near.
+// three.js + R3F is ~935KB parsed, kept out of the initial script set so the boot mask and LCP headline do not
+// wait on it. ssr:false is safe: shouldRenderParticles gates the mount and stays false until the section is near.
 const ParticleField = dynamic(
     () => import("@/components/particles/ParticleField").then((m) => m.ParticleField),
     { ssr: false }
@@ -33,10 +30,8 @@ export function ParticleSection({ stats }: { stats: PackageStats }) {
     // Only render WebGL canvas when near viewport for performance
     useEffect(() => {
         if (isInView) {
-            // A one-way latch, not a render loop: it only ever goes false -> true, and the
-            // value it depends on (an IntersectionObserver) has no SSR equivalent, so it
-            // cannot be decided at render time. The canvas then stays mounted for the rest
-            // of the visit and the `active` prop handles pausing the render loop.
+            // A one-way latch on an IntersectionObserver, which has no SSR equivalent (AGENTS.md, Commands).
+            // The canvas stays mounted for the visit, and the `active` prop pauses its render loop.
             // eslint-disable-next-line react-hooks/set-state-in-effect
             setShouldRenderParticles(true);
         }
@@ -45,10 +40,8 @@ export function ParticleSection({ stats }: { stats: PackageStats }) {
     return (
         <section
             ref={containerRef}
-            // Same long-press problem as the contact canvas: this section is an
-            // interactive particle field, and holding a finger on it made iOS select
-            // the headline and raise the Copy / Search callout. Scoped to coarse
-            // pointers so the sentence stays selectable with a mouse.
+            // Same long-press problem as the contact canvas: a finger held on the field makes iOS select the headline
+            // and raise the Copy / Search callout. Coarse pointers only, so the sentence stays selectable with a mouse.
             className="relative w-full h-svh overflow-hidden pointer-coarse:select-none [-webkit-touch-callout:none]"
             style={{ background: 'var(--spine-particle)', marginBottom: '-1px' }}
         >

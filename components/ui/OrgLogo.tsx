@@ -18,8 +18,7 @@ export type Org = keyof typeof LOGOS | "self";
 // --logo-s is the side of that square; the default suits a display-m heading.
 const SIZE = "[--logo-s:2rem] md:[--logo-s:2.25rem]";
 
-// Decorative by default, since the name usually sits beside the mark; pass alt where it does not.
-// Served as is, since the optimiser's srcset stops at 2x; width and height only set the aspect ratio.
+// Decorative by default (pass alt when no name is adjacent). Served as is: the optimiser's srcset stops at 2x.
 // paper pins a two-variant mark to its light-ground file, for a surface that stays paper in dark mode.
 export function OrgLogo({ org, className = SIZE, alt = "", paper = false }: { org: Org; className?: string; alt?: string; paper?: boolean }) {
     if (org === "self") {

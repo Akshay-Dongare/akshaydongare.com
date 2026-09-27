@@ -1,16 +1,5 @@
-/**
- * Shape generators for the morphing particle system.
- *
- * Each generator returns a Float32Array of [x, y, z] positions for `count` particles
- * that, taken together, outline a recognizable shape.
- *
- * Shapes and what they symbolize:
- *   Lightbulb  – the spark of an idea
- *   Rocket     – the drive to launch and build
- *   Diamond    – resilience under pressure
- *   Bridge     – connecting ideas and people
- *   DNA Helix  – growth and evolution
- */
+// Shapes for MorphingParticleField, each `count` [x, y, z] positions: Lightbulb (an idea), Rocket (building),
+// Diamond (resilience), Bridge (connection), DNA Helix (evolution). Shape i pairs with its SHAPE_WORDS[i].
 
 // ─── helpers ────────────────────────────────────────────────
 function rand(min: number, max: number) {

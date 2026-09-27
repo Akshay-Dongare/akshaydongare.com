@@ -3,14 +3,8 @@
 import Link from "next/link";
 import { useEffect } from "react";
 
-// There was no error boundary anywhere, so the nearest handler for a throw in any client
-// component was Next's default global error page, which renders its OWN document: navbar,
-// footer, styling and all context gone, replaced by an unstyled message. The likeliest
-// sources are the two WebGL fields, which run continuously on the homepage.
-//
-// This keeps the layout and the canvas, offers a retry that re-renders the subtree without
-// a full reload, and otherwise reads like the 404, including ending on --blend-void so the
-// footer joint stays seamless.
+// Without this boundary a client throw, likeliest in the two WebGL fields, reaches Next's default global error page,
+// a bare document of its own. This keeps the layout, retries without a reload and ends on --blend-void for the footer.
 
 export default function Error({
     error,

@@ -1,12 +1,7 @@
 import type { MetadataRoute } from "next";
 
-// Deliberately allows everything, including /email-signature-artifacts/. Those
-// image URLs are embedded in already-sent email, and robots.txt is fetched by
-// more than search crawlers — a Disallow there risks breaking mail clients that
-// proxy images, retroactively and silently. The scratch page in that directory
-// is kept out of search with a noindex meta tag on the page itself instead,
-// which is also what Google prefers for de-indexing: a disallowed page is never
-// crawled, so the crawler never sees the noindex.
+// Allows all, even /email-signature-artifacts/: its images are in sent email, and a Disallow can break image proxies.
+// Its scratch page uses a noindex meta instead, which Google prefers: a disallowed page is never crawled to see it.
 export default function robots(): MetadataRoute.Robots {
     return {
         rules: { userAgent: "*", allow: "/" },

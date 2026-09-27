@@ -109,10 +109,8 @@ const buildProjects = (stats: PackageStats): Project[] => [
     }
 ];
 
-// Three of these cards point at the same LinkedIn profile, because the work is closed
-// source and there is nothing public to link. Naming the destination up front is what
-// stops that reading as broken: a reader who clicks Airbnb, comes back and clicks Harvard
-// used to land on the identical page twice with no warning either time.
+// Three cards point at the same LinkedIn profile, since that work is closed source; naming the destination up front
+// keeps a second visit to the same page from reading as a broken link.
 function destinationLabel(url: string) {
     if (url.includes("github.com")) return "GITHUB";
     if (url.includes("linkedin.com")) return "LINKEDIN";
@@ -161,8 +159,8 @@ export function WorkContent({ stats }: { stats: PackageStats }) {
                                 id={proj.id}
                                 className="group relative flex flex-col h-full scroll-mt-4 border border-[var(--work-card-edge)] rounded-[20px] md:rounded-3xl p-6 md:p-8 cursor-none bg-[var(--work-card)] shadow-[var(--work-card-shadow)] hover:bg-[var(--work-card-hover-bg)] hover:border-[var(--work-card-hover-edge)] hover:shadow-none target:bg-[var(--work-card-hover-bg)] target:border-[var(--work-card-hover-edge)] target:shadow-none transition-[background-color,border-color,box-shadow] duration-300 ease-[cubic-bezier(0,0,0.5,1)]"
                             >
-                                {/* A row of its own, since Tech Mahindra's 4:1 lockup broke titles inline. 40px holds the
-                                    tallest mark, Harvard's shield, and the destination sits at its far end. */}
+                                {/* A row of its own, since Tech Mahindra's 4:1 lockup breaks titles inline. 40px holds
+                                    the tallest mark, Harvard's shield, and the destination sits at its far end. */}
                                 <div className="flex h-10 items-center justify-between gap-4 mb-5">
                                     {proj.logo && <OrgLogo org={proj.logo} alt={proj.affiliation} />}
                                     <span aria-hidden="true" className="hidden lg:inline-flex shrink-0 whitespace-nowrap items-baseline gap-2 font-mono text-fg-60 lg:opacity-0 lg:-translate-x-4 lg:group-hover:translate-x-0 lg:group-hover:opacity-100 lg:group-target:translate-x-0 lg:group-target:opacity-100 lg:group-has-[h2_a:focus-visible]:translate-x-0 lg:group-has-[h2_a:focus-visible]:opacity-100 transition-[opacity,translate] duration-300">

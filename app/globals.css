@@ -1,37 +1,17 @@
-@import "tailwindcss";
+/* Classes come from the code only: Tailwind would otherwise turn every class-like word in the docs into CSS. */
+@import "tailwindcss" source(none);
+@source "../app";
+@source "../components";
+@source "../lib";
+@source "../mdx-components.tsx";
 
 @theme inline {
-  --color-cream: #f0ede7;
-  --color-cream-dark: #e8e4dc;
-  --color-charcoal: #1c1c1c;
-  --color-muted: #8a8a8a;
-  --color-steel: #5e7a8a;
-  --color-steel-dark: #4a6070;
-  --color-overlay-text: rgba(255,255,255,0.92);
-  --color-border: rgba(28,28,28,0.12);
-
-
-  --text-on-dark: rgba(255,255,255,0.92);
-  --text-on-dark-dim: rgba(255,255,255,0.55);
-  --text-on-light: #0d1117;
-  --text-on-light-dim: #5a6370;
-  --border-on-dark: rgba(255,255,255,0.08);
-  --border-on-light: rgba(13,17,23,0.10);
-
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
 :root {
-  --color-cream: #f0ede7;
-  --color-cream-dark: #e8e4dc;
   --color-charcoal: #1c1c1c;
-  --color-muted: #8a8a8a;
-  --color-steel: #5e7a8a;
-  --color-steel-dark: #4a6070;
-  --color-white: #ffffff;
-  --color-black: #000000;
-  --color-overlay-text: rgba(255,255,255,0.92);
   --color-border: rgba(28,28,28,0.12);
 
   /* Deep Obsidian Blend System */
@@ -45,13 +25,6 @@
   --blend-warm: #e9e4da;
   --blend-accent: #6b9fd4;
   --blend-accent-dim: #3a6288;
-
-  --text-on-dark: rgba(255,255,255,0.92);
-  --text-on-dark-dim: rgba(255,255,255,0.55);
-  --text-on-light: #0d1117;
-  --text-on-light-dim: #5a6370;
-  --border-on-dark: rgba(255,255,255,0.08);
-  --border-on-light: rgba(13,17,23,0.10);
 }
 
 /* Modes: light (Daylight Folio) is the default on :root; [data-mode="dark"] holds Deep Obsidian.
@@ -294,7 +267,7 @@
 }
 
 /* Headings balance their lines and paragraphs avoid a lone last word. The h1 is left alone, since balance would
-   rewrap the hero's tuned three lines, and so are the hero's dd rows, where it started a line with the separator. */
+   rewrap the hero's tuned three lines, and so are the hero's dd rows, where it would start a line on the separator. */
 @layer base {
   h2, h3 {
     text-wrap: balance;
@@ -304,7 +277,7 @@
   }
 }
 
-/* The scroll cue's bob: 4px over 1.6s, easing in and out on each half, as the Framer loop it replaced did. */
+/* The scroll cue's bob: 4px over 1.6s, easing in and out on each half. */
 @keyframes cue-bob {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(4px); }
@@ -333,7 +306,7 @@ html.skip-boot .boot-mask {
   display: none !important;
 }
 
-/* Fallback for when the pre-paint script in layout.tsx did not run. */
+/* Fallback for when the pre-paint script in layout.tsx does not run. */
 @media (prefers-reduced-motion: reduce) {
   .boot-mask {
     display: none !important;
@@ -348,15 +321,8 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* The native pointer is hidden ONLY while the custom cursor is actually running.
-   CursorProvider adds .custom-cursor-active to <html> at the exact point it attaches
-   its mousemove listener, drops it on cleanup and while the page lacks focus, so the
-   CSS and the component cannot disagree. They used to be independent, and they did disagree: the component bails on
-   a touch device or prefers-reduced-motion, while these rules stayed on unconditionally.
-   That left two real groups with no pointer at all — someone who asked for reduced
-   motion and is using a mouse, and anyone on a touchscreen laptop driving it with a
-   mouse, since maxTouchPoints > 0 is enough to make the component bail. The dot itself
-   is parked at -100,-100 in that state, so nothing replaces what the CSS took away. */
+/* The native pointer hides only while CursorProvider sets .custom-cursor-active on <html>, which it holds while
+   running with focus. It bails on any touchscreen and reduced motion, where a mouse would otherwise show no pointer. */
 @media (forced-colors: none) {
   html.custom-cursor-active body,
   html.custom-cursor-active :is(a, button, [role="button"], input, select, textarea),
@@ -371,24 +337,21 @@ html.cursor-resync {
   --hidden-cursor: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=") 0 0, none;
 }
 
-/* Tailwind's own .cursor-none utility is unconditional and is on 24 elements, so it has
-   to be reverted too. `revert` restores the UA value, which correctly gives pointer on
-   links and buttons and text on inputs, rather than flattening everything to auto.
-   This rule is deliberately unlayered: unlayered styles outrank @layer utilities in the
-   cascade regardless of specificity, which is what lets it beat the utility. */
+/* Tailwind's .cursor-none utility is unconditional, so it is reverted to the UA cursor (pointer on links, text on
+   inputs, not auto). Unlayered on purpose: unlayered rules outrank @layer utilities whatever the specificity. */
 html:not(.custom-cursor-active) .cursor-none {
   cursor: revert;
 }
 
-/* High Contrast can switch on mid-visit, after the cursor started, so the native pointer comes back here too. */
+/* High Contrast can switch on mid-visit, after the cursor starts, so the native pointer comes back here too. */
 @media (forced-colors: active) {
   .cursor-none {
     cursor: revert;
   }
 }
 
-/* @utility, not @layer utilities: Tailwind sorts these with its own utilities, so a variant or a
-   single-property utility beside one wins. In @layer they came later in the sheet and beat both. */
+/* @utility, not @layer utilities: Tailwind sorts these with its own utilities, so a variant or a single-property
+   utility beside one wins. In @layer they would come later in the sheet and beat both. AGENTS.md, Color System. */
 @utility text-display-xl {
   font-size: clamp(2.8rem, 6vw, 5.5rem);
   font-weight: 400;
@@ -433,39 +396,8 @@ html:not(.custom-cursor-active) .cursor-none {
   }
 }
 
-/* ── Sub-page masthead glow ───────────────────────────────────────────────
-   Gives /about, /work, /contact, /privacy and /colophon the same sense of
-   light as the homepage's nebula without extending the simulation.
-
-   This was a starfield first, and it read as dust on the screen — the same
-   complaint the nebula drew, and for the same reason. Keeping text at 4.5:1
-   caps a white dot at alpha 0.1367, which puts a lit pixel at RGB(46,50,55)
-   against a (13,17,23) canvas: 1.39:1 of local contrast. Human contrast
-   sensitivity falls off steeply at high spatial frequency, so isolated 1px
-   dots at that level sit near threshold, and low-contrast hard-edged specks
-   scattered evenly are precisely what dust and sensor noise look like. The
-   non-overlap rule the contrast cap required made it worse, because forcing a
-   minimum separation produces blue noise — more uniform than random, where a
-   real sky is clumped. No amount of tuning fixes that inside the budget.
-
-   Low spatial frequency is the way out. The contrast sensitivity function
-   peaks at low-to-mid frequencies, so a broad soft bloom is far more visible
-   than a 1px dot carrying the SAME peak alpha, and a smooth gradient cannot
-   read as dust because dust is by definition high-frequency.
-
-   Colour buys headroom too. The cap is a luminance limit, and #6b9fd4 is
-   darker than white, so it tolerates alpha 0.2329 rather than 0.1367 before
-   white/50 drops under 4.5:1. The two layers below composite to
-   1-(0.89 x 0.95) = 0.1545, which lands the brightest pixel at RGB(28,39,52)
-   with white/50 at 4.88:1 — the lightest token this canvas permits, with
-   margin. Raising either alpha is what breaks the page.
-
-   Still, like the starfield was: no motion means SC 2.2.2 never applies, no
-   pause control is owed, there is no per-frame cost, and the luminance stays
-   fixed so the contrast floor is measurable with an ordinary tool. The stops
-   are deliberately non-linear, and the bloom deliberately compact rather than
-   a full-width wash, because a shallower ramp spreads 8-bit banding into
-   wider, more visible rings. */
+/* Sub-page masthead glow: still, so SC 2.2.2 owes no pause control; a starfield at 4.5:1-safe alpha reads as dust.
+   Raising either alpha breaks 4.5:1 for muted text; compact non-linear stops limit banding. AGENTS.md, Sub-Pages. */
 .masthead-glow {
   position: relative;
 }

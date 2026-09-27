@@ -19,10 +19,8 @@ export function Footer() {
     return (
         <footer
             className="w-full pt-24 pb-12 px-6 md:px-12 lg:px-20"
-            // Opens on --blend-void because every page above it ends there, so the joint is
-            // a continuation rather than a 6-level step. The lift eases in below the seam
-            // instead of at it, and it returns to void at the very bottom so iOS
-            // rubber-band overscroll shows the same colour as body's background-color.
+            // Opens on --blend-void, where every page above ends, so the joint has no step; the lift eases in below it.
+            // Closes on void so iOS rubber-band overscroll shows the same colour as body's background-color.
             style={{ background: 'var(--spine-footer)' }}
             data-theme="dark"
         >
@@ -60,14 +58,8 @@ export function Footer() {
 
                 </div>
 
-                {/* LOWER AREA - Logo Wordmark.
-                    No rule above it on purpose. Two 1px hairlines used to sit in this
-                    footer and both kept getting noticed, which is the one thing structural
-                    furniture must never do. A 1px line is the highest-frequency mark you
-                    can draw, so dimming it makes a fainter line rather than a softer one.
-                    The gaps already separate these zones unambiguously, so the rules were
-                    restating what the layout had said. This gap doubles to 64px to carry
-                    the separation that the rule used to. */}
+                {/* LOWER AREA - Logo Wordmark. No rule above on purpose: a 1px line is the highest-frequency mark,
+                    so it gets noticed even dimmed, and this 64px gap already separates the zones. */}
                 <div className="flex flex-col md:flex-row items-start md:items-end justify-between pt-16">
 
                     <div className="flex items-end mb-8 md:mb-0">

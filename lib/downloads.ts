@@ -1,24 +1,10 @@
-// Live package stats for langchain-litellm.
-//
-// Downloads come from pepy's badge SVG: their JSON API needs a key, the badge
-// does not, and it carries the same number.
-//
-// On how fresh this can be: PyPI publishes download counts as a DAILY batch,
-// so the underlying number changes once a day, not per install. pepy then
-// caches the badge for 12h (cache-control: max-age=43200). Revalidating hourly
-// means we pick up each new value within an hour of pepy publishing it, which
-// is as live as this data gets anywhere. Polling faster would refetch an
-// identical response; there is no real-time download feed to read.
-//
-// The release count comes from PyPI's public JSON, which needs no key either.
-// It is fetched alongside because two sentences on the site read
-// "N downloads across M releases" — making one live and leaving the other
-// hardcoded would be worse than leaving both alone.
+// Keyless live langchain-litellm stats: downloads from pepy's badge SVG, the same number as its keyed JSON API;
+// releases from PyPI's JSON, as /about and /work say "N downloads across M releases" and a half-live pair would clash.
 
 const BADGE_TOTAL = "https://static.pepy.tech/badge/langchain-litellm";
 const BADGE_MONTH = "https://static.pepy.tech/badge/langchain-litellm/month";
 const PYPI = "https://pypi.org/pypi/langchain-litellm/json";
-const REVALIDATE = 3600; // 1h
+const REVALIDATE = 3600; // 1h. Counts change daily and pepy caches 12h, so faster polling refetches the same value.
 
 // The canonical path: /project/ is a 308 to this. Any filters in the address bar are added by pepy's own page on load.
 export const PEPY_URL = "https://pepy.tech/projects/langchain-litellm";

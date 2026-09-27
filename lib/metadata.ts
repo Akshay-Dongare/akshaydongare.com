@@ -2,21 +2,8 @@ import type { Metadata } from "next";
 
 const SITE = "https://akshaydongare.com";
 
-/**
- * Per-page Open Graph and Twitter metadata.
- *
- * Next inherits `openGraph` wholesale from the nearest ancestor that declares it,
- * and the root layout declares one. Sub-pages that set only `title` and
- * `description` therefore served the HOMEPAGE's og:title, og:description and
- * og:url: a shared /work link previewed as the homepage and its og:url pointed at
- * the homepage, so the per-page <title> work was invisible to anything reading
- * Open Graph. Verified on production before the fix - all five sub-pages emitted
- * identical og: tags.
- *
- * `title` here stays bare so the root layout's "%s · Akshay Dongare" template
- * still applies to <title>; the og:title is built with the same suffix by hand,
- * because templates do not apply to Open Graph.
- */
+/** Next inherits `openGraph` whole from the root layout, so a page that sets only a title previews as the homepage.
+ *  `title` stays bare for the root "%s · Akshay Dongare" template; og:title adds the suffix itself, as OG skips it. */
 export function pageMetadata({
     title,
     description,
@@ -39,11 +26,8 @@ export function pageMetadata({
             siteName: "Akshay Dongare",
             locale: "en_US",
             type: "website",
-            // A page-level openGraph REPLACES the parent's rather than merging into it,
-            // so declaring one here silently dropped the root opengraph-image.tsx from
-            // every sub-page. They were shipping twitter:card=summary_large_image with
-            // no image to put in it, which degrades to a bare text card exactly on the
-            // two URLs a recruiter gets sent.
+            // A page-level openGraph replaces the parent's, dropping the root opengraph-image.tsx, so it is listed
+            // again here; without it summary_large_image degrades to a bare text card.
             images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "Akshay Dongare, AI Platform Engineer" }],
         },
         twitter: {

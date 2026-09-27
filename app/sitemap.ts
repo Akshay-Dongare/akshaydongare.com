@@ -2,14 +2,10 @@ import type { MetadataRoute } from "next";
 
 const BASE = "https://akshaydongare.com";
 
-// Every route is statically prerendered, so there is nothing dynamic to
-// enumerate — listing them explicitly keeps this honest about what exists.
-// Priority orders them the way a stranger should meet them: the argument, then
-// the evidence, then how to reach him; the boilerplate pages trail.
-// lastModified is set by hand: bump a route's date only when its main content changes.
-// Google stops trusting lastmod that moves on every deploy.
+// Every route is static, so they are listed by hand; priority runs argument, evidence, contact, then boilerplate.
+// Bump a lastModified only when that route's main content changes (AGENTS.md, Search).
 const ROUTES: Array<{ path: string; lastModified: string; priority: number; changeFrequency: MetadataRoute.Sitemap[number]["changeFrequency"] }> = [
-    { path: "/", lastModified: "2026-09-24", priority: 1.0, changeFrequency: "monthly" },
+    { path: "/", lastModified: "2026-09-26", priority: 1.0, changeFrequency: "monthly" },
     { path: "/work", lastModified: "2026-09-24", priority: 0.9, changeFrequency: "monthly" },
     { path: "/about", lastModified: "2026-09-24", priority: 0.9, changeFrequency: "monthly" },
     { path: "/contact", lastModified: "2026-09-21", priority: 0.8, changeFrequency: "yearly" },

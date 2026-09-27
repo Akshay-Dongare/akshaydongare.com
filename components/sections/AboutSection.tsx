@@ -58,9 +58,8 @@ export function AboutSection({ stats }: { stats: PackageStats }) {
                         the same corners and soft ink shadow, and no hover zoom, since the photo is not a link. */}
                     <div className="relative w-full aspect-[4/5] max-w-[480px] rounded-[20px] md:rounded-3xl overflow-hidden shadow-[var(--card-shadow)]">
                         <div className="w-full h-full relative">
-                            {/* No priority: this sits below the fold, so the default lazy
-                                load is correct. `fill` supplies absolute/inset-0/w-full/h-full
-                                itself, so only the object-fit classes remain. */}
+                            {/* No priority: below the fold, the default lazy load is correct. `fill` supplies
+                                absolute/inset-0/w-full/h-full itself, so only the object-fit classes remain. */}
                             <Image
                                 src="/Akshay_Headshot.jpg"
                                 alt="Portrait of Akshay Dongare"

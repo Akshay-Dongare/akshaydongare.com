@@ -16,18 +16,8 @@ export function BootSequence({ children }: { children: React.ReactNode }) {
     const ruleRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        // Two opaque full-viewport panels sliding apart is large-area motion, the class
-        // W3C's SC 2.3.3 intent text names as a vestibular trigger. Skip it outright
-        // rather than shortening or cross-fading it — the reduced state is no animation
-        // at all, with the page rendered as if the reveal had already finished.
-        // Safari private browsing, "block all cookies", and some enterprise policies make
-        // even READING sessionStorage throw. The mask renders on the first paint and is
-        // only torn down from inside this effect, so an exception here is the worst
-        // failure this component has: the opaque full-viewport overlay stays up forever,
-        // or React takes the tree down with it. Both are a blank page. The inline
-        // boot-skip script in app/layout.tsx already guards the identical call; this did
-        // not. Failing to "not played yet" is the harmless direction — worst case a
-        // repeat visitor sees the reveal twice.
+        // Reading sessionStorage can throw (Safari private mode, blocked cookies), and only this effect removes
+        // the mask, so a throw is a blank page. Failing to "not played" at worst replays the reveal.
         const hasPlayed = () => {
             try { return !!sessionStorage.getItem("bootPlayed"); } catch { return false; }
         };
@@ -35,6 +25,8 @@ export function BootSequence({ children }: { children: React.ReactNode }) {
             try { sessionStorage.setItem("bootPlayed", "true"); } catch { /* storage blocked; play it again */ }
         };
 
+        // Two opaque panels sliding apart is large-area motion, a vestibular trigger under SC 2.3.3, so reduced
+        // motion skips the reveal outright and the page renders as if it had finished.
         const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
         if (prefersReducedMotion || hasPlayed()) {
             // Deliberate: neither sessionStorage nor matchMedia exists during SSR, so this
@@ -51,15 +43,8 @@ export function BootSequence({ children }: { children: React.ReactNode }) {
         let safety: ReturnType<typeof setTimeout> | undefined;
         let revealTimer: ReturnType<typeof setTimeout> | undefined;
 
-        // gsap is ~82KB parsed and this component is the only thing on the site that uses
-        // it, so a static import put a whole animation engine into the initial bundle of
-        // all seven routes — including /privacy, /colophon and the 404, which animate
-        // nothing — for an intro that plays at most once per session. Importing it here
-        // fetches it only on the one pageview that actually runs the reveal.
-        //
-        // The failure path matters more than the saving: this effect is the only thing
-        // that takes the opaque mask down, so if the chunk never arrives the visitor is
-        // left staring at a black screen. A failed import unmounts the mask immediately.
+        // Imported here, not statically: nothing else uses gsap, so its ~82KB loads only when the reveal plays.
+        // Only this effect removes the opaque mask, so a failed import unmounts it rather than leave a black screen.
         (async () => {
             let gsap;
             try {
@@ -127,9 +112,8 @@ export function BootSequence({ children }: { children: React.ReactNode }) {
                 revealTimer = setTimeout(beginReveal, remaining);
             };
 
-            // Two frames after hydration is first paint of real content, which is all the
-            // reveal actually waits on. The safety timer is now a backstop for a dropped
-            // frame, not a resource budget.
+            // Two frames after hydration is the first paint of real content, which is all the reveal waits on.
+            // The safety timer only backstops a dropped frame.
             raf1 = requestAnimationFrame(() => requestAnimationFrame(trigger));
             safety = setTimeout(trigger, SAFETY_TIMEOUT_MS);
         })();

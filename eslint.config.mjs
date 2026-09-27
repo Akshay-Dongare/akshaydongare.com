@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Session worktrees are whole checkouts with their own builds.
+    ".claude/**",
   ]),
 ]);
 

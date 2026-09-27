@@ -10,42 +10,24 @@ const PARTICLE_COUNT = 8000;
 const MORPH_DURATION = 2.5;
 const HOLD_AFTER_MORPH = 1.0;      // hold longer so the easter egg word has time to display
 const SHATTER_HOLD_TIME = 2.25;
-// Touch gets roughly half. Resting a mouse is passive — your hand is doing
-// nothing — but holding a finger against glass is active effort, and 2.25s of
-// it reads as a hang rather than a charge. 1.1s still sits well clear of the
-// ~500ms long-press threshold both iOS and Android use, so a sloppy tap cannot
-// trigger it, and it is long enough for the tension ring to visibly sweep.
+// A held finger is effort, not rest, so the mouse's 2.25s reads as a hang. 1.1s stays well clear of the ~500ms
+// iOS and Android long-press, so a sloppy tap cannot fire it, and still gives the tension ring time to sweep.
 const SHATTER_HOLD_TIME_TOUCH = 1.1;
 const SPRING_STRENGTH = 0.1;
 const DAMPING = 0.82;
-const GRAVITY = -1.5;              // gentle fall (was -4.0)
+const GRAVITY = -1.5;              // gentle fall
 const SHATTER_FLOOR = -6.0;
 const FLOOR_BOUNCE = 0.2;
-// How close the pointer must come to an actual particle to count as "on the
-// shape", in SCREEN pixels so it means the same thing at every camera distance.
-// A fingertip covers roughly 44pt, hence the coarse value.
-// How close the pointer must come to a real particle to count as "on the shape",
-// in SCREEN pixels so it behaves the same at any camera distance. Measured
-// against the actual shape generators at 375x812: 24px starts the charge on
-// 85-100% of points that are genuinely on the artwork and on 0% of points more
-// than 25px from it. Wider (44px) reinstated the original complaint — a 25-50px
-// halo fired 43-70% of the time. Same value for mouse and finger: there is no
-// reason a mouse should be the less reliable of the two.
+// Pointer-to-particle distance that counts as on the shape, in SCREEN pixels for any camera distance, mouse or finger.
+// At 375x812, 24px charges on 85-100% of points on the artwork and 0% beyond 25px; 44px fires on a 25-50px halo.
 const HIT_TOLERANCE_PX = 24;
 // Test every Nth particle; the loop early-exits as soon as the threshold is met.
 const HIT_TEST_STRIDE = 2;
-// ...and require MANY of them, not one. Every generator scatters ~5% of its
-// particles uniformly across the whole box as ambient "stars", so a
-// nearest-particle test treats the entire bounding box as the shape — press
-// beside the DNA helix and you are still within 24px of a stray dot. Density
-// separates the two cleanly: measured across all five shapes, real structure has
-// a median of 353-609 particles inside the tolerance circle while scatter-only
-// regions have 5-9. At 14 (strided, so ~28 unstrided) every shape detects 100%
-// of its real structure and the stars stop counting.
+// Many neighbours, not one: every generator scatters ~5% of its particles across the box as "stars". On all five
+// shapes the circle holds a median 353-609 on structure and 5-9 on scatter; 14 (~28 unstrided) splits them.
 const HIT_MIN_NEIGHBOURS = 14;
-// Portrait stacks the headline and the CONNECT link across the top of the
-// section while the artwork is centred, so they collide. Lift the camera on
-// portrait aspects to drop the shape clear of them.
+// In portrait the headline and CONNECT link stack across the top and collide with the centred artwork,
+// so the camera lifts to drop the shape clear of them.
 const PORTRAIT_CAMERA_LIFT = 1.5;
 const SETTLE_TIME = 1.0;           // time on ground before reform
 const REBUILD_VULNERABILITY_DELAY = 4.0; // time to ignore cursor while reforming & showing word
@@ -60,13 +42,10 @@ interface SharedState {
     cursorOverShape: boolean;
     cursorX: number;
     cursorY: number;
-    /** False until a real mousemove lands. R3F's `mouse` starts at (0,0),
-        which is the centre of the viewport and therefore on top of the shape,
-        so without this the charge begins before any input exists. */
+    /** False until real input lands and again on leave or lift, so a stale cursor position never charges. */
     pointerActive: boolean;
-    /** True when the last input to aim the cursor was a finger or stylus.
-        Drives both the hold duration and the tension ring's radius, which have
-        to agree about which device is live. */
+    /** True when the last input to aim the cursor was a finger or stylus. Drives both the hold time and the tension
+        ring's radius, which must agree about which device is live. */
     coarsePointer: boolean;
     /** Hold required to shatter — see SHATTER_HOLD_TIME_TOUCH. */
     holdTime: number;
@@ -84,9 +63,7 @@ function createSharedState(): SharedState {
     };
 }
 
-// ═════════════════════════════════════════════════════════════
-//  WebGL Point Cloud
-// ═════════════════════════════════════════════════════════════
+// ═══ WebGL Point Cloud ═══════════════════════════════════════
 function MorphingPointCloud({ color, shared, reduced = false }: { color: string; shared: React.MutableRefObject<SharedState>; reduced?: boolean }) {
     const pointsRef = useRef<THREE.Points>(null);
 
@@ -117,9 +94,8 @@ function MorphingPointCloud({ color, shared, reduced = false }: { color: string;
 
     const particleRand = useMemo(() => {
         const r = new Float32Array(PARTICLE_COUNT * 2);
-        // Deliberate: per-particle jitter must be random once and then STABLE for the
-        // lifetime of the mount, which is what the empty-dep useMemo guarantees. Re-rolling
-        // it on re-render would visibly reshuffle 8,000 particles mid-animation.
+        // Jitter is rolled once and must stay stable for the mount, which the empty-dep useMemo guarantees;
+        // re-rolling on re-render would reshuffle 8,000 particles mid-animation. AGENTS.md, Commands.
         // eslint-disable-next-line react-hooks/purity
         for (let i = 0; i < PARTICLE_COUNT * 2; i++) r[i] = (Math.random() - 0.5) * 2;
         return r;
@@ -196,26 +172,15 @@ function MorphingPointCloud({ color, shared, reduced = false }: { color: string;
         const s = stateRef.current;
         const sh = shared.current;
 
-        // CameraFit pulls the camera back on portrait aspects, which would bring the
-        // fixed floor into frame and end every phone shatter in a visible flat pile.
-        // Derive it from the live camera so particles always fall just out of shot.
-        // Read fov/position directly, NOT useThree().viewport — R3F only recomputes
-        // that in setSize, so CameraFit's imperative setZ leaves it stale for exactly
-        // the aspects that matter here.
+        // CameraFit pulls back in portrait, which would bring a fixed floor into frame as a flat pile. Read fov and
+        // position directly, not useThree().viewport: R3F updates that only in setSize, so CameraFit's setZ misses it.
         const cam = state.camera as THREE.PerspectiveCamera;
         const halfH = Math.tan(THREE.MathUtils.degToRad(cam.fov / 2)) * cam.position.z;
         // Just below the bottom edge of what the camera can see, wherever it sits.
         const floorY = Math.min(SHATTER_FLOOR, cam.position.y - halfH - 1);
 
-        // Map the pointer from CSS pixels to world space against the LIVE camera.
-        // Two separate reasons this cannot use R3F's `mouse` / `viewport`:
-        //  - `mouse` only updates on pointermove, and a touch press-and-hold fires
-        //    pointerdown with no move, so a finger at rest never registers at all;
-        //  - `viewport` is recomputed only in setSize, so CameraFit's imperative
-        //    setZ leaves it describing the z=10 frustum while the camera actually
-        //    sits at z~19.5 on a phone — about half the true world extent.
-        // Both the mouse and touch handlers already write cursorX/cursorY in
-        // element-relative CSS pixels, so derive from those instead.
+        // Maps cursorX/cursorY against the LIVE camera, not R3F's `mouse` or `viewport`: `mouse` misses a finger held
+        // still, and `viewport` keeps the z=10 frustum after CameraFit's setZ while a phone sits at z~19.5.
         const halfW = halfH * (state.size.width / state.size.height);
         const mouseX = ((sh.cursorX / state.size.width) * 2 - 1) * halfW;
         const mouseY = cam.position.y - ((sh.cursorY / state.size.height) * 2 - 1) * halfH;
@@ -229,15 +194,7 @@ function MorphingPointCloud({ color, shared, reduced = false }: { color: string;
         }
 
         // ─── Is the pointer actually ON the shape? ──────────
-        // This used to measure distance from the shape's CENTROID against a fixed
-        // 3.0 world-unit radius — a circle, not the shape. The mismatch is hidden
-        // on desktop, where the artwork is wider than the circle, but obvious on a
-        // phone: CameraFit pulls the camera back for the narrow aspect, so the same
-        // radius spans 71% of the screen width and reaches well outside the
-        // artwork. You could charge it by pressing empty background, or the hollow
-        // middle of an outline shape like the diamond.
-        // Measure proximity to an actual particle instead, with the tolerance in
-        // screen pixels so it behaves identically at any camera distance.
+        // Counts nearby particles; a centroid radius spans empty phone background and the diamond's hollow middle.
         const pxPerUnit = (state.size.height / 2) / halfH;
         const tolWorld = HIT_TOLERANCE_PX / pxPerUnit;
         const tol2 = tolWorld * tolWorld;
@@ -251,9 +208,8 @@ function MorphingPointCloud({ color, shared, reduced = false }: { color: string;
         }
         const cursorIsOverShape = sh.pointerActive && !s.isRebuilding && overShape;
 
-        // Deliberate: SharedState is a mutable ref bridging this useFrame loop to the
-        // TensionRing/ShapeWord overlays at 60fps without re-rendering React. Routing
-        // this through state would re-render the tree every frame. See AGENTS.md.
+        // SharedState is a mutable ref feeding the TensionRing and ShapeWord overlays at 60fps; routing it
+        // through React state would re-render the tree every frame. AGENTS.md, Commands.
         // eslint-disable-next-line react-hooks/immutability
         sh.cursorOverShape = cursorIsOverShape;
         sh.isShattered = s.isShattered;
@@ -262,9 +218,8 @@ function MorphingPointCloud({ color, shared, reduced = false }: { color: string;
         let hoverProgress = 0;
         if (cursorIsOverShape && !s.isShattered) {
             if (s.cursorHoverStart < 0) s.cursorHoverStart = time;
-            // Switching input device mid-charge changes the denominator. Carry the
-            // fraction already charged rather than the elapsed seconds, or the ring
-            // jumps to full (mouse -> touch) or visibly unwinds (touch -> mouse).
+            // A device switch mid-charge changes the denominator, so carry the fraction charged, not the seconds,
+            // or the ring jumps to full (mouse to touch) or unwinds (touch to mouse).
             if (sh.holdTime !== s.lastHoldTime) {
                 const carried = Math.min((time - s.cursorHoverStart) / s.lastHoldTime, 1.0);
                 s.cursorHoverStart = time - carried * sh.holdTime;
@@ -386,17 +341,13 @@ function MorphingPointCloud({ color, shared, reduced = false }: { color: string;
     return <points ref={pointsRef} geometry={geometry} material={material} />;
 }
 
-// ═════════════════════════════════════════════════════════════
-//  Tension Ring  — subtle circular progress around cursor
-//  Appears only when hovering over the shape.
-//  It's the cinematic "something is building" cue.
-// ═════════════════════════════════════════════════════════════
+// ═══ Tension Ring ════════════════════════════════════════════
+// Subtle circular progress round the cursor, shown only over the shape: the "something is building" cue.
 function TensionRing({ shared }: { shared: React.MutableRefObject<SharedState> }) {
     const svgRef = useRef<SVGSVGElement>(null);
     const circleRef = useRef<SVGCircleElement>(null);
-    // Fine pointers get a tight ring at the cursor; a fingertip occludes roughly
-    // 44pt, so coarse input needs a radius that clears it or the only explicit
-    // progress cue is invisible exactly when it is being used.
+    // A fingertip occludes roughly 44pt, so coarse input needs a radius that clears it, or the only
+    // explicit progress cue is hidden exactly while it is in use.
     const R_FINE = 20;
     const R_COARSE = 44;
     const BOX = (r: number) => r * 2 + 10;
@@ -452,9 +403,7 @@ function TensionRing({ shared }: { shared: React.MutableRefObject<SharedState> }
     );
 }
 
-// ═════════════════════════════════════════════════════════════
-//  Shape Word  — brief easter-egg word after each reform
-// ═════════════════════════════════════════════════════════════
+// ═══ Shape Word: brief easter-egg word after each reform ══════
 function ShapeWord({ shared }: { shared: React.MutableRefObject<SharedState> }) {
     const ref = useRef<HTMLDivElement>(null);
 
@@ -496,9 +445,7 @@ function ShapeWord({ shared }: { shared: React.MutableRefObject<SharedState> }) 
     );
 }
 
-// ═════════════════════════════════════════════════════════════
-// Keeps the whole shape inside the frustum in portrait. Desktop aspects are
-// >= 0.9, which clamps to the original z = 10, so nothing changes there.
+// Keeps the whole shape inside the frustum in portrait. Desktop aspects are >= 0.9 and clamp to z = 10.
 function CameraFit() {
     const { camera, size } = useThree();
     useLayoutEffect(() => {
@@ -511,14 +458,10 @@ function CameraFit() {
     return null;
 }
 
-//  Main Export
-// ═════════════════════════════════════════════════════════════
+// ═══ Main Export ═════════════════════════════════════════════
 export function MorphingParticleField({ color = "#ffffff", className = "", active = true }: { color?: string; className?: string; active?: boolean }) {
-    // Reduced motion: render the field once and then stop, rather than removing it.
-    // The particles are this section's visual content, so a still frame keeps the
-    // composition while the movement — which is the part that triggers vestibular
-    // symptoms — goes away entirely. frameloop "demand" draws on mount and then only
-    // when something invalidates, so there is no ongoing CPU, GPU or battery cost.
+    // Reduced motion keeps one still frame: the particles are the section's content, and the movement is what
+    // triggers vestibular symptoms. frameloop "demand" draws on mount, then idles at no CPU, GPU or battery cost.
     const reduced = !!useReducedMotion();
     const shared = useRef<SharedState>(createSharedState());
     const wrapperRef = useRef<HTMLDivElement>(null);
@@ -536,10 +479,8 @@ export function MorphingParticleField({ color = "#ffffff", className = "", activ
             shared.current.holdTime = coarse ? SHATTER_HOLD_TIME_TOUCH : SHATTER_HOLD_TIME;
         };
 
-        // After a tap, browsers replay a synthetic mouse sequence. A touchscreen
-        // laptop also reports (hover: hover), so it cannot be branched away --
-        // instead ignore mouse events that land inside the replay window, or the
-        // shape latches on and re-shatters at nobody.
+        // Browsers replay synthetic mouse events after a tap, and a touchscreen laptop reports (hover: hover), so
+        // mouse events inside the replay window are dropped, or the shape latches on and re-shatters at nobody.
         let lastTouch = 0;
         const REPLAY_WINDOW = 700;
 
@@ -593,10 +534,8 @@ export function MorphingParticleField({ color = "#ffffff", className = "", activ
                     camera={{ position: [0, 0, 10], fov: 50 }}
                     gl={{ alpha: true, antialias: false, powerPreference: "high-performance" }}
                     dpr={[1, 1.5]}
-                    // "never" stops the render loop without tearing down the GL context, the
-                    // geometry or the simulation state, so scrolling back costs nothing to
-                    // resume. Before this the canvas kept running at 60fps for the rest of the
-                    // visit once it had been seen once, six screens away from the viewport.
+                    // "never" stops the loop but keeps the GL context, geometry and simulation, so scrolling back
+                    // resumes free; without it the canvas runs at 60fps for the whole visit once seen.
                     frameloop={reduced ? "demand" : active ? "always" : "never"}
                 >
                     <CameraFit />

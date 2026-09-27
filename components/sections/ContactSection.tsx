@@ -9,11 +9,8 @@ import { useMode } from "@/lib/mode";
 // Terracotta #a8532b on screen: the field's colour path darkens its input, so this is that colour pre-lightened.
 const LIGHT_CLIMAX = "#d49b72";
 
-// three.js + R3F is ~935KB parsed. Statically imported, it sat in this route's initial
-// script set, so the boot mask could not lift and the LCP headline could not paint until
-// a quarter-megabyte of WebGL engine had downloaded and compiled, for a canvas nobody had
-// scrolled to yet. ssr:false changes no behaviour: the mount is already gated behind
-// shouldRenderParticles, which starts false and only flips once the section is near.
+// three.js + R3F is ~935KB parsed, kept out of the initial script set so the boot mask and LCP headline do not
+// wait on it. ssr:false is safe: shouldRenderParticles gates the mount and stays false until the section is near.
 const MorphingParticleField = dynamic(
     () => import("@/components/particles/MorphingParticleField").then((m) => m.MorphingParticleField),
     { ssr: false }
@@ -27,10 +24,8 @@ export function ContactSection() {
 
     useEffect(() => {
         if (isInView) {
-            // A one-way latch, not a render loop: it only ever goes false -> true, and the
-            // value it depends on (an IntersectionObserver) has no SSR equivalent, so it
-            // cannot be decided at render time. The canvas then stays mounted for the rest
-            // of the visit and the `active` prop handles pausing the render loop.
+            // A one-way latch on an IntersectionObserver, which has no SSR equivalent (AGENTS.md, Commands).
+            // The canvas stays mounted for the visit, and the `active` prop pauses its render loop.
             // eslint-disable-next-line react-hooks/set-state-in-effect
             setShouldRenderParticles(true);
         }
@@ -39,10 +34,8 @@ export function ContactSection() {
     return (
         <section
             ref={containerRef}
-            // A press-and-hold IS the interaction here (1.1s on touch), which is exactly
-            // the gesture iOS reads as "select text" — it was grabbing the CONNECT
-            // label and raising the Copy / Search callout mid-charge. Suppress both
-            // for this section only; the rest of the site stays selectable.
+            // Press-and-hold is the interaction (1.1s on touch), which iOS reads as selecting the CONNECT label and
+            // raising the Copy / Search callout mid-charge. Both are off for this section only.
             className="relative w-full h-svh overflow-hidden pointer-coarse:select-none [-webkit-touch-callout:none]"
             style={{ background: 'var(--spine-contact)' }}
             data-theme="dark"

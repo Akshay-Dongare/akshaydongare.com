@@ -1,15 +1,7 @@
 import Link from "next/link";
 
-// Before this file existed, an unmatched route fell through to Next's built-in error
-// page, which Next renders INSIDE the root layout. Production served an unstyled white
-// block sandwiched between the dark navbar and the dark footer, and two <title>
-// elements: Next's own "404: This page could not be found." plus the layout's.
-//
-// not-found.tsx does not support a metadata export, so the title still comes from the
-// root layout. That is fine: the point of this file is that there is now exactly one.
-//
-// The canvas matches the sub-pages exactly, including ending on --blend-void so the
-// footer joint stays seamless here too.
+// Replaces Next's built-in 404, which renders unstyled inside the root layout and adds a second <title>.
+// It takes no metadata export, so the layout's title is the only one; the canvas ends on --blend-void like sub-pages.
 
 const DESTINATIONS = [
     { href: "/", label: "Home", note: "Start at the top" },

@@ -5,9 +5,8 @@ import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion
 import Link from "next/link";
 import { ScrollCue } from "@/components/ui/ScrollCue";
 
-// The /files view is the diff itself rather than the conversation, which is what
-// the section is showing. Verified: this PR changed exactly the two files quoted
-// below — litellm.py (+2/-25) and test_litellm.py (+38/-8).
+// The /files view, because the section shows the diff, not the conversation. The PR changes exactly
+// the two files quoted below: litellm.py (+2/-25) and test_litellm.py (+38/-8).
 const PR_URL = "https://github.com/langchain-ai/langchain-litellm/pull/161/files";
 
 // Verbatim from langchain-ai/langchain-litellm PR #161 (merged 2026-05-21),
@@ -54,8 +53,7 @@ const DIFF = `# langchain-litellm · langchain_litellm/chat_models/litellm.py
          return {**self._default_params, **creds}
 `;
 
-// Second hunk of the same PR: the regression test. Shown instead of
-// repeating the fix, which is what the old placeholder sample did.
+// Second hunk of the same PR: the regression test, rather than a repeat of the fix.
 const TEST = `# and the test that keeps it fixed
 # tests/unit_tests/test_litellm.py
 
@@ -120,14 +118,12 @@ export function CodeSection() {
         offset: ["start end", "end start"],
     });
 
-    // MotionConfig reducedMotion="user" covers animate/whileInView, but NOT a
-    // MotionValue driven by scroll: that is a computed value, not an animation, so
-    // Framer has nothing to opt out of. Collapsing the output range is the opt-out.
+    // MotionConfig reducedMotion="user" does not reach a MotionValue driven by scroll, which is computed,
+    // not animated, so collapsing the output range is the opt-out.
     const reduced = !!useReducedMotion();
     const codeY = useTransform(scrollYProgress, [0, 1], reduced ? ["0%", "0%"] : ["0%", "-30%"]);
-    // Pixels, not percent. As a percentage this was 20% of the layer's OWN height, so
-    // sizing the bleed needed to hide its edges meant solving a percentage of a
-    // percentage. In px the guarantee is arithmetic: travel 140, bleed 200, never shows.
+    // Pixels, not percent: a percentage is of the layer's own height, which makes sizing the bleed circular.
+    // In px the guarantee is arithmetic: travel 140, bleed 200, the edge never shows.
     const imageY = useTransform(scrollYProgress, [0, 1], reduced ? [0, 0] : [0, 140]);
 
     return (
@@ -137,11 +133,8 @@ export function CodeSection() {
             style={{ background: 'var(--spine-code)', marginBottom: '-1px' }}
             data-theme="dark"
         >
-            {/* Static masked wrapper. The mask is anchored to the SECTION, not to the layer
-                that moves inside it, so the top and bottom 12% always resolve to the
-                section's own background, which begins and ends on --blend-void. That is
-                what makes both joints seamless: MissionSection ends on void above and
-                ContactSection opens on void below. */}
+            {/* The mask is anchored to the section, not the layer moving in it, so its faded top and bottom show
+                the section's own ground and both joints stay seamless. AGENTS.md, Blended Scroll Journey. */}
             <div
                 className="absolute inset-0 overflow-hidden pointer-events-none"
                 style={{
@@ -149,10 +142,8 @@ export function CodeSection() {
                     maskImage: 'var(--code-mask)',
                 }}
             >
-                {/* Bled 200px past both edges against 140px of travel, so this layer's own
-                    edges are never inside the wrapper. Before, it was inset-0 and shifted
-                    down, which put its top edge 20% into the section as a hard line across
-                    the full width. */}
+                {/* Bled 200px past both edges against 140px of travel, so this layer's own edges never enter
+                    the wrapper, where an edge would draw a hard line across the full width. */}
                 <motion.div
                     className="absolute inset-x-0"
                     style={{ y: imageY, top: '-200px', height: 'calc(100% + 400px)' }}

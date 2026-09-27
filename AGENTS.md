@@ -16,7 +16,8 @@ npm run start    # serve the production build locally
 Lint is clean and expected to stay that way, so a non-zero exit means you
 introduced something. Eight rule violations are suppressed at their call sites,
 each with a comment explaining why; do not add a suppression without one, and do
-not widen any of these to a file- or directory-level disable. Keep this count
+not widen any of these to a file- or directory-level disable. `eslint.config.mjs` ignores `.claude/**`, where
+session worktrees keep whole checkouts and their builds. Keep this count
 accurate: eslint reports an unused `eslint-disable` as a warning, so a stale one
 fails the clean bar exactly as an error does.
 
@@ -114,8 +115,8 @@ Google builds the result from the server HTML, so these hold it to what a recrui
   the download figure. Phones cut it near 110 characters, so what must be seen goes first.
 - **Sitemap dates.** `lastModified` in `app/sitemap.ts` is set by hand. Bump a route's date when
   its main content changes and at no other time; a date that moves on every deploy is ignored.
-- **Old URLs.** `/projects` and `/social` from the previous site 308 to `/work` and `/contact`
-  in `next.config.ts`. `/blog` has no equivalent and stays a 404.
+- **Old URLs.** `/projects` and `/social` from the previous site 308 to `/work` and `/contact`,
+  and `/profile.jpg` to the current headshot, in `next.config.ts`. `/blog` has no equivalent and stays a 404.
 - **First-screen reveals run on mount.** Google renders in a tall viewport, and every `h-svh`
   section stretches with it: at 412x5000 the hero is 5000px and its h1 sits at y 4708, outside
   a `whileInView` margin, so it stayed at the server-rendered `opacity:0`. Anything on the first
@@ -274,7 +275,7 @@ On hover a card sinks rather than lifts: its fill drops one step below the groun
 `#f4f1ea` on paper, `--work-card-hover-bg` `#0b0c13` on /work's dark), a hairline edge appears, the
 shadow goes, and the destination label (WORK, LINKEDIN, GITHUB) slides in. ALL WORK does the same.
 Arriving at `/work#…` shows that card in the same state through `:target`, so a reader sees where
-they landed; `scroll-mt-28` keeps it clear of the nav.
+they landed; the page's `scroll-padding-top: 96px` plus the card's `scroll-mt-4` keeps it clear of the nav.
 
 **Text never uses white or black utilities.** `text-fg-NN` replaces `text-white/NN`: in dark it
 is the same `color-mix` Tailwind emits for `text-white/NN`, in light a solid ink by role (NN 85
@@ -323,7 +324,15 @@ The `--blend-*` token family defines the unified scroll palette:
 - **Light arm**: `--blend-mist` (#c8d4e0) → `--blend-parchment` (#f2efe9) → `--blend-warm` (#e9e4da)
 - **Accent**: `--blend-accent` (#6b9fd4) · `--blend-accent-dim` (#3a6288) · `--blend-slate` (#5b7fa6)
 
-The old `--color-cream`, `--color-steel`, etc. tokens are still defined in `globals.css` but are **not applied to any page** — all sub-pages and the Footer now use the deep obsidian dark canvas.
+Of the old palette only `--color-charcoal` and `--color-border` remain, in `:root`: `body`, the dark `--on-paper` and
+`mdx-components.tsx` read them. Every other colour is a mode token, under Modes.
+
+**Tailwind reads the code, not the docs.** `globals.css` opens with `@import "tailwindcss" source(none)` and one
+`@source` each for `app`, `components`, `lib` and `mdx-components.tsx`. Automatic detection also read this file, and
+every class-like word in it became CSS: `tracking-[-0.02em]` and `leading-[1.05]`, quoted here as deleted overrides,
+shipped as live rules. `@source not "../AGENTS.md"` cannot fix it, because the scanner follows the `CLAUDE.md` symlink
+back to this file and still reads it. A new top-level folder that holds classes needs its own `@source` line, or its
+classes silently render unstyled.
 
 **Typography utilities must not declare `color`.** `.text-label` did while it sat in
 `@layer utilities`, and it silently beat every `text-white/NN` written beside it: same specificity,
@@ -350,7 +359,7 @@ The display classes, `.text-label` and `.text-code` followed, so `@layer utiliti
 the Footer wordmark renders its `font-medium tracking-tight leading-none`, 500 on -0.025em and 1.0.
 The other five were deleted so each heading matches its siblings on the same class: the /about
 Timeline h2 stays 400, the home About and Work headings stay on 1.1, /contact's h1 stays at -0.02em,
-and the unused MDX h1 stays on the display-l ladder's -0.015em. Seven copies of a class's own value
+and the unused MDX h1 stays on display-l's normal tracking. Seven copies of a class's own value
 (`leading-[1.05]`, one `tracking-[-0.02em]`) went too. Across every page, the 404 and the open phone
 menu at 375 and 1440, only the wordmark changed, and each page got shorter by exactly its two-line
 leading cut, 4.5px and 8.6px. Measured on `npm run build` and `next start`, with each build's CSS

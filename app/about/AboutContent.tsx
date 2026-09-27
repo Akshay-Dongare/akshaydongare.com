@@ -32,10 +32,8 @@ export function AboutContent({ stats }: { stats: PackageStats }) {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.35, delay: 0.1, ease: [0.25, 0.1, 0.25, 1] }}
                 >
-                    {/* priority: this is the page's LCP element, so it must not lazy-load.
-                        sizes is the box's real cap (max-w-[320px]) rather than a viewport
-                        fraction, so the srcset tops out at 320px x DPR instead of the
-                        source's 1197px. */}
+                    {/* priority: the page's LCP element must not lazy-load. sizes is the box's 320px cap, not a
+                        viewport fraction, so the srcset stops at 320px x DPR, not 1197px (AGENTS.md, Branding). */}
                     <Image
                         src="/Akshay_Headshot.jpg"
                         alt="Portrait of Akshay Dongare"

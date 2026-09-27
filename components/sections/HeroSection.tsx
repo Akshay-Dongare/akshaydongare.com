@@ -13,9 +13,8 @@ export function HeroSection({ stats }: { stats: PackageStats }) {
         offset: ["start start", "end start"],
     });
 
-    // MotionConfig reducedMotion="user" covers animate/whileInView, but NOT a
-    // MotionValue driven by scroll: that is a computed value, not an animation, so
-    // Framer has nothing to opt out of. Collapsing the output range is the opt-out.
+    // MotionConfig reducedMotion="user" does not reach a MotionValue driven by scroll, which is computed,
+    // not animated, so collapsing the output range is the opt-out.
     const reduced = !!useReducedMotion();
     // Parallax effect moves the image slightly slower than scroll
     const y = useTransform(scrollYProgress, [0, 1], reduced ? [0, 0] : [0, 280]);
@@ -29,14 +28,8 @@ export function HeroSection({ stats }: { stats: PackageStats }) {
             style={{ background: 'var(--spine-hero)', marginBottom: '-1px' }}
             data-theme="dark"
         >
-            {/* Static masked wrapper, anchored to the SECTION rather than to the thing that
-                moves inside it. The depth layer below is opaque and covers the whole hero, so
-                it — not the section — used to own the bottom edge, and its 135deg gradient
-                cannot present a uniform edge: at the bottom it ran from roughly --blend-deep
-                on the left to #0a0e15 on the right while ParticleSection opens flat on
-                --blend-deep. Fading the last 12% hands the joint back to the section's own
-                gradient, which ends on exactly the colour ParticleSection starts with.
-                Only the bottom is masked: nothing sits above the hero to join. */}
+            {/* Masked at the section, not the moving layer: the opaque 135deg depth layer has no uniform bottom
+                edge, so its last 12% fades to the section's gradient, which ends on ParticleSection's first colour. */}
             <div
                 className="absolute inset-0 overflow-hidden pointer-events-none"
                 style={{
@@ -44,10 +37,8 @@ export function HeroSection({ stats }: { stats: PackageStats }) {
                     maskImage: 'linear-gradient(to bottom, #000 0%, #000 88%, transparent 100%)',
                 }}
             >
-                {/* Bled 340px past both edges against 280px of travel, plus the ~58px the
-                    1.04 scale adds at the top from origin-bottom, so this layer's own edges
-                    can never enter the wrapper. Before, it was inset-0 and slid down, which
-                    dragged its top edge into the hero as a hard line across the full width. */}
+                {/* Bled 340px past both edges against 280px of travel plus ~58px from the 1.04 scale at the top, so
+                    this layer's own edges never enter the wrapper and draw a line across the hero. */}
                 <motion.div
                     className="absolute inset-x-0 origin-bottom"
                     style={{ y, scale, top: '-340px', height: 'calc(100% + 680px)' }}
@@ -55,21 +46,16 @@ export function HeroSection({ stats }: { stats: PackageStats }) {
                     {/* Micro-diagonal gradient for depth — imperceptible hue shift */}
                     <div className="absolute inset-0" style={{ background: 'var(--depth-hero)' }} />
 
-                {/* The backdrop is a CSS gradient rather than a photograph, deliberately: it
-                    costs no request and no layout shift. There used to be a second div here
-                    meant to lay a vignette over it, but its radial-gradient was written into
-                    className instead of style, so Tailwind emitted nothing and it rendered as
-                    an empty box from the day it was written. Removed rather than switched on,
-                        because the hero everyone has been looking at is the one without it. */}
+                {/* The backdrop is a CSS gradient rather than a photograph on purpose: no request, no layout shift.
+                    It has no vignette over it by choice, since the approved hero is the one without. */}
                 </motion.div>
             </div>
 
             {/* min-h, and the text block in flow: on a short phone the content grows the hero instead of sliding under the nav. */}
             <div className="relative w-full min-h-svh max-w-[1400px] mx-auto z-10 flex flex-col pt-[clamp(5.5rem,14svh,7rem)] pb-[clamp(4.5rem,8vw,6rem)] px-[clamp(1.5rem,5vw,3rem)]">
 
-                {/* The claim sits mid-screen, its measure in em so the headline holds about three lines at any desktop
-                    width, and its size capped by height too so a short laptop window keeps room around it. Every reveal
-                    here runs on mount, not in view: Google renders in a tall viewport where h-svh stretches. */}
+                {/* Em measure holds three lines; the height cap shrinks it on short screens. AGENTS.md, Hero layout.
+                    Reveals run on mount, not in view: Google renders in a tall viewport where h-svh stretches. */}
                 <motion.div
                     className="my-auto"
                     initial={{ opacity: 0, y: 30 }}

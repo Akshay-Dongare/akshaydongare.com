@@ -11,9 +11,8 @@ export function MissionSection() {
         offset: ["start start", "end start"],
     });
 
-    // MotionConfig reducedMotion="user" covers animate/whileInView, but NOT a
-    // MotionValue driven by scroll: that is a computed value, not an animation, so
-    // Framer has nothing to opt out of. Collapsing the output range is the opt-out.
+    // MotionConfig reducedMotion="user" does not reach a MotionValue driven by scroll, which is computed,
+    // not animated, so collapsing the output range is the opt-out.
     const reduced = !!useReducedMotion();
     const y = useTransform(scrollYProgress, [0, 1], reduced ? ["0%", "0%"] : ["0%", "30%"]);
     const [approachOpen, setApproachOpen] = useState(true);
