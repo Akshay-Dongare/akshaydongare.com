@@ -219,9 +219,9 @@ alt, rather than leaving the affiliation to a picture.
   and softened the brick on 3x phones, and the source is only 10KB. Two-variant marks load
   eagerly: a lazy image under `display:none` is never fetched, so the first mode switch blanked it.
 
-**/about body text is justified** (`text-justify hyphens-auto`), at the owner's request. Hyphenation
-depends on `lang="en"` on `<html>`. WCAG 1.4.8 advises against justified text, but only at AAA, so
-it stays on this one page and does not spread without asking.
+**/about body text and the /contact paragraph are justified** (`text-justify hyphens-auto`), at the
+owner's request. Hyphenation depends on `lang="en"` on `<html>`. WCAG 1.4.8 advises against justified
+text, but only at AAA, so it stays on these two pages and does not spread without asking.
 
 **/about body is 20px from `lg`, on 1.625 leading** (`lg:text-[1.25rem] leading-relaxed` over
 `.text-body`), at the owner's request. At 1440 the 740px column runs a median 78 to 81 characters a
