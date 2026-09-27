@@ -235,13 +235,15 @@ and the 1.625 line lifts the ceiling from 0.146em to 0.160em at 18px, so at 20px
 ### Modes
 
 Light is "Daylight Folio"; dark is the original "Deep Obsidian" site, behind a Light / Dark switcher.
-A first visit follows the device's `prefers-color-scheme`, a choice made with the switch is stored in
-`localStorage` and wins from then on, and light is the fallback. Until a choice is stored the page also
-follows a system change live, such as macOS turning dark at sunset. This is a readability call: a reader
-in dark mode at night should not get a screen of cream, and both modes clear the same contrast.
-`<html data-mode>` carries the mode, and a pre-paint script in `app/layout.tsx` applies the stored or
-system mode so a dark visitor never sees a light frame. `lib/mode.ts` holds the hook and the setters, and syncs other tabs through the `storage`
-event. Keep the attribute off `data-theme`: the Navbar reads `[data-theme="dark"]` as section
+Every visit opens in the device's `prefers-color-scheme`, light as the fallback, and until the switch is
+used it follows a system change live, such as macOS turning dark at sunset. The switch's choice lasts for
+the visit only, in `sessionStorage`: it holds across reloads and pages and goes when the tab closes, and the
+pre-paint script deletes any lasting `localStorage` choice. This is a readability call for a site people
+visit a few times: a reader in dark mode at night should not get a screen of cream, both modes clear the
+same contrast, and most presses of the switch are someone trying it, not setting a preference. Do not
+make the choice persist across visits without asking. `<html data-mode>` carries the mode, and a pre-paint
+script in `app/layout.tsx` applies the visit's or the system's mode so a dark visitor never sees a light
+frame. `lib/mode.ts` holds the hook and the setters; each tab is its own visit, so there is no cross-tab sync. Keep the attribute off `data-theme`: the Navbar reads `[data-theme="dark"]` as section
 sentinels. Anything that must be right before or during hydration reads the attribute, not the
 hook, because the hook reports the server's "light" until hydration ends: the Navbar starts at a
 null state rendered as `text-fg-100`, which CSS resolves per mode. The root layout owns the

@@ -93,8 +93,9 @@ const siteJsonLd = {
   url: "https://akshaydongare.com",
 };
 
-// A stored choice wins, then the system setting, then light; dark is applied before first paint so it never flashes light.
-const modeScript = `(function(){var m;try{m=localStorage.getItem('mode')}catch(e){}if(m!=='dark'&&m!=='light'){try{m=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'}catch(e){}}if(m==='dark'){var d=document.documentElement;d.dataset.mode='dark';d.style.colorScheme='dark';var t=document.querySelector('meta[name="theme-color"]');if(t)t.content='#07090f'}})()`;
+// This visit's choice wins, then the system setting, then light; dark lands before first paint, so no light flash.
+// A lasting choice in localStorage is deleted, so every new visit starts from the system.
+const modeScript = `(function(){var m;try{localStorage.removeItem('mode')}catch(e){}try{m=sessionStorage.getItem('mode')}catch(e){}if(m!=='dark'&&m!=='light'){try{m=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'}catch(e){}}if(m==='dark'){var d=document.documentElement;d.dataset.mode='dark';d.style.colorScheme='dark';var t=document.querySelector('meta[name="theme-color"]');if(t)t.content='#07090f'}})()`;
 
 // Runs before first paint so neither a repeat visitor nor someone with reduced motion
 // ever sees a frame of the mask.

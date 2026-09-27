@@ -13,10 +13,10 @@ function read(): Mode {
     return document.documentElement.dataset.mode === "dark" ? "dark" : "light";
 }
 
-// The switch's stored choice, or null until the visitor makes one.
+// The switch's choice for this visit, or null until the visitor makes one; a new visit starts from the system.
 function stored(): Mode | null {
     try {
-        const value = localStorage.getItem(MODE_KEY);
+        const value = sessionStorage.getItem(MODE_KEY);
         return value === "dark" || value === "light" ? value : null;
     } catch {
         return null;
@@ -30,25 +30,19 @@ function system(): Mode {
 function subscribe(onChange: () => void) {
     const observer = new MutationObserver(onChange);
     observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-mode"] });
-    // A choice made or cleared in another tab arrives as a storage event; applying it fires the observer.
-    const onStorage = (e: StorageEvent) => {
-        if (e.key === MODE_KEY || e.key === null) applyMode(stored() ?? system());
-    };
-    // Until the visitor picks a mode the page follows the system, including a switch at sunset.
+    // Each tab is its own visit, so there is no cross-tab sync. Until the visitor picks a mode the page follows the system, including a switch at sunset.
     const media = window.matchMedia(DARK_QUERY);
     const onSystem = () => {
         if (!stored()) applyMode(system());
     };
-    window.addEventListener("storage", onStorage);
     media.addEventListener("change", onSystem);
     return () => {
         observer.disconnect();
-        window.removeEventListener("storage", onStorage);
         media.removeEventListener("change", onSystem);
     };
 }
 
-// The server always renders light; a stored or system dark is applied before paint.
+// The server always renders light; this visit's or the system's dark is applied before paint.
 export function useMode(): Mode {
     return useSyncExternalStore(subscribe, read, () => "light");
 }
@@ -72,5 +66,5 @@ export function applyMode(mode: Mode) {
 
 export function setMode(mode: Mode) {
     applyMode(mode);
-    try { localStorage.setItem(MODE_KEY, mode); } catch { /* storage blocked; the choice lasts this page only */ }
+    try { sessionStorage.setItem(MODE_KEY, mode); } catch { /* storage blocked; the choice lasts this page only */ }
 }

@@ -33,7 +33,7 @@ export function PrivacyContent() {
 
                     <h2 className="text-display-m mt-16 mb-4 text-fg-85">Data Collection</h2>
                     <p>
-                        I do not collect personal data, and there is no analytics here. No page-view counter, no session recording, no ad network, no tracker, and nothing at all that loads from another origin: every script, style and font on this site is served from this domain. Two things can be written to your browser. One sessionStorage entry called bootPlayed remembers that the intro animation has already run, so you do not sit through it a second time, and it disappears when you close the tab. If you use the Light / Dark switch, one localStorage entry called mode remembers your choice until you clear this site’s data. Neither holds an identifier. There are no cookies. If that ever changes, this page changes first.
+                        I do not collect personal data, and there is no analytics here. No page-view counter, no session recording, no ad network, no tracker, and nothing at all that loads from another origin: every script, style and font on this site is served from this domain. Two things can be written to your browser, and both disappear when you close the tab. One sessionStorage entry called bootPlayed remembers that the intro animation has already run, so you do not sit through it a second time. If you use the Light / Dark switch, a second one called mode keeps your choice while you browse; until you use it, the site follows your device’s light or dark setting. Neither holds an identifier. There are no cookies. If that ever changes, this page changes first.
                     </p>
 
                     <h2 className="text-display-m mt-16 mb-4 text-fg-85">Communication</h2>
