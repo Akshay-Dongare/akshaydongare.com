@@ -322,7 +322,7 @@ body {
 }
 
 /* The native pointer hides only while CursorProvider sets .custom-cursor-active on <html>, which it holds while
-   running with focus. It bails on any touchscreen and reduced motion, where a mouse would otherwise show no pointer. */
+   its dot shows. It bails on any touchscreen and reduced motion, where a mouse would otherwise show no pointer. */
 @media (forced-colors: none) {
   html.custom-cursor-active body,
   html.custom-cursor-active :is(a, button, [role="button"], input, select, textarea),

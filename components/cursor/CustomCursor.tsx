@@ -73,14 +73,14 @@ export function CursorProvider({ children }: { children: React.ReactNode }) {
             tick();
         };
 
-        // The custom cursor runs only while the page has focus. With another app in front, macOS will
-        // not let the browser hide its pointer, so the dot would ride beside the native arrow.
+        // The native pointer hides only while the dot shows: with the page focused and the pointer inside it.
+        // Another app in front stops macOS hiding the pointer, and before the first move there is no dot yet.
         const sync = () => {
             const wasFocused = focused;
             focused = document.hasFocus();
-            root.classList.toggle("custom-cursor-active", focused);
-            if (focused !== wasFocused) resync();
             const next = focused && inside;
+            root.classList.toggle("custom-cursor-active", next);
+            if (focused !== wasFocused) resync();
             if (next !== shown) {
                 shown = next;
                 setIsVisible(next);
@@ -113,7 +113,6 @@ export function CursorProvider({ children }: { children: React.ReactNode }) {
             if (document.visibilityState === "visible") resync();
         };
 
-        root.classList.toggle("custom-cursor-active", focused);
         window.addEventListener("mousemove", moveCursor);
         window.addEventListener("focus", sync);
         window.addEventListener("blur", sync);

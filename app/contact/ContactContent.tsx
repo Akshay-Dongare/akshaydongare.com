@@ -47,6 +47,7 @@ export function ContactContent() {
                         >
                             <Link
                                 href={link.href}
+                                aria-label={link.label.includes("@") ? link.label : undefined}
                                 className="group flex justify-between items-center gap-4 py-8 md:py-12 border-t border-line-8 cursor-none"
                             >
                                 {/* The address may break after its @ on a 320px screen; <wbr> is not copied with it. */}
