@@ -34,20 +34,26 @@ export function ColophonContent() {
 
                     <h2 className="text-display-m mt-16 mb-4 text-fg-85">Architecture</h2>
                     <p>
-                        Built on <strong className="text-fg-80 font-medium">Next.js</strong> with the App Router. Every route is statically prerendered at build time, but most of the interface is client-rendered rather than server-rendered: the cursor, the scroll choreography and both particle fields all need the browser to exist.
+                        Built on <strong className="text-fg-80 font-medium">Next.js 16</strong> with the App Router, <strong className="text-fg-80 font-medium">React 19</strong> and <strong className="text-fg-80 font-medium">TypeScript</strong>. Every route is prerendered at build time. The download figures are the one live part: they come from pepy and PyPI, and the pages that show them regenerate every hour. Most of the interface still runs in the browser, because the cursor, the scroll choreography and both particle fields need a real window to exist.
                     </p>
 
                     <h2 className="text-display-m mt-16 mb-4 text-fg-85">Design & Styling</h2>
                     <p>
-                        The interface is built using a hybrid approach of <strong className="text-fg-80 font-medium">Vanilla CSS</strong> via custom variables and strict utility classes from <strong className="text-fg-80 font-medium">Tailwind CSS</strong>. This allows for rigorous control over design tokens while retaining the speed of utility composition.
+                        Styled with <strong className="text-fg-80 font-medium">Tailwind CSS v4</strong>, configured CSS-first. Every colour, gradient and shadow is a CSS variable with one value per mode, so no utility hard-codes a colour.
                     </p>
                     <p>
-                        Typography is set entirely in <strong className="text-fg-80 font-medium">Geist Sans</strong> and <strong className="text-fg-80 font-medium">Geist Mono</strong>, an excellent typeface family engineered for high-density interfaces and code by Vercel.
+                        There are two modes. <strong className="text-fg-80 font-medium">Daylight Folio</strong>, the light one, moves through cream, sage, apricot and sand as you scroll; <strong className="text-fg-80 font-medium">Deep Obsidian</strong>, the dark one, is a near-black spine with a pale bridge through the middle. A visit opens in your device’s setting, and the switch holds your choice until you close the tab. Body text clears WCAG AA contrast in both.
+                    </p>
+                    <p>
+                        Typography is set entirely in <strong className="text-fg-80 font-medium">Geist Sans</strong> and <strong className="text-fg-80 font-medium">Geist Mono</strong>, an excellent typeface family engineered for high-density interfaces and code by Vercel, served from this domain.
                     </p>
 
                     <h2 className="text-display-m mt-16 mb-4 text-fg-85">Interactions</h2>
                     <p>
-                        Fluid animations are powered by <strong className="text-fg-80 font-medium">Framer Motion</strong>. The cursor is a hyper-minimal 5px dot. In dark mode it uses <code className="font-mono text-fg-55 text-[0.8em]">mix-blend-mode: difference</code>, which inverts against any background; in light mode it is a solid ink dot with a paper halo, because difference drops out over the particle pigment. Position tracking uses raw DOM events mixed with React context at 60fps; the dot scales to 8px on hover via a 150ms spring.
+                        Page transitions and content reveals run on <strong className="text-fg-80 font-medium">Framer Motion</strong>, none longer than 350ms. The one-time intro, an iris wipe, runs on <strong className="text-fg-80 font-medium">GSAP</strong>, which loads only on the visit that plays it. With reduced motion set, nothing slides, and the particle fields hold a still frame.
+                    </p>
+                    <p>
+                        The cursor is a hyper-minimal 5px dot. In dark mode it uses <code className="font-mono text-fg-55 text-[0.8em]">mix-blend-mode: difference</code>, which inverts against any background; in light mode it is a solid ink dot with a paper halo, because difference drops out over the particle pigment. Position tracking uses raw DOM events mixed with React context at 60fps; the dot scales to 8px on hover via a 150ms spring. It runs only while the page has focus, so it never sits beside the system pointer.
                     </p>
 
                     <h2 className="text-display-m mt-16 mb-4 text-fg-85">WebGL & Physics</h2>
@@ -59,6 +65,14 @@ export function ColophonContent() {
                     </p>
                     <p>
                         The 5,000-particle silhouette uses area-weighted generation (<code className="font-mono text-fg-55 text-[0.8em]">r = R·√u</code>) across four layered populations: disc haze, Fibonacci/Fermat spiral arms, sinuous filaments, and sparse cosmic dust. A per-particle <code className="font-mono text-fg-55 text-[0.8em]">aSize</code> attribute creates a 70/30 grain-to-node size split, placing large particles precisely on dense strand intersections for maximum additive glow.
+                    </p>
+                    <p>
+                        The second field, under Contact, is the opposite in character: 8,000 particles that morph between a lightbulb, a rocket, a diamond, a bridge and a DNA helix. Rest the pointer on the shape, or hold a finger on it, and a tension ring charges; the shape shatters, falls under gravity, bounces off the floor and reforms into the next one, with a new word each time.
+                    </p>
+
+                    <h2 className="text-display-m mt-16 mb-4 text-fg-85">Hosting & Privacy</h2>
+                    <p>
+                        Hosted on <strong className="text-fg-80 font-medium">Vercel</strong>. There are no analytics, no cookies and no trackers, and every script, style and font is served from this domain; the <Link href="/privacy" className="link-in-text text-fg-80 underline underline-offset-4 decoration-line-20 hover:text-fg-50 transition-colors cursor-none">privacy page</Link> lists the two things the site writes to your browser. Every link opens in the same tab, so Back always brings you here.
                     </p>
 
                     <h2 className="text-display-m mt-16 mb-4 text-fg-85">Source</h2>
