@@ -93,8 +93,8 @@ const siteJsonLd = {
   url: "https://akshaydongare.com",
 };
 
-// Light is the default; a stored dark choice is applied before first paint so it never flashes light.
-const modeScript = `try{if(localStorage.getItem('mode')==='dark'){var d=document.documentElement;d.dataset.mode='dark';d.style.colorScheme='dark';var t=document.querySelector('meta[name="theme-color"]');if(t)t.content='#07090f'}}catch(e){}`;
+// A stored choice wins, then the system setting, then light; dark is applied before first paint so it never flashes light.
+const modeScript = `(function(){var m;try{m=localStorage.getItem('mode')}catch(e){}if(m!=='dark'&&m!=='light'){try{m=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'}catch(e){}}if(m==='dark'){var d=document.documentElement;d.dataset.mode='dark';d.style.colorScheme='dark';var t=document.querySelector('meta[name="theme-color"]');if(t)t.content='#07090f'}})()`;
 
 // Runs before first paint so neither a repeat visitor nor someone with reduced motion
 // ever sees a frame of the mask.

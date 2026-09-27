@@ -234,10 +234,13 @@ and the 1.625 line lifts the ceiling from 0.146em to 0.160em at 18px, so at 20px
 
 ### Modes
 
-Light, "Daylight Folio", is the default; dark is the original "Deep Obsidian" site behind a
-Light / Dark switcher. `<html data-mode>` carries the mode, and a pre-paint script in
-`app/layout.tsx` applies a stored choice from `localStorage` so a dark visitor never sees a light
-frame. `lib/mode.ts` holds the hook and the setters, and syncs other tabs through the `storage`
+Light is "Daylight Folio"; dark is the original "Deep Obsidian" site, behind a Light / Dark switcher.
+A first visit follows the device's `prefers-color-scheme`, a choice made with the switch is stored in
+`localStorage` and wins from then on, and light is the fallback. Until a choice is stored the page also
+follows a system change live, such as macOS turning dark at sunset. This is a readability call: a reader
+in dark mode at night should not get a screen of cream, and both modes clear the same contrast.
+`<html data-mode>` carries the mode, and a pre-paint script in `app/layout.tsx` applies the stored or
+system mode so a dark visitor never sees a light frame. `lib/mode.ts` holds the hook and the setters, and syncs other tabs through the `storage`
 event. Keep the attribute off `data-theme`: the Navbar reads `[data-theme="dark"]` as section
 sentinels. Anything that must be right before or during hydration reads the attribute, not the
 hook, because the hook reports the server's "light" until hydration ends: the Navbar starts at a
