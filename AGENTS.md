@@ -282,6 +282,14 @@ shadow goes, and the destination label (WORK, LINKEDIN, GITHUB) slides in. ALL W
 Arriving at `/work#…` shows that card in the same state through `:target`, so a reader sees where
 they landed; the page's `scroll-padding-top: 96px` plus the card's `scroll-mt-4` keeps it clear of the nav.
 
+**A mouse click on a homepage card lands with the pointer on the same card.** A page cannot move the
+pointer, so `lib/cardHandoff.ts` moves the page: the click records how far down its card it fell, and
+/work replaces Next's hash scroll with one that puts the same fraction of the matching card under the
+pointer. It measures layout offsets, not `getBoundingClientRect`, because the page is still sliding in.
+The column lines up only because both grids share one geometry and /work opens with the four in the
+homepage's order, Airbnb and langchain-litellm, then ISO and Harvard. Keep the two orders in step, or
+every click lands on the neighbouring card. Touch, keyboard and modified clicks keep the anchor jump.
+
 **Text never uses white or black utilities.** `text-fg-NN` replaces `text-white/NN`: in dark it
 is the same `color-mix` Tailwind emits for `text-white/NN`, in light a solid ink by role (NN 85
 and up `#1a1c13`, 65 to 80 `#272a1e`, 50 to 60 `#3d422c`). `text-lbl-NN` is the same on

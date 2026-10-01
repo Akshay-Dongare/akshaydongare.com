@@ -7,6 +7,7 @@ import { PEPY_URL, PYPI_URL, type PackageStats } from "@/lib/downloads";
 import { GAMI_AWARD_POST, GAMI_SITE, LANGCHAIN_ORG, LINKEDIN_EXPERIENCE, LITELLM_REPO } from "@/lib/links";
 import { ScrollCue } from "@/components/ui/ScrollCue";
 import { OrgLogo } from "@/components/ui/OrgLogo";
+import { handOffCard } from "@/lib/cardHandoff";
 
 // All four are open at once: a recruiter gives the page seconds, and a name behind a click
 // is a name they never read. The full account of each lives on /work.
@@ -107,6 +108,7 @@ export function WorkSection({ stats }: { stats: PackageStats }) {
                                             <Link
                                                 href={`/work#${project.slug}`}
                                                 aria-label={`${project.org}, the full entry on the work page`}
+                                                onClick={(e) => handOffCard(e, project.slug)}
                                                 className="cursor-none outline-none after:absolute after:inset-0 after:rounded-[20px] md:after:rounded-3xl focus-visible:after:outline-2 focus-visible:after:outline-offset-2 focus-visible:after:outline-current"
                                             >
                                                 {project.org}

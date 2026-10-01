@@ -1,20 +1,29 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import type { PackageStats } from "@/lib/downloads";
 import { GAMI_AWARD_POST, GAMI_SITE, HARVARD_SITE, LINKEDIN_EXPERIENCE, LITELLM_REPO } from "@/lib/links";
 import { OrgLogo, type Org } from "@/components/ui/OrgLogo";
+import { landCardUnderPointer } from "@/lib/cardHandoff";
 
 // affiliation names the organisation for cards whose title does not, so it is not left to the logo alone.
-// id is the anchor the homepage cards link to.
+// id is the anchor a homepage card links to; those four keep the homepage's order so a click lands in the same column.
 type Project = { title: string; desc: React.ReactNode; tags: string[]; link: string; logo?: Org; affiliation?: string; id?: string };
 
 // Links inside a description sit above the card's stretched title link, so both stay clickable.
 const INLINE = "link-in-text relative z-10 text-fg-85 underline underline-offset-4 decoration-line-20 hover:text-fg-55 transition-colors cursor-none";
 
 const buildProjects = (stats: PackageStats): Project[] => [
+    {
+        title: "Airbnb · AI Platform",
+        id: "airbnb",
+        logo: "airbnb",
+        desc: "The team already used the package I maintain, which is how they found me. Their internal LLM gateway, used by roughly 28 services, could not safely serve two providers in one process, because configuration lived in process-wide globals. I moved it to per-model registries resolved per request, giving a structural concurrency guarantee rather than a lock, and put an expiry-aware cache behind the auth path. Thirteen changes across ten repos, zero consumer migrations, and a test suite that went from 17 to 144. Two calls in two months; the rest was async.",
+        tags: ["PYTHON", "LLM GATEWAY", "CONCURRENCY", "CONTRACT"],
+        link: LINKEDIN_EXPERIENCE
+    },
     {
         title: "langchain-litellm",
         id: "langchain-litellm",
@@ -24,11 +33,11 @@ const buildProjects = (stats: PackageStats): Project[] => [
         link: LITELLM_REPO
     },
     {
-        title: "Airbnb · AI Platform",
-        id: "airbnb",
-        logo: "airbnb",
-        desc: "The team already used the package I maintain, which is how they found me. Their internal LLM gateway, used by roughly 28 services, could not safely serve two providers in one process, because configuration lived in process-wide globals. I moved it to per-model registries resolved per request, giving a structural concurrency guarantee rather than a lock, and put an expiry-aware cache behind the auth path. Thirteen changes across ten repos, zero consumer migrations, and a test suite that went from 17 to 144. Two calls in two months; the rest was async.",
-        tags: ["PYTHON", "LLM GATEWAY", "CONCURRENCY", "CONTRACT"],
+        title: "ISO · Companion",
+        id: "iso",
+        logo: "iso",
+        desc: "Applied AI engineer on Companion, the assistant the International Organization for Standardization builds for its own standards work. I designed the agentic graph patterns it runs on, which is what let it scale without maintenance cost scaling with it, and ran the comparative evaluation behind its web search layer so answers come from official ISO sources rather than the open web. Started the architecture documentation and refactored the legacy codebase while I was in there.",
+        tags: ["LANGGRAPH", "AGENTS", "RETRIEVAL", "CONTRACT"],
         link: LINKEDIN_EXPERIENCE
     },
     {
@@ -44,14 +53,6 @@ const buildProjects = (stats: PackageStats): Project[] => [
             </>
         ),
         tags: ["RAG", "GUARDRAILS", "WHATSAPP", "HEALTHCARE"],
-        link: LINKEDIN_EXPERIENCE
-    },
-    {
-        title: "ISO · Companion",
-        id: "iso",
-        logo: "iso",
-        desc: "Applied AI engineer on Companion, the assistant the International Organization for Standardization builds for its own standards work. I designed the agentic graph patterns it runs on, which is what let it scale without maintenance cost scaling with it, and ran the comparative evaluation behind its web search layer so answers come from official ISO sources rather than the open web. Started the architecture documentation and refactored the legacy codebase while I was in there.",
-        tags: ["LANGGRAPH", "AGENTS", "RETRIEVAL", "CONTRACT"],
         link: LINKEDIN_EXPERIENCE
     },
     {
@@ -119,6 +120,7 @@ function destinationLabel(url: string) {
 
 export function WorkContent({ stats }: { stats: PackageStats }) {
     const ALL_PROJECTS = buildProjects(stats);
+    useEffect(landCardUnderPointer, []);
     return (
         <div
             className="masthead-glow w-full min-h-screen pt-32 pb-24"
