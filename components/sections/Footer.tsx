@@ -1,5 +1,8 @@
+"use client";
+
 import React from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 interface FooterLinkProps {
     href: string;
@@ -16,6 +19,16 @@ function FooterLink({ href, label }: FooterLinkProps) {
 }
 
 export function Footer() {
+    const pathname = usePathname();
+    const year = new Date().getFullYear();
+    // A link to the page already open scrolls to its top instead, as the Navbar's [ AD ] does on "/".
+    const toTop = (href: string) => (e: React.MouseEvent) => {
+        if (pathname !== href) return;
+        e.preventDefault();
+        const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        window.scrollTo({ top: 0, behavior: reduced ? "auto" : "smooth" });
+    };
+
     return (
         <footer
             className="w-full pt-24 pb-12 px-6 md:px-12 lg:px-20"
@@ -64,13 +77,25 @@ export function Footer() {
 
                     <div className="flex items-end mb-8 md:mb-0">
                         <h2 className="text-display-xl font-medium tracking-tight text-fg-80 leading-none">
-                            Akshay <br /> Dongare
+                            <Link
+                                href="/"
+                                aria-label={pathname === "/" ? "Akshay Dongare, back to top" : "Akshay Dongare, home"}
+                                onClick={toTop("/")}
+                                className="cursor-none hover:text-fg-100 transition-colors duration-200"
+                            >
+                                Akshay <br /> Dongare
+                            </Link>
                         </h2>
                     </div>
 
-                    <p className="text-label text-lbl-50">
-                        © {new Date().getFullYear()} AKSHAY DONGARE
-                    </p>
+                    <Link
+                        href="/privacy"
+                        aria-label={`© ${year} Akshay Dongare, ${pathname === "/privacy" ? "back to top" : "privacy"}`}
+                        onClick={toTop("/privacy")}
+                        className="py-2 -my-2 cursor-none text-label text-lbl-50 hover:text-lbl-90 light:hover:text-fg-100 transition-colors duration-200"
+                    >
+                        © {year} AKSHAY DONGARE
+                    </Link>
 
                 </div>
             </div>

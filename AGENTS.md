@@ -161,7 +161,7 @@ which reflows the copy.
 
 ### Branding
 
-**Logo:** typographical brutalist `[ AD ]` in monospace, in the Navbar (small, inline, inherits theme text color). The Footer carries the Akshay Dongare wordmark alone. Do not revert to the old overlapping-circles letterform. Its accessible name is under Accessible names and targets.
+**Logo:** typographical brutalist `[ AD ]` in monospace, in the Navbar (small, inline, inherits theme text color). The Footer carries the Akshay Dongare wordmark alone, and it links home as `[ AD ]` does, scrolling to the top on "/"; the © line beside it links to /privacy the same way. Do not revert to the old overlapping-circles letterform. Its accessible name is under Accessible names and targets.
 
 **Favicon:** the same mark in Geist Mono 700, parchment `#f2efe9` on void `#07090f`, as
 three files Next picks up by convention: `app/favicon.ico` (16, 32, 48), `app/icon.png` (192)
