@@ -350,9 +350,10 @@ html.skip-boot .boot-mask {
   display: none !important;
 }
 
-/* A line that types itself like a terminal (TypedLine in BootSequence.tsx). The text is clipped open in --chars
-   steps, one per character, and a block caret rides the clip's edge on the same steps. A "pass" caret waits at the
-   start, types, and leaves; a "rest" caret appears with its line, stays solid while it types, then keeps blinking at the end. */
+/* A line that types itself like a terminal (components/ui/TypedLine.tsx, used by the boot screen and the hero). The
+   text is clipped open in --chars steps, one per character, and a block caret rides the clip's edge on the same
+   steps. A "pass" caret waits at the start, types, and leaves; a "type" caret shows only while its line types; a "rest"
+   caret appears with its line, stays solid while it types, then keeps blinking at the end. */
 .typed-line {
   position: relative;
   display: inline-block;
@@ -374,6 +375,12 @@ html.skip-boot .boot-mask {
   animation:
     typed-caret-ride var(--type-ms) steps(var(--chars), end) var(--type-delay) both,
     typed-caret-leave 1ms linear calc(var(--type-delay) + var(--type-ms)) forwards;
+}
+.typed-caret-type {
+  opacity: 0;
+  animation:
+    typed-caret-ride var(--type-ms) steps(var(--chars), end) var(--type-delay) both,
+    typed-caret-solid var(--type-ms) step-end var(--type-delay);
 }
 .typed-caret-rest {
   opacity: 0;

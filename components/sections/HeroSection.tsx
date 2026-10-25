@@ -5,6 +5,16 @@ import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion
 import Link from "next/link";
 import { PYPI_URL, type PackageStats } from "@/lib/downloads";
 import { ScrollCue } from "@/components/ui/ScrollCue";
+import { TypedLine } from "@/components/ui/TypedLine";
+
+// The name and role type themselves in at the boot screen's pace (BootSequence.tsx): 50ms a character for the name,
+// 20ms for the role, starting as the block fades in. The role is two segments, split where it wraps on a phone, that
+// type in turn. On a first visit this all runs under the boot mask, so the hero is already typed when it opens.
+const NAME_START_MS = 300;
+const NAME_MS = 18 * 50;
+const ROLE_A_START_MS = NAME_START_MS + NAME_MS + 150;
+const ROLE_A_MS = 25 * 20;
+const ROLE_B_MS = 18 * 20;
 
 export function HeroSection({ stats }: { stats: PackageStats }) {
     const containerRef = useRef<HTMLDivElement>(null);
@@ -63,8 +73,24 @@ export function HeroSection({ stats }: { stats: PackageStats }) {
                     transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1], delay: 0.08 }}
                 >
                     <div className="flex flex-col gap-1.5 mb-6">
-                        <span className="text-[0.95rem] font-mono text-fg-90 tracking-[0.15em] uppercase">[ Akshay Dongare ]</span>
-                        <span className="text-label text-lbl-70"><span aria-hidden="true">{"->"}</span> ai platform engineer{"\u00a0·"} llm{"\u00a0"}infrastructure</span>
+                        {/* self-start: a stretched flex item would set the clip's 100% to the column, not the text. */}
+                        <TypedLine
+                            chars={18}
+                            startMs={NAME_START_MS}
+                            durationMs={NAME_MS}
+                            caret="pass"
+                            className="self-start text-[0.95rem] font-mono text-fg-90 tracking-[0.15em] uppercase"
+                        >
+                            [ Akshay Dongare ]
+                        </TypedLine>
+                        <span className="self-start text-label text-lbl-70">
+                            <TypedLine chars={25} startMs={ROLE_A_START_MS} durationMs={ROLE_A_MS} caret="type">
+                                <span aria-hidden="true">{"->"}</span> ai platform engineer{"\u00a0·"}
+                            </TypedLine>{" "}
+                            <TypedLine chars={18} startMs={ROLE_A_START_MS + ROLE_A_MS} durationMs={ROLE_B_MS} caret="type">
+                                llm{"\u00a0"}infrastructure
+                            </TypedLine>
+                        </span>
                     </div>
 
                     <h1 className="text-display-xl text-fg-100 font-sans max-w-[14em]" style={{ fontSize: "clamp(min(2.8rem, 6.5svh), min(6vw, 9.5svh), 5.5rem)" }}>

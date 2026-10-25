@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
+import { TypedLine } from "@/components/ui/TypedLine";
 
 const MIN_HOLD_MS = 900;
 // Backstop only. The reveal fires two frames after hydration, so this should never
@@ -19,21 +20,6 @@ const ROLE_MS = ROLE.length * 20;
 const READ_MS = 500;
 // Bounds the wait on the typing, in case its animation never reports finishing.
 const TYPING_BACKSTOP_MS = 4000;
-
-// One line clipped open a character at a time while a block caret rides its edge. Geist Mono gives every glyph one
-// advance, tracking included, so each of the --chars steps is exactly one character. The CSS is .typed-* in globals.css.
-function TypedLine({ text, startMs, durationMs, caret, className, textRef }: {
-    text: string; startMs: number; durationMs: number; caret: "pass" | "rest"; className: string;
-    textRef?: React.Ref<HTMLSpanElement>;
-}) {
-    const timing = { "--chars": text.length, "--type-delay": `${startMs}ms`, "--type-ms": `${durationMs}ms` } as React.CSSProperties;
-    return (
-        <span className={`typed-line ${className}`} style={timing}>
-            <span ref={textRef} className="typed-text">{text}</span>
-            <span className={`typed-caret typed-caret-${caret}`} />
-        </span>
-    );
-}
 
 export function BootSequence({ children }: { children: React.ReactNode }) {
     const [maskMounted, setMaskMounted] = useState(true);
@@ -171,24 +157,28 @@ export function BootSequence({ children }: { children: React.ReactNode }) {
                             the lockup blank until it arrived. */}
                         <div className="flex flex-col items-center gap-4 px-6 text-center font-mono text-fg-100">
                             <TypedLine
-                                text={NAME}
+                                chars={NAME.length}
                                 startMs={NAME_START_MS}
                                 durationMs={NAME_END_MS - NAME_START_MS}
                                 caret="pass"
                                 className="text-[0.85rem] tracking-[0.3em] uppercase"
-                            />
+                            >
+                                {NAME}
+                            </TypedLine>
                             <div
                                 className="boot-rule h-px w-24 bg-line-25 origin-center"
                                 style={{ "--rule-delay": `${NAME_END_MS}ms` } as React.CSSProperties}
                             />
                             <TypedLine
-                                text={ROLE}
+                                chars={ROLE.length}
                                 startMs={ROLE_START_MS}
                                 durationMs={ROLE_MS}
                                 caret="rest"
                                 textRef={roleRef}
                                 className="text-[0.6rem] tracking-[0.1em] md:text-[0.7rem] md:tracking-[0.18em] text-fg-55"
-                            />
+                            >
+                                {ROLE}
+                            </TypedLine>
                         </div>
                     </div>
                 </div>

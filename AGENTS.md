@@ -495,7 +495,7 @@ desktop width, and its size is `clamp(min(2.8rem, 6.5svh), min(6vw, 9.5svh), 5.5
 laptop window or a short phone shrinks the headline instead of pushing the facts below the fold.
 Measured, the `<dl>` ends inside the viewport at every size from 360x640 to 1920x1080, which keeps the
 first-screen rule above. The download figure keeps whole from 375px (`min-[375px]:whitespace-nowrap`);
-at 360 it must wrap, or the Creator row takes three lines and the facts fall below the fold.
+at 360 it must wrap, or the Creator row takes three lines and the facts fall below the fold. The name and role above the h1 type themselves in at the boot screen's pace (`components/ui/TypedLine.tsx`), from 300ms after mount, carets showing only while each types. The role types as two segments split where it wraps on a phone, since a typed line cannot wrap. On a first visit this runs under the boot mask, so the hero opens already typed.
 
 **Download figures link the number, not the sentence.** The link wraps "15 million" or "1 million" and
 stops there, so the underline marks the claim rather than the words around it. All-time figures go to
