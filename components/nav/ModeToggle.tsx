@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect } from "react";
-import { setMode, syncThemeColor, useMode } from "@/lib/mode";
+import { revealMode, syncThemeColor, useMode } from "@/lib/mode";
 
 // Sun knob on an ink track in light, moon knob on a paper track in dark. The look reads
 // data-mode through CSS variants, so it is right before hydration; the hook drives aria only.
@@ -17,7 +17,8 @@ export function ModeToggle({ className = "" }: { className?: string }) {
             role="switch"
             aria-checked={mode === "dark"}
             aria-label="Dark mode"
-            onClick={() => setMode(mode === "dark" ? "light" : "dark")}
+            // The reveal grows from the knob, the span below, wherever it sits before the switch.
+            onClick={(e) => revealMode(mode === "dark" ? "light" : "dark", e.currentTarget.firstElementChild ?? e.currentTarget)}
             className={`relative inline-flex h-7 w-[52px] shrink-0 items-center rounded-full p-[3px] cursor-none forced-colors:border after:absolute after:-inset-y-2 after:-inset-x-1 after:content-[''] transition-colors duration-300 light:bg-[#1a1c13] dark:bg-[#f2efe9] dark:ring-1 dark:ring-black/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current ${className}`}
         >
             <span
