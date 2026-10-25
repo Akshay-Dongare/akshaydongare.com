@@ -23,7 +23,7 @@ fails the clean bar exactly as an error does.
 
 All ten are inherent to the WebGL and client-only work and will not be
 "fixed". Three are `react-hooks/purity`, where `Math.random()` seeds a typed
-array inside an empty-dep `useMemo` (the randomness must be rolled once and then
+array inside a `useMemo` that runs once per mount (the randomness must be rolled once and then
 stay stable, or the particles reshuffle on every re-render). Three are
 `react-hooks/immutability`, where `useFrame` writes straight into the shared ref
 and the velocity buffer (allocating fresh arrays for 8,000 particles per frame
@@ -40,7 +40,10 @@ inside the effect, `eslint-plugin-react-hooks` 7.0 skipped the whole component
 because of the dynamic `import()`, and reported the directive as unused; 7.1
 analyses it again. `MorphingParticleField` builds its shapes in an empty-dep
 `useMemo`, not lazily in a ref, because 7.1's `react-hooks/refs` forbids reading
-a ref during render. Keep `eslint-config-next` on the same version as `next`.
+a ref during render. Keep `eslint-config-next` on the same version as `next`. The
+config accepts any `eslint-plugin-react-hooks` ^7.1.0, so a blanket `npm update` can
+move the plugin on its own and bring new errors, as 7.1 did; update packages by
+name and run lint after.
 
 There is no test suite.
 
