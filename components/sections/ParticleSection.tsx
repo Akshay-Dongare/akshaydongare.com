@@ -44,6 +44,8 @@ export function ParticleSection({ stats }: { stats: PackageStats }) {
             // and raise the Copy / Search callout. Coarse pointers only, so the sentence stays selectable with a mouse.
             className="relative w-full h-svh overflow-hidden pointer-coarse:select-none [-webkit-touch-callout:none]"
             style={{ background: 'var(--spine-particle)', marginBottom: '-1px' }}
+            // An inverted cursor dot vanishes over the light pigment, so CursorProvider draws it solid here.
+            data-cursor="solid"
         >
             {/* Dark theme sentinel covers the top portion — keeps Navbar white text while dark bg is visible */}
             <div className="absolute top-0 left-0 w-full h-[55%] pointer-events-none" data-theme="dark" />

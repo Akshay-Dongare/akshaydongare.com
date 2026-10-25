@@ -112,9 +112,13 @@
   --menu-bg: #faf6ee;
   --code-veil: rgba(250, 246, 238, 0.5);
   --boot-panel: #f3ecdd;
-  --cursor-color: #1a1c13;
-  --cursor-blend: normal;
-  --cursor-ring: 0 0 0 1.5px #faf6ee;
+  /* The cursor dot behaves the same in both modes: white with difference, so it inverts whatever it is over, and
+     solid with a ring in the page colour over the particle fields (data-cursor="solid"), where an inverted dot falls
+     to 1.1:1 on the olive pigment and 2.1:1 on the terracotta. Only the solid pair changes with the mode. */
+  --cursor-color: #ffffff;
+  --cursor-blend: difference;
+  --cursor-solid: #1a1c13;
+  --cursor-solid-ring: 0 0 0 1.5px #faf6ee;
   /* One opacity for every glass: 0.6 is as clear as it goes before white nav text over paper drops under 4.5:1. */
   --nav-glass: rgba(250, 246, 238, 0.6);
   --nav-glass-on-light: rgba(250, 246, 238, 0.6);
@@ -183,9 +187,8 @@
   --menu-bg: #07090f;
   --code-veil: rgba(7, 9, 15, 0.5);
   --boot-panel: #000000;
-  --cursor-color: #ffffff;
-  --cursor-blend: difference;
-  --cursor-ring: none;
+  --cursor-solid: #ffffff;
+  --cursor-solid-ring: 0 0 0 1.5px #07090f;
   --nav-glass: rgba(7, 9, 15, 0.6);
   --nav-glass-on-light: rgba(242, 239, 233, 0.6);
   --particle-halo: 0 2px 24px rgba(7, 9, 15, 0.5);

@@ -21,6 +21,8 @@ export function CursorProvider({ children }: { children: React.ReactNode }) {
     const [isReady, setIsReady] = useState(false);
     const [isHovering, setIsHovering] = useState(false);
     const [isVisible, setIsVisible] = useState(false);
+    // Over a particle field (data-cursor="solid") the dot is solid with a ring instead of inverting. AGENTS.md.
+    const [isSolid, setIsSolid] = useState(false);
 
     const cursorX = useSpring(-100, { stiffness: 2000, damping: 40, mass: 0.1 });
     const cursorY = useSpring(-100, { stiffness: 2000, damping: 40, mass: 0.1 });
@@ -123,6 +125,9 @@ export function CursorProvider({ children }: { children: React.ReactNode }) {
         // Global listeners for hover state on interactive elements
         const handleMouseOver = (e: MouseEvent) => {
             const target = e.target as HTMLElement;
+            // During the mode switch's view transition the pointer is over a snapshot layer and events target <html>;
+            // keep the last answer, or a pointer resting on a particle field would lose its solid dot until it moved.
+            if (target !== document.documentElement) setIsSolid(!!target.closest('[data-cursor="solid"]'));
             // Check if the target or any of its parents is an interactive element
             if (
                 target.tagName.toLowerCase() === 'a' ||
@@ -178,11 +183,11 @@ export function CursorProvider({ children }: { children: React.ReactNode }) {
                         y: cursorY,
                         translateX: "-50%",
                         translateY: "-50%",
-                        // White difference dot in dark; a solid ink dot in light, where difference drops under 3:1 over pigment.
-                        backgroundColor: "var(--cursor-color)",
-                        mixBlendMode: "var(--cursor-blend)" as React.CSSProperties["mixBlendMode"],
-                        // A paper halo keeps the ink dot visible over the ink pills.
-                        boxShadow: "var(--cursor-ring)",
+                        // Inverts what it is over in both modes; over the particle fields, solid with a ring in the
+                        // page colour, which keeps it visible on pigment and on the brightest particle cores alike.
+                        backgroundColor: isSolid ? "var(--cursor-solid)" : "var(--cursor-color)",
+                        mixBlendMode: (isSolid ? "normal" : "var(--cursor-blend)") as React.CSSProperties["mixBlendMode"],
+                        boxShadow: isSolid ? "var(--cursor-solid-ring)" : "none",
                         width: isHovering ? 8 : 5,
                         height: isHovering ? 8 : 5,
                         opacity: isVisible ? 1 : 0,

@@ -39,6 +39,8 @@ export function ContactSection() {
             className="relative w-full h-svh overflow-hidden pointer-coarse:select-none [-webkit-touch-callout:none]"
             style={{ background: 'var(--spine-contact)' }}
             data-theme="dark"
+            // An inverted cursor dot vanishes over the light pigment, so CursorProvider draws it solid here.
+            data-cursor="solid"
         >
             <div className="absolute inset-0 z-10 p-6 md:p-12 lg:p-20 pt-[clamp(5rem,10vw,10rem)] pb-12 flex flex-col justify-between pointer-events-none">
 
