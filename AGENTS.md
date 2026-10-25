@@ -502,7 +502,7 @@ stops there, so the underline marks the claim rather than the words around it. A
 `PYPI_URL` and monthly ones to `PEPY_URL` (both in `lib/downloads.ts`). pepy's page header still says
 the latest version is 0.6.6: its metadata last synced on 24 May 2026, although its download counts
 are current. No pepy URL avoids that header, so pepy backs only the monthly count, which it states
-as "in the last 30 days". The monthly figure keeps one decimal, rounded down so it never overstates ("1.2 million"): the default badge rounds to "1M" while pepy's page says 1.2M, so `lib/downloads.ts` asks for the unrounded badge (`?units=none`) and formats it itself, and a compact badge still passes through if pepy ever ignores the option. PyPI lists every release but shows no download count at all, so the
+as "in the last 30 days". The monthly figure keeps one decimal, rounded as pepy's page rounds it, so the number matches the page it links to ("1.2 million"). The default badge rounds to "1M", and the plain badge ignores `units`, so `lib/downloads.ts` reads pepy's personalized badge with `period=month&units=none` and formats the raw count itself; a compact badge still passes through if pepy ever ignores the option. PyPI lists every release but shows no download count at all, so the
 pill's accessible name calls it the package on PyPI, not a citation for the figure.
 
 **Copy and wrapping.** Visible copy uses the typographic apostrophe ’, never `&apos;` or a straight

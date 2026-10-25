@@ -40,14 +40,17 @@ function toLongForm(compact: string): string {
     return m ? `${m[1]} ${SCALE[m[2].toUpperCase()]}` : compact;
 }
 
-/** A raw count -> "1.2M", rounded down to one decimal so a figure never overstates, with ".0" dropped. A badge that
-    is already compact ("1M") passes through, so pepy ignoring the units option degrades to today's figure. */
+/** A raw count -> "1.2M", rounded to one decimal as pepy's own page rounds it, since the figure links there, with
+    ".0" dropped. A badge that is already compact ("1M") passes through, so pepy ignoring the units option degrades to
+    the whole-number figure. */
 function compactOneDecimal(value: string): string {
     if (/[KMB]$/.test(value)) return value;
     const n = Number(value.replace(/[,.\s]/g, ""));
     if (!Number.isFinite(n)) return value;
+    // Largest unit first, and by the rounded value, so 999,960 is "1M" rather than "1000K".
     for (const [size, unit] of [[1e9, "B"], [1e6, "M"], [1e3, "K"]] as const) {
-        if (n >= size) return `${Math.floor((n / size) * 10) / 10}${unit}`;
+        const x = Math.round((n / size) * 10) / 10;
+        if (x >= 1) return `${x}${unit}`;
     }
     return String(n);
 }
