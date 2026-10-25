@@ -189,13 +189,13 @@ export function WorkContent({ stats }: { stats: PackageStats }) {
                             <div
                                 id={proj.id}
                                 data-landed={proj.id && hash === proj.id ? "" : undefined}
-                                className="group relative flex flex-col h-full scroll-mt-4 border border-[var(--work-card-edge)] rounded-[20px] md:rounded-3xl p-6 md:p-8 cursor-none bg-[var(--work-card)] shadow-[var(--work-card-shadow)] hover:bg-[var(--work-card-hover-bg)] hover:border-[var(--work-card-hover-edge)] hover:shadow-none landed:bg-[var(--work-card-hover-bg)] landed:border-[var(--work-card-hover-edge)] landed:shadow-none transition-[background-color,border-color,box-shadow] duration-300 ease-[cubic-bezier(0,0,0.5,1)]"
+                                className="group relative flex flex-col h-full scroll-mt-4 border border-[var(--work-card-edge)] rounded-[20px] md:rounded-3xl p-6 md:p-8 cursor-none bg-[var(--work-card)] shadow-[var(--work-card-shadow)] hover:bg-[var(--work-card-hover-bg)] hover:border-[var(--work-card-hover-edge)] hover:shadow-none landed:animate-[landed-card_2s_cubic-bezier(0,0,0.5,1)] transition-[background-color,border-color,box-shadow] duration-300 ease-[cubic-bezier(0,0,0.5,1)]"
                             >
                                 {/* A row of its own, since Tech Mahindra's 4:1 lockup breaks titles inline. 40px holds
                                     the tallest mark, Harvard's shield, and the destination sits at its far end. */}
                                 <div className="flex h-10 items-center justify-between gap-4 mb-5">
                                     {proj.logo && <OrgLogo org={proj.logo} alt={proj.affiliation} />}
-                                    <span aria-hidden="true" className="hidden lg:inline-flex shrink-0 whitespace-nowrap items-baseline gap-2 font-mono text-fg-60 lg:opacity-0 lg:-translate-x-4 lg:group-hover:translate-x-0 lg:group-hover:opacity-100 lg:group-landed:translate-x-0 lg:group-landed:opacity-100 lg:group-has-[h2_a:focus-visible]:translate-x-0 lg:group-has-[h2_a:focus-visible]:opacity-100 transition-[opacity,translate] duration-300">
+                                    <span aria-hidden="true" className="hidden lg:inline-flex shrink-0 whitespace-nowrap items-baseline gap-2 font-mono text-fg-60 lg:opacity-0 lg:-translate-x-4 lg:group-hover:translate-x-0 lg:group-hover:opacity-100 lg:group-landed:animate-[landed-label_2s_cubic-bezier(0,0,0.5,1)] lg:group-has-[h2_a:focus-visible]:translate-x-0 lg:group-has-[h2_a:focus-visible]:opacity-100 transition-[opacity,translate] duration-300">
                                         <span className="text-label text-fg-60">{destinationLabel(proj.link)}</span>
                                         <span className="text-xl">[ → ]</span>
                                     </span>
