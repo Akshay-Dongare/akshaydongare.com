@@ -36,6 +36,14 @@ tracks a pointer the server does not have.
 `BootSequence` used to hold a ninth. It went away on its own when the gsap import
 moved inside the effect, and the directive then started reporting as unused.
 
+`eslint-config-next` stays at 16.3.5 while `next` is on 16.4, and the lockfile holds
+`eslint-plugin-react-hooks` at 7.0.1. Version 7.1 reports eight new errors: six
+`react-hooks/refs` from the `shapesRef` lazy init in `MorphingParticleField`, one
+`immutability` at its `useFrame` call, and one `set-state-in-effect` in `BootSequence`,
+which 7.0.1 skips entirely because of the dynamic `import("gsap")`. The 16.3.5 config
+accepts `^7.0.0`, so a blanket `npm update` pulls 7.1 in without touching the config.
+Update packages by name, and move the config and the plugin only together with those fixes.
+
 There is no test suite.
 
 `npm run dev` can keep serving a pre-edit `app/globals.css`, even across a restart: Turbopack's
