@@ -31,6 +31,9 @@
    data-mode sits on <html>, leaving data-theme free for the Navbar's section sentinels. */
 @custom-variant dark (&:where([data-mode="dark"], [data-mode="dark"] *));
 @custom-variant light (&:where([data-mode="light"], [data-mode="light"] *));
+/* The /work card a reader arrived at. :target covers a full load of /work#id, but Next's client navigation moves
+   the URL with pushState, which never updates :target, so WorkContent mirrors the hash into data-landed. */
+@custom-variant landed (&:is(:target, [data-landed]));
 
 @theme inline {
   --color-fg-100: var(--fg-100);
