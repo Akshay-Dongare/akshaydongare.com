@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { PillButton } from "@/components/ui/PillButton";
 import { motion, AnimatePresence } from "framer-motion";
 import { ModeToggle } from "@/components/nav/ModeToggle";
+import { DecodeText } from "@/components/ui/DecodeText";
 import { useMode } from "@/lib/mode";
 
 export function Navbar() {
@@ -136,7 +137,7 @@ export function Navbar() {
                     <Link
                         href="/"
                         aria-label={pathname === "/" ? "AD: Akshay Dongare, back to top" : "AD: Akshay Dongare, home"}
-                        className="retype-host flex items-center -m-3 p-3 cursor-none pointer-events-auto"
+                        className="flex items-center -m-3 p-3 cursor-none pointer-events-auto"
                         onClick={(e) => {
                             setIsMobileMenuOpen(false);
                             if (pathname === "/") {
@@ -147,8 +148,7 @@ export function Navbar() {
                         }}
                     >
                         <span className={`font-mono text-sm font-medium tracking-[0.1em] ${isMobileMenuOpen ? "text-fg-100" : textColorClass} transition-colors duration-300`}>
-                            {/* AD re-types on hover behind the boot's caret; .retype in globals.css. */}
-                            [ <span className="retype"><span className="retype-text">AD</span><span className="retype-caret" /></span> ]
+                            <DecodeText text="[ AD ]" />
                         </span>
                     </Link>
 
