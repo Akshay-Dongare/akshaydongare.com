@@ -350,6 +350,68 @@ html.skip-boot .boot-mask {
   display: none !important;
 }
 
+/* A line that types itself like a terminal (TypedLine in BootSequence.tsx). The text is clipped open in --chars
+   steps, one per character, and a block caret rides the clip's edge on the same steps. A "pass" caret waits at the
+   start, types, and leaves; a "rest" caret appears with its line, types, and keeps blinking at the end. */
+.typed-line {
+  position: relative;
+  display: inline-block;
+  white-space: nowrap;
+}
+.typed-text {
+  animation: typed-open var(--type-ms) steps(var(--chars), end) var(--type-delay) both;
+}
+.typed-caret {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 0.6em;
+  height: 1.1em;
+  translate: 0 -50%;
+  background: currentColor;
+}
+.typed-caret-pass {
+  animation:
+    typed-caret-ride var(--type-ms) steps(var(--chars), end) var(--type-delay) both,
+    typed-caret-leave 1ms linear calc(var(--type-delay) + var(--type-ms)) forwards;
+}
+.typed-caret-rest {
+  opacity: 0;
+  animation:
+    typed-caret-ride var(--type-ms) steps(var(--chars), end) var(--type-delay) both,
+    typed-caret-blink 1s step-end var(--type-delay) infinite;
+}
+.boot-rule {
+  animation: boot-rule-draw 250ms cubic-bezier(0.22, 1, 0.36, 1) var(--rule-delay) both;
+}
+@keyframes typed-open {
+  from { clip-path: inset(0 100% 0 0); }
+  to { clip-path: inset(0); }
+}
+@keyframes typed-caret-ride {
+  from { left: 0; }
+  to { left: 100%; }
+}
+@keyframes typed-caret-leave {
+  to { opacity: 0; }
+}
+@keyframes typed-caret-blink {
+  0%, 50% { opacity: 1; }
+  50.01%, 100% { opacity: 0; }
+}
+@keyframes boot-rule-draw {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .typed-text, .boot-rule {
+    animation: none;
+  }
+  .typed-caret {
+    display: none;
+  }
+}
+
 /* Fallback for when the pre-paint script in layout.tsx does not run. */
 @media (prefers-reduced-motion: reduce) {
   .boot-mask {

@@ -7,13 +7,34 @@ const MIN_HOLD_MS = 900;
 // be reached; it exists so a dropped frame cannot strand the mask on screen.
 const SAFETY_TIMEOUT_MS = 1200;
 
+// The lockup types itself like a terminal, timed from first paint so it finishes inside MIN_HOLD_MS: the name at
+// 26ms a character, the rule drawn under it, then the role line printed at 7ms a character, by about 940ms.
+const NAME = "[ AKSHAY DONGARE ]";
+const ROLE = "-> ai platform engineer\u00a0· llm\u00a0infrastructure";
+const NAME_START_MS = 100;
+const NAME_END_MS = NAME_START_MS + NAME.length * 26;
+const ROLE_START_MS = NAME_END_MS + 60;
+const ROLE_MS = ROLE.length * 7;
+
+// One line clipped open a character at a time while a block caret rides its edge. Geist Mono gives every glyph one
+// advance, tracking included, so each of the --chars steps is exactly one character. The CSS is .typed-* in globals.css.
+function TypedLine({ text, startMs, durationMs, caret, className }: {
+    text: string; startMs: number; durationMs: number; caret: "pass" | "rest"; className: string;
+}) {
+    const timing = { "--chars": text.length, "--type-delay": `${startMs}ms`, "--type-ms": `${durationMs}ms` } as React.CSSProperties;
+    return (
+        <span className={`typed-line ${className}`} style={timing}>
+            <span className="typed-text">{text}</span>
+            <span className={`typed-caret typed-caret-${caret}`} />
+        </span>
+    );
+}
+
 export function BootSequence({ children }: { children: React.ReactNode }) {
     const [maskMounted, setMaskMounted] = useState(true);
     const topRef = useRef<HTMLDivElement>(null);
     const bottomRef = useRef<HTMLDivElement>(null);
     const lockupRef = useRef<HTMLDivElement>(null);
-    const brandRef = useRef<HTMLDivElement>(null);
-    const ruleRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         // Reading sessionStorage can throw (Safari private mode, blocked cookies), and only this effect removes
@@ -55,23 +76,6 @@ export function BootSequence({ children }: { children: React.ReactNode }) {
                 return;
             }
             if (cancelled) return;
-
-            const brand = brandRef.current;
-            const rule = ruleRef.current;
-            if (brand) {
-                gsap.fromTo(
-                    brand,
-                    { opacity: 0, letterSpacing: "0.5em" },
-                    { opacity: 1, letterSpacing: "0.3em", duration: 0.7, ease: "power2.out", delay: 0.05 }
-                );
-            }
-            if (rule) {
-                gsap.fromTo(
-                    rule,
-                    { scaleX: 0 },
-                    { scaleX: 1, duration: 0.65, ease: "power3.out", delay: 0.18 }
-                );
-            }
 
             const beginReveal = () => {
                 const top = topRef.current;
@@ -151,22 +155,27 @@ export function BootSequence({ children }: { children: React.ReactNode }) {
                         ref={lockupRef}
                         className="absolute inset-0 flex items-center justify-center"
                     >
-                        <div
-                            ref={brandRef}
-                            className="flex flex-col items-center gap-4 px-6 text-center font-mono text-fg-100"
-                            style={{ opacity: 0 }}
-                        >
-                            <span className="text-[0.85rem] tracking-[0.3em] uppercase">
-                                [ AKSHAY DONGARE ]
-                            </span>
-                            <div
-                                ref={ruleRef}
-                                className="h-px w-24 bg-line-25 origin-center"
-                                style={{ transform: "scaleX(0)" }}
+                        {/* CSS-driven from first paint rather than gsap, which loads after hydration and would leave
+                            the lockup blank until it arrived. */}
+                        <div className="flex flex-col items-center gap-4 px-6 text-center font-mono text-fg-100">
+                            <TypedLine
+                                text={NAME}
+                                startMs={NAME_START_MS}
+                                durationMs={NAME_END_MS - NAME_START_MS}
+                                caret="pass"
+                                className="text-[0.85rem] tracking-[0.3em] uppercase"
                             />
-                            <span className="text-[0.6rem] tracking-[0.1em] md:text-[0.7rem] md:tracking-[0.18em] text-fg-55 font-mono">
-                                {"->"} ai platform engineer{"\u00a0·"} llm{"\u00a0"}infrastructure
-                            </span>
+                            <div
+                                className="boot-rule h-px w-24 bg-line-25 origin-center"
+                                style={{ "--rule-delay": `${NAME_END_MS}ms` } as React.CSSProperties}
+                            />
+                            <TypedLine
+                                text={ROLE}
+                                startMs={ROLE_START_MS}
+                                durationMs={ROLE_MS}
+                                caret="rest"
+                                className="text-[0.6rem] tracking-[0.1em] md:text-[0.7rem] md:tracking-[0.18em] text-fg-55"
+                            />
                         </div>
                     </div>
                 </div>
