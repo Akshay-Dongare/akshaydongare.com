@@ -31,6 +31,7 @@ export function BootSequence({ children }: { children: React.ReactNode }) {
         if (prefersReducedMotion || hasPlayed()) {
             // Deliberate: neither sessionStorage nor matchMedia exists during SSR, so this
             // can only be decided after mount. A one-shot skip, not a render loop.
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setMaskMounted(false);
             return;
         }

@@ -80,17 +80,15 @@ function MorphingPointCloud({ color, shared, reduced = false }: { color: string;
         rebuildStartTime: 0,
     });
 
-    const shapesRef = useRef<Float32Array[]>([]);
-    if (shapesRef.current.length === 0) {
-        for (let i = 0; i < SHAPE_COUNT; i++) {
-            shapesRef.current.push(SHAPE_GENERATORS[i](PARTICLE_COUNT));
-        }
-    }
+    const shapes = useMemo(
+        () => Array.from({ length: SHAPE_COUNT }, (_, i) => SHAPE_GENERATORS[i](PARTICLE_COUNT)),
+        [],
+    );
 
-    const positions = useMemo(() => new Float32Array(shapesRef.current[0]), []);
+    const positions = useMemo(() => new Float32Array(shapes[0]), [shapes]);
     const velocities = useMemo(() => new Float32Array(PARTICLE_COUNT * 3), []);
-    const fromPositions = useMemo(() => new Float32Array(PARTICLE_COUNT * 3), []);
-    const toPositions = useMemo(() => new Float32Array(PARTICLE_COUNT * 3), []);
+    const fromPositions = useMemo(() => new Float32Array(shapes[0]), [shapes]);
+    const toPositions = useMemo(() => new Float32Array(shapes[1]), [shapes]);
 
     const particleRand = useMemo(() => {
         const r = new Float32Array(PARTICLE_COUNT * 2);
@@ -101,11 +99,6 @@ function MorphingPointCloud({ color, shared, reduced = false }: { color: string;
         return r;
     }, []);
 
-    useMemo(() => {
-        fromPositions.set(shapesRef.current[0]);
-        toPositions.set(shapesRef.current[1]);
-    }, [fromPositions, toPositions]);
-
     const advanceShape = useCallback(() => {
         const s = stateRef.current;
         s.currentShapeIdx = s.nextShapeIdx;
@@ -113,8 +106,8 @@ function MorphingPointCloud({ color, shared, reduced = false }: { color: string;
         s.morphProgress = 0;
         s.timeSinceLastMorph = 0;
         fromPositions.set(positions);
-        toPositions.set(shapesRef.current[s.nextShapeIdx]);
-    }, [fromPositions, toPositions, positions]);
+        toPositions.set(shapes[s.nextShapeIdx]);
+    }, [fromPositions, toPositions, positions, shapes]);
 
     const geometry = useMemo(() => {
         const geo = new THREE.BufferGeometry();
@@ -162,6 +155,8 @@ function MorphingPointCloud({ color, shared, reduced = false }: { color: string;
     // A mode switch builds a new material; free the old one's GPU program.
     useEffect(() => () => material.dispose(), [material]);
 
+    // The frame loop writes SharedState in place for the overlays; see the note above sh.cursorOverShape.
+    // eslint-disable-next-line react-hooks/immutability
     useFrame((state, delta) => {
         if (!pointsRef.current) return;
         // No morph, no charge, no shatter under reduced motion: one still shape.
