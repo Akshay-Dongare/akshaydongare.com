@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useSyncExternalStore } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import type { PackageStats } from "@/lib/downloads";
@@ -118,11 +118,40 @@ function destinationLabel(url: string) {
     return "OPEN";
 }
 
+// A card reached from the homepage arrives by client navigation, which never sets :target, so the hash is mirrored
+// into data-landed for the landed: variant. Next moves the URL with pushState, which fires neither hashchange nor
+// popstate; the Navigation API's currententrychange does, so where it exists a hash-only navigation, such as the
+// Navbar's Work link from /work#id, moves the state too.
+function subscribeHash(onChange: () => void) {
+    const nav = "navigation" in window ? (window.navigation as EventTarget) : null;
+    window.addEventListener("hashchange", onChange);
+    window.addEventListener("popstate", onChange);
+    nav?.addEventListener("currententrychange", onChange);
+    return () => {
+        window.removeEventListener("hashchange", onChange);
+        window.removeEventListener("popstate", onChange);
+        nav?.removeEventListener("currententrychange", onChange);
+    };
+}
+// The fragment as :target reads it: percent-decoded, or as written when that fails.
+function readHash() {
+    const raw = location.hash.slice(1);
+    try { return decodeURIComponent(raw); } catch { return raw; }
+}
+const serverHash = () => "";
+// The server has no hash, so hydration starts from none and catches up; until it does, :target stands in.
+const noSubscription = () => () => {};
+const onClient = () => true;
+const onServer = () => false;
+
 export function WorkContent({ stats }: { stats: PackageStats }) {
     const ALL_PROJECTS = buildProjects(stats);
+    const hash = useSyncExternalStore(subscribeHash, readHash, serverHash);
+    const hashSynced = useSyncExternalStore(noSubscription, onClient, onServer);
     useEffect(landCardUnderPointer, []);
     return (
         <div
+            data-hash-synced={hashSynced ? "" : undefined}
             className="masthead-glow w-full min-h-screen pt-32 pb-24"
             style={{ background: 'var(--spine-page)' }}
             data-theme="dark"
@@ -159,13 +188,14 @@ export function WorkContent({ stats }: { stats: PackageStats }) {
                                 the description can hold links of its own; an <a> inside an <a> is invalid HTML. */}
                             <div
                                 id={proj.id}
-                                className="group relative flex flex-col h-full scroll-mt-4 border border-[var(--work-card-edge)] rounded-[20px] md:rounded-3xl p-6 md:p-8 cursor-none bg-[var(--work-card)] shadow-[var(--work-card-shadow)] hover:bg-[var(--work-card-hover-bg)] hover:border-[var(--work-card-hover-edge)] hover:shadow-none target:bg-[var(--work-card-hover-bg)] target:border-[var(--work-card-hover-edge)] target:shadow-none transition-[background-color,border-color,box-shadow] duration-300 ease-[cubic-bezier(0,0,0.5,1)]"
+                                data-landed={proj.id && hash === proj.id ? "" : undefined}
+                                className="group relative flex flex-col h-full scroll-mt-4 border border-[var(--work-card-edge)] rounded-[20px] md:rounded-3xl p-6 md:p-8 cursor-none bg-[var(--work-card)] shadow-[var(--work-card-shadow)] hover:bg-[var(--work-card-hover-bg)] hover:border-[var(--work-card-hover-edge)] hover:shadow-none landed:bg-[var(--work-card-hover-bg)] landed:border-[var(--work-card-hover-edge)] landed:shadow-none transition-[background-color,border-color,box-shadow] duration-300 ease-[cubic-bezier(0,0,0.5,1)]"
                             >
                                 {/* A row of its own, since Tech Mahindra's 4:1 lockup breaks titles inline. 40px holds
                                     the tallest mark, Harvard's shield, and the destination sits at its far end. */}
                                 <div className="flex h-10 items-center justify-between gap-4 mb-5">
                                     {proj.logo && <OrgLogo org={proj.logo} alt={proj.affiliation} />}
-                                    <span aria-hidden="true" className="hidden lg:inline-flex shrink-0 whitespace-nowrap items-baseline gap-2 font-mono text-fg-60 lg:opacity-0 lg:-translate-x-4 lg:group-hover:translate-x-0 lg:group-hover:opacity-100 lg:group-target:translate-x-0 lg:group-target:opacity-100 lg:group-has-[h2_a:focus-visible]:translate-x-0 lg:group-has-[h2_a:focus-visible]:opacity-100 transition-[opacity,translate] duration-300">
+                                    <span aria-hidden="true" className="hidden lg:inline-flex shrink-0 whitespace-nowrap items-baseline gap-2 font-mono text-fg-60 lg:opacity-0 lg:-translate-x-4 lg:group-hover:translate-x-0 lg:group-hover:opacity-100 lg:group-landed:translate-x-0 lg:group-landed:opacity-100 lg:group-has-[h2_a:focus-visible]:translate-x-0 lg:group-has-[h2_a:focus-visible]:opacity-100 transition-[opacity,translate] duration-300">
                                         <span className="text-label text-fg-60">{destinationLabel(proj.link)}</span>
                                         <span className="text-xl">[ → ]</span>
                                     </span>

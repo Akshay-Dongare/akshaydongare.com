@@ -288,8 +288,15 @@ inside a card takes `relative z-10` to stay above it. Do not wrap a card in an `
 On hover a card sinks rather than lifts: its fill drops one step below the ground (`--card-hover-bg`
 `#f4f1ea` on paper, `--work-card-hover-bg` `#0b0c13` on /work's dark), a hairline edge appears, the
 shadow goes, and the destination label (WORK, LINKEDIN, GITHUB) slides in. ALL WORK does the same.
-Arriving at `/work#…` shows that card in the same state through `:target`, so a reader sees where
-they landed; the page's `scroll-padding-top: 96px` plus the card's `scroll-mt-4` keeps it clear of the nav.
+Arriving at `/work#…` shows that card in the same state, so a reader sees where they landed; the
+page's `scroll-padding-top: 96px` plus the card's `scroll-mt-4` keeps it clear of the nav. `:target`
+alone covered only a full load: a homepage card arrives by client navigation, and Next moves the URL with
+`pushState`, which never updates `:target`, so no click, tap or Enter ever showed it. `WorkContent` mirrors
+the decoded hash into `data-landed` through `useSyncExternalStore`, listening for `hashchange`, `popstate`
+and the Navigation API's `currententrychange`, the only one that fires on `pushState`, so the Navbar's Work
+link from `/work#id` clears the card where that API exists. The `landed:` variant matches `[data-landed]`,
+or `:target` only until the page has hydrated (`data-hash-synced`), since after that `:target` too can be
+left on the wrong card.
 
 **A mouse click on a homepage card lands with the pointer on the same card.** A page cannot move the
 pointer, so `lib/cardHandoff.ts` moves the page: the click records how far down its card it fell, and
