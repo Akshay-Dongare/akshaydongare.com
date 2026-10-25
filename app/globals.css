@@ -295,6 +295,15 @@
   }
 }
 
+/* The /work card a reader arrived at holds its hover look for the first half, then eases back to rest: held, it
+   read as a stuck hover or a hung page. 100% is left out so each property returns to the card's own value. */
+@keyframes landed-card {
+  0%, 50% { background-color: var(--work-card-hover-bg); border-color: var(--work-card-hover-edge); box-shadow: none; }
+}
+@keyframes landed-label {
+  0%, 50% { opacity: 1; translate: 0; }
+}
+
 /* Keyboard focus, Page Down and find-in-page stop clear of the 80px fixed bar (WCAG 2.2 SC 2.4.11). */
 html {
   scroll-padding-top: 96px;
