@@ -2,7 +2,9 @@
 // releases from PyPI's JSON, as /about and /work say "N downloads across M releases" and a half-live pair would clash.
 
 const BADGE_TOTAL = "https://static.pepy.tech/badge/langchain-litellm";
-const BADGE_MONTH = "https://static.pepy.tech/badge/langchain-litellm/month";
+// Unrounded, so the monthly figure keeps a decimal: the default badge says "1M" where pepy's own page, which the
+// figure links to, says 1.2M.
+const BADGE_MONTH = "https://static.pepy.tech/badge/langchain-litellm/month?units=none";
 const PYPI = "https://pypi.org/pypi/langchain-litellm/json";
 const REVALIDATE = 3600; // 1h. Counts change daily and pepy caches 12h, so faster polling refetches the same value.
 
@@ -17,9 +19,9 @@ export interface PackageStats {
     compact: string;
     /** All-time, long, for prose: "15 million". */
     long: string;
-    /** Last 30 days, compact: "1M". */
+    /** Last 30 days, compact, to one decimal: "1.2M". */
     monthlyCompact: string;
-    /** Last 30 days, long: "1 million". */
+    /** Last 30 days, long: "1.2 million". */
     monthlyLong: string;
     /** Released versions on PyPI. */
     releases: number;
@@ -38,6 +40,18 @@ function toLongForm(compact: string): string {
     return m ? `${m[1]} ${SCALE[m[2].toUpperCase()]}` : compact;
 }
 
+/** A raw count -> "1.2M", rounded down to one decimal so a figure never overstates, with ".0" dropped. A badge that
+    is already compact ("1M") passes through, so pepy ignoring the units option degrades to today's figure. */
+function compactOneDecimal(value: string): string {
+    if (/[KMB]$/.test(value)) return value;
+    const n = Number(value.replace(/[,.\s]/g, ""));
+    if (!Number.isFinite(n)) return value;
+    for (const [size, unit] of [[1e9, "B"], [1e6, "M"], [1e3, "K"]] as const) {
+        if (n >= size) return `${Math.floor((n / size) * 10) / 10}${unit}`;
+    }
+    return String(n);
+}
+
 async function fetchBadgeCount(url: string): Promise<string | null> {
     try {
         const res = await fetch(url, { next: { revalidate: REVALIDATE }, signal: AbortSignal.timeout(5000) });
@@ -47,9 +61,9 @@ async function fetchBadgeCount(url: string): Promise<string | null> {
         // the count is the last text node, the first is the word "downloads".
         const texts = [...svg.matchAll(/<text[^>]*>([^<]+)<\/text>/g)].map((m) => m[1].trim());
         const value = texts[texts.length - 1];
-        // Only accept something shaped like a count, so a pepy error page can
-        // never end up rendered as a statistic.
-        return /^\d[\d.]*[KMBkmb]?$/.test(value ?? "") ? value.toUpperCase() : null;
+        // Only accept something shaped like a count, raw ("1,234,567") or compact ("1M"), so a pepy error page
+        // can never end up rendered as a statistic.
+        return /^\d[\d.,]*[KMBkmb]?$/.test(value ?? "") ? value.toUpperCase() : null;
     } catch {
         return null;
     }
@@ -75,7 +89,7 @@ export async function getPackageStats(): Promise<PackageStats> {
         fetchReleaseCount(),
     ]);
     const compact = total ?? FALLBACK.compact;
-    const monthlyCompact = monthly ?? FALLBACK.monthlyCompact;
+    const monthlyCompact = monthly ? compactOneDecimal(monthly) : FALLBACK.monthlyCompact;
     return {
         compact,
         long: toLongForm(compact),
