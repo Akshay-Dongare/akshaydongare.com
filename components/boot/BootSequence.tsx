@@ -29,26 +29,19 @@ export function BootSequence({ children }: { children: React.ReactNode }) {
     const roleRef = useRef<HTMLSpanElement>(null);
 
     useEffect(() => {
-        // Reading sessionStorage can throw (Safari private mode, blocked cookies), and only this effect removes
-        // the mask, so a throw is a blank page. Failing to "not played" at worst replays the reveal.
-        const hasPlayed = () => {
-            try { return !!sessionStorage.getItem("bootPlayed"); } catch { return false; }
-        };
-        const markPlayed = () => {
-            try { sessionStorage.setItem("bootPlayed", "true"); } catch { /* storage blocked; play it again */ }
-        };
-
+        // The pre-paint script in layout.tsx has already decided, and on a first visit has already marked the boot
+        // as played, so its class is the answer here, not sessionStorage. Reading storage would see its own mark and
+        // cut the boot off. If storage is blocked the script adds nothing and the boot plays, as it always did.
         // Two opaque panels sliding apart is large-area motion, a vestibular trigger under SC 2.3.3, so reduced
         // motion skips the reveal outright and the page renders as if it had finished.
         const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-        if (prefersReducedMotion || hasPlayed()) {
-            // Deliberate: neither sessionStorage nor matchMedia exists during SSR, so this
+        if (prefersReducedMotion || document.documentElement.classList.contains("skip-boot")) {
+            // Deliberate: neither the class nor matchMedia exists during SSR, so this
             // can only be decided after mount. A one-shot skip, not a render loop.
             // eslint-disable-next-line react-hooks/set-state-in-effect
             setMaskMounted(false);
             return;
         }
-        markPlayed();
 
         const start = performance.now();
         let triggered = false;
