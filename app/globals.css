@@ -412,6 +412,38 @@ html.skip-boot .boot-mask {
   }
 }
 
+/* The Navbar's [ AD ] speaks the boot's terminal language on hover, once and quietly: the two letters clear and type
+   back in behind the same caret, which leaves half a second later. The only hover effect of its kind, by intent:
+   more of them would read as busy. Mouse-capable devices only, and never under reduced motion. */
+.retype {
+  position: relative;
+  display: inline-block;
+}
+.retype-caret {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 0.6em;
+  height: 1.1em;
+  translate: 0 -50%;
+  background: currentColor;
+  opacity: 0;
+}
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .retype-host:hover .retype-text {
+    animation: typed-open 180ms steps(2, end) both;
+  }
+  .retype-host:hover .retype-caret {
+    animation:
+      typed-caret-ride 180ms steps(2, end) both,
+      retype-caret-show 520ms step-end both;
+  }
+}
+@keyframes retype-caret-show {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
 /* Fallback for when the pre-paint script in layout.tsx does not run. */
 @media (prefers-reduced-motion: reduce) {
   .boot-mask {
