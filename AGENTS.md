@@ -264,7 +264,10 @@ to inline, so dark mode renders as it did before the switcher existed. Section b
 `var(--spine-*)`, the parallax layers `var(--depth-*)`. The intended dark differences are
 `color-scheme: dark`, so native scrollbars match the page; the Code label at the 13px floor instead of
 9.9px; the code overlay's fade at its foot; and the Work cards and ALL WORK, which stay paper in both
-modes (below).
+modes (below). Text selection is the one place colours are literal rather than tokens, because custom
+properties inside `::selection` resolve differently across engines: ink `#1a1c13` on a terracotta wash
+`#e9b48c` in light (9.3:1), white on `#3a6288`, the accent's deep blue, in dark (6.4:1), and the light pair
+inside `.surface-paper`. Change both modes together, and keep the text at 4.5:1 or above on its wash.
 
 **Work cards and ALL WORK.** Built to Apple's published principles (the HIG and the WWDC25 design
 sessions): content first, colour used sparingly, no glass on the content layer, depth from one soft
