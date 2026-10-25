@@ -352,7 +352,7 @@ html.skip-boot .boot-mask {
 
 /* A line that types itself like a terminal (TypedLine in BootSequence.tsx). The text is clipped open in --chars
    steps, one per character, and a block caret rides the clip's edge on the same steps. A "pass" caret waits at the
-   start, types, and leaves; a "rest" caret appears with its line, types, and keeps blinking at the end. */
+   start, types, and leaves; a "rest" caret appears with its line, stays solid while it types, then keeps blinking at the end. */
 .typed-line {
   position: relative;
   display: inline-block;
@@ -379,7 +379,8 @@ html.skip-boot .boot-mask {
   opacity: 0;
   animation:
     typed-caret-ride var(--type-ms) steps(var(--chars), end) var(--type-delay) both,
-    typed-caret-blink 1s step-end var(--type-delay) infinite;
+    typed-caret-blink 1s step-end calc(var(--type-delay) + var(--type-ms)) infinite,
+    typed-caret-solid var(--type-ms) step-end var(--type-delay);
 }
 .boot-rule {
   animation: boot-rule-draw 250ms cubic-bezier(0.22, 1, 0.36, 1) var(--rule-delay) both;
@@ -394,6 +395,10 @@ html.skip-boot .boot-mask {
 }
 @keyframes typed-caret-leave {
   to { opacity: 0; }
+}
+/* Solid while its line types; the blink only starts once the line is done. */
+@keyframes typed-caret-solid {
+  from, to { opacity: 1; }
 }
 @keyframes typed-caret-blink {
   0%, 50% { opacity: 1; }
