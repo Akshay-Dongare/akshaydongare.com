@@ -14,35 +14,33 @@ npm run start    # serve the production build locally
 ```
 
 Lint is clean and expected to stay that way, so a non-zero exit means you
-introduced something. Eight rule violations are suppressed at their call sites,
+introduced something. Ten rule violations are suppressed at their call sites,
 each with a comment explaining why; do not add a suppression without one, and do
 not widen any of these to a file- or directory-level disable. `eslint.config.mjs` ignores `.claude/**`, where
 session worktrees keep whole checkouts and their builds. Keep this count
 accurate: eslint reports an unused `eslint-disable` as a warning, so a stale one
 fails the clean bar exactly as an error does.
 
-All eight are inherent to the WebGL and client-only work and will not be
+All ten are inherent to the WebGL and client-only work and will not be
 "fixed". Three are `react-hooks/purity`, where `Math.random()` seeds a typed
 array inside an empty-dep `useMemo` (the randomness must be rolled once and then
-stay stable, or the particles reshuffle on every re-render). Two are
+stay stable, or the particles reshuffle on every re-render). Three are
 `react-hooks/immutability`, where `useFrame` writes straight into the shared ref
 and the velocity buffer (allocating fresh arrays for 8,000 particles per frame
-would thrash GC). Three are `set-state-in-effect` for state that cannot be known
-until after mount: the one-way `shouldRenderParticles` latch in `ParticleSection`
-and `ContactSection`, driven by an IntersectionObserver that has no SSR
-equivalent, and the mount flag in `CursorProvider`, which gates an element that
-tracks a pointer the server does not have.
+would thrash GC); the third sits on `MorphingParticleField`'s `useFrame` call,
+where the rule also reports the callback as a whole. Four are `set-state-in-effect`
+for state that cannot be known until after mount: the one-way
+`shouldRenderParticles` latch in `ParticleSection` and `ContactSection`, driven by
+an IntersectionObserver that has no SSR equivalent, the mount flag in
+`CursorProvider`, which gates an element that tracks a pointer the server does not
+have, and `BootSequence`'s skip, which reads `sessionStorage` and `matchMedia`.
 
-`BootSequence` used to hold a ninth. It went away on its own when the gsap import
-moved inside the effect, and the directive then started reporting as unused.
-
-`eslint-config-next` stays at 16.3.5 while `next` is on 16.4, and the lockfile holds
-`eslint-plugin-react-hooks` at 7.0.1. Version 7.1 reports eight new errors: six
-`react-hooks/refs` from the `shapesRef` lazy init in `MorphingParticleField`, one
-`immutability` at its `useFrame` call, and one `set-state-in-effect` in `BootSequence`,
-which 7.0.1 skips entirely because of the dynamic `import("gsap")`. The 16.3.5 config
-accepts `^7.0.0`, so a blanket `npm update` pulls 7.1 in without touching the config.
-Update packages by name, and move the config and the plugin only together with those fixes.
+`BootSequence`'s directive once went away and came back. With the gsap import
+inside the effect, `eslint-plugin-react-hooks` 7.0 skipped the whole component
+because of the dynamic `import()`, and reported the directive as unused; 7.1
+analyses it again. `MorphingParticleField` builds its shapes in an empty-dep
+`useMemo`, not lazily in a ref, because 7.1's `react-hooks/refs` forbids reading
+a ref during render. Keep `eslint-config-next` on the same version as `next`.
 
 There is no test suite.
 
