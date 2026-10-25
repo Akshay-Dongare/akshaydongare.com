@@ -170,7 +170,7 @@ which reflows the copy.
 
 ### Branding
 
-**Logo:** typographical brutalist `[ AD ]` in monospace, in the Navbar (small, inline, inherits theme text color). The Footer carries the Akshay Dongare wordmark alone, and it links home as `[ AD ]` does, scrolling to the top on "/"; the © line beside it links to /privacy the same way. Do not revert to the old overlapping-circles letterform. Its accessible name is under Accessible names and targets.
+**Logo:** typographical brutalist `[ AD ]` in monospace, in the Navbar (small, inline, inherits theme text color). When a mouse enters it, A and D decode: each flickers through random mono glyphs about 22 times a second and settles in reading order, the last at 420ms, while the brackets hold still (`components/ui/DecodeText.tsx`). The mono advance keeps the width fixed, the link's `aria-label` stays the name, and a tap or reduced motion leaves it alone. The Footer carries the Akshay Dongare wordmark alone, and it links home as `[ AD ]` does, scrolling to the top on "/"; the © line beside it links to /privacy the same way. Do not revert to the old overlapping-circles letterform. Its accessible name is under Accessible names and targets.
 
 **Favicon:** the same mark in Geist Mono 700, parchment `#f2efe9` on void `#07090f`, as
 three files Next picks up by convention: `app/favicon.ico` (16, 32, 48), `app/icon.png` (192)
