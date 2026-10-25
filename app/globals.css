@@ -247,15 +247,17 @@
 }
 
 /* Selected text takes the site's palette instead of the system blue: ink on a terracotta wash in light (9.3:1),
-   white on the accent's deep blue in dark (6.4:1), and the light pair inside .surface-paper, like its ink. Literal
-   colours, not tokens: custom properties inside highlight pseudo-elements resolve differently across engines. */
+   void on the bright accent in dark (7.1:1), and the light pair inside .surface-paper, like its ink. The dark wash
+   was the accent's deep blue, #3a6288, until it turned out to be macOS's own dark-mode highlight to within 6 levels,
+   so it looked unchanged. Literal colours, not tokens: custom properties inside highlight pseudo-elements resolve
+   differently across engines. */
 ::selection {
   background-color: #e9b48c;
   color: #1a1c13;
 }
 [data-mode="dark"] ::selection {
-  background-color: #3a6288;
-  color: #ffffff;
+  background-color: #6b9fd4;
+  color: #07090f;
 }
 [data-mode="dark"] .surface-paper ::selection {
   background-color: #e9b48c;
