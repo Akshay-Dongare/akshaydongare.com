@@ -3,8 +3,8 @@
 
 const BADGE_TOTAL = "https://static.pepy.tech/badge/langchain-litellm";
 // Unrounded, so the monthly figure keeps a decimal: the default badge says "1M" where pepy's own page, which the
-// figure links to, says 1.2M.
-const BADGE_MONTH = "https://static.pepy.tech/badge/langchain-litellm/month?units=none";
+// figure links to, says 1.2M. The plain badge ignores units; the personalized one honours it.
+const BADGE_MONTH = "https://static.pepy.tech/personalized-badge/langchain-litellm?period=month&units=none&left_text=downloads";
 const PYPI = "https://pypi.org/pypi/langchain-litellm/json";
 const REVALIDATE = 3600; // 1h. Counts change daily and pepy caches 12h, so faster polling refetches the same value.
 
