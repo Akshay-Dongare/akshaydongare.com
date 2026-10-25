@@ -467,9 +467,16 @@ body {
 /* The native pointer hides only while CursorProvider sets .custom-cursor-active on <html>, which it holds while
    its dot shows. It bails on any touchscreen and reduced motion, where a mouse would otherwise show no pointer. */
 @media (forced-colors: none) {
+  html.custom-cursor-active,
   html.custom-cursor-active body,
   html.custom-cursor-active :is(a, button, [role="button"], input, select, textarea),
   html.custom-cursor-active .cursor-none {
+    cursor: var(--hidden-cursor, none);
+  }
+  /* The mode switch's view transition draws the page as snapshots in a ::view-transition layer hung off <html>,
+     and the pointer is over that layer for its 600ms; without <html> above and this rule the arrow came back.
+     A rule of its own, since a browser that does not know the pseudo-element drops the whole selector list. */
+  html.custom-cursor-active::view-transition {
     cursor: var(--hidden-cursor, none);
   }
 }
