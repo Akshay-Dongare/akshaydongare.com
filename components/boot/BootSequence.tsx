@@ -7,24 +7,29 @@ const MIN_HOLD_MS = 900;
 // be reached; it exists so a dropped frame cannot strand the mask on screen.
 const SAFETY_TIMEOUT_MS = 1200;
 
-// The lockup types itself like a terminal, timed from first paint so it finishes inside MIN_HOLD_MS: the name at
-// 26ms a character, the rule drawn under it, then the role line printed at 7ms a character, by about 940ms.
+// The lockup types itself like a terminal, timed from first paint at a pace a reader can follow: the name at 50ms a
+// character, the rule drawn under it, then the role line at 20ms a character, done by about 2.1s. The panels open
+// READ_MS after the role line finishes, so the whole of it stays up long enough to read.
 const NAME = "[ AKSHAY DONGARE ]";
 const ROLE = "-> ai platform engineer\u00a0· llm\u00a0infrastructure";
-const NAME_START_MS = 100;
-const NAME_END_MS = NAME_START_MS + NAME.length * 26;
-const ROLE_START_MS = NAME_END_MS + 60;
-const ROLE_MS = ROLE.length * 7;
+const NAME_START_MS = 150;
+const NAME_END_MS = NAME_START_MS + NAME.length * 50;
+const ROLE_START_MS = NAME_END_MS + 200;
+const ROLE_MS = ROLE.length * 20;
+const READ_MS = 500;
+// Bounds the wait on the typing, in case its animation never reports finishing.
+const TYPING_BACKSTOP_MS = 4000;
 
 // One line clipped open a character at a time while a block caret rides its edge. Geist Mono gives every glyph one
 // advance, tracking included, so each of the --chars steps is exactly one character. The CSS is .typed-* in globals.css.
-function TypedLine({ text, startMs, durationMs, caret, className }: {
+function TypedLine({ text, startMs, durationMs, caret, className, textRef }: {
     text: string; startMs: number; durationMs: number; caret: "pass" | "rest"; className: string;
+    textRef?: React.Ref<HTMLSpanElement>;
 }) {
     const timing = { "--chars": text.length, "--type-delay": `${startMs}ms`, "--type-ms": `${durationMs}ms` } as React.CSSProperties;
     return (
         <span className={`typed-line ${className}`} style={timing}>
-            <span className="typed-text">{text}</span>
+            <span ref={textRef} className="typed-text">{text}</span>
             <span className={`typed-caret typed-caret-${caret}`} />
         </span>
     );
@@ -35,6 +40,7 @@ export function BootSequence({ children }: { children: React.ReactNode }) {
     const topRef = useRef<HTMLDivElement>(null);
     const bottomRef = useRef<HTMLDivElement>(null);
     const lockupRef = useRef<HTMLDivElement>(null);
+    const roleRef = useRef<HTMLSpanElement>(null);
 
     useEffect(() => {
         // Reading sessionStorage can throw (Safari private mode, blocked cookies), and only this effect removes
@@ -111,10 +117,16 @@ export function BootSequence({ children }: { children: React.ReactNode }) {
                 if (triggered || cancelled) return;
                 triggered = true;
                 clearTimeout(safety);
-                // MIN_HOLD is measured from mount, not from when gsap landed, so a slow
-                // chunk eats into the hold rather than adding to it.
-                const remaining = Math.max(0, MIN_HOLD_MS - (performance.now() - start));
-                revealTimer = setTimeout(beginReveal, remaining);
+                // The typing runs in CSS from first paint, so its own animation is the clock: wait for the role
+                // line to finish, then READ_MS more. MIN_HOLD is measured from mount, not from when gsap landed,
+                // so a slow chunk eats into the hold rather than adding to it.
+                const typed = roleRef.current?.getAnimations()[0]?.finished.catch(() => undefined);
+                const backstop = new Promise((resolve) => setTimeout(resolve, TYPING_BACKSTOP_MS));
+                Promise.race([typed ?? Promise.resolve(), backstop]).then(() => {
+                    if (cancelled) return;
+                    const remaining = Math.max(READ_MS, MIN_HOLD_MS - (performance.now() - start));
+                    revealTimer = setTimeout(beginReveal, remaining);
+                });
             };
 
             // Two frames after hydration is the first paint of real content, which is all the reveal waits on.
@@ -174,6 +186,7 @@ export function BootSequence({ children }: { children: React.ReactNode }) {
                                 startMs={ROLE_START_MS}
                                 durationMs={ROLE_MS}
                                 caret="rest"
+                                textRef={roleRef}
                                 className="text-[0.6rem] tracking-[0.1em] md:text-[0.7rem] md:tracking-[0.18em] text-fg-55"
                             />
                         </div>
