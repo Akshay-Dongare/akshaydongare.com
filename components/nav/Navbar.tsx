@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { PillButton } from "@/components/ui/PillButton";
 import { motion, AnimatePresence } from "framer-motion";
 import { ModeToggle } from "@/components/nav/ModeToggle";
+import { DecodeText } from "@/components/ui/DecodeText";
 import { useMode } from "@/lib/mode";
 
 export function Navbar() {
@@ -147,7 +148,7 @@ export function Navbar() {
                         }}
                     >
                         <span className={`font-mono text-sm font-medium tracking-[0.1em] ${isMobileMenuOpen ? "text-fg-100" : textColorClass} transition-colors duration-300`}>
-                            [ AD ]
+                            <DecodeText text="[ AD ]" />
                         </span>
                     </Link>
 
