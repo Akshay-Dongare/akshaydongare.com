@@ -68,3 +68,32 @@ export function setMode(mode: Mode) {
     applyMode(mode);
     try { sessionStorage.setItem(MODE_KEY, mode); } catch { /* storage blocked; the choice lasts this page only */ }
 }
+
+const REVEAL_MS = 600;
+
+// The switch opens the new mode as a circle growing from its knob over a still snapshot of the old one, through
+// the View Transitions API. Without the API, or under reduced motion, the mode simply changes.
+export function revealMode(mode: Mode, origin: Element) {
+    if (!("startViewTransition" in document) || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        setMode(mode);
+        return;
+    }
+    const r = origin.getBoundingClientRect();
+    const x = r.left + r.width / 2;
+    const y = r.top + r.height / 2;
+    // Out to the farthest corner, so the circle ends with the whole viewport open.
+    const radius = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
+    const root = document.documentElement;
+    // Scopes the snapshot styles in globals.css to this switch, and stops colour transitions replaying inside it.
+    root.classList.add("mode-switching");
+    const transition = document.startViewTransition(() => setMode(mode));
+    transition.ready
+        .then(() => {
+            root.animate(
+                { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${radius}px at ${x}px ${y}px)`] },
+                { duration: REVEAL_MS, easing: "cubic-bezier(0.4, 0, 0.2, 1)", pseudoElement: "::view-transition-new(root)" },
+            );
+        })
+        .catch(() => { /* skipped, e.g. the tab was hidden; the mode has still changed */ });
+    transition.finished.finally(() => root.classList.remove("mode-switching"));
+}

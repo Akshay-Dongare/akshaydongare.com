@@ -295,6 +295,19 @@
   }
 }
 
+/* The mode switch (revealMode in lib/mode.ts) clips the new mode open over the old one, so the snapshots skip their
+   default cross-fade, and colour transitions stay off for the switch or they would replay inside the circle. */
+html.mode-switching::view-transition-old(root),
+html.mode-switching::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+html.mode-switching *,
+html.mode-switching *::before,
+html.mode-switching *::after {
+  transition: none !important;
+}
+
 /* The /work card a reader arrived at holds its hover look for the first half, then eases back to rest: held, it
    read as a stuck hover or a hung page. 100% is left out so each property returns to the card's own value. */
 @keyframes landed-card {
