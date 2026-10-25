@@ -317,11 +317,20 @@
 }
 
 /* The mode switch (revealMode in lib/mode.ts) clips the new mode open over the old one, so the snapshots skip their
-   default cross-fade, and colour transitions stay off for the switch or they would replay inside the circle. */
+   default cross-fade, and colour transitions stay off for the switch or they would replay inside the circle. The circle
+   is a CSS animation, so it is on the new snapshot from its first frame; started from the transition's ready promise,
+   it could land a frame late and show the whole new mode for that frame first. */
 html.mode-switching::view-transition-old(root),
 html.mode-switching::view-transition-new(root) {
   animation: none;
   mix-blend-mode: normal;
+}
+html.mode-switching::view-transition-new(root) {
+  animation: mode-reveal 600ms cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+@keyframes mode-reveal {
+  from { clip-path: circle(0 at var(--reveal-x) var(--reveal-y)); }
+  to { clip-path: circle(var(--reveal-r) at var(--reveal-x) var(--reveal-y)); }
 }
 html.mode-switching *,
 html.mode-switching *::before,

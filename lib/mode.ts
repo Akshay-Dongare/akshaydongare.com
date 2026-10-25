@@ -69,10 +69,13 @@ export function setMode(mode: Mode) {
     try { sessionStorage.setItem(MODE_KEY, mode); } catch { /* storage blocked; the choice lasts this page only */ }
 }
 
-const REVEAL_MS = 600;
+// The switch in progress. Only it may end the switch: a key press during one skips it, and the skipped one's end
+// would otherwise strip mode-switching from the next, dropping it into the browser's cross-fade mid-reveal.
+let switching: ViewTransition | null = null;
 
 // The switch opens the new mode as a circle growing from its knob over a still snapshot of the old one, through
-// the View Transitions API. Without the API, or under reduced motion, the mode simply changes.
+// the View Transitions API; the circle itself is mode-reveal in globals.css. Without the API, or under reduced
+// motion, the mode simply changes.
 export function revealMode(mode: Mode, origin: Element) {
     if (!("startViewTransition" in document) || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
         setMode(mode);
@@ -81,19 +84,18 @@ export function revealMode(mode: Mode, origin: Element) {
     const r = origin.getBoundingClientRect();
     const x = r.left + r.width / 2;
     const y = r.top + r.height / 2;
-    // Out to the farthest corner, so the circle ends with the whole viewport open.
-    const radius = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
     const root = document.documentElement;
+    root.style.setProperty("--reveal-x", `${x}px`);
+    root.style.setProperty("--reveal-y", `${y}px`);
+    // Out to the farthest corner, so the circle ends with the whole viewport open.
+    root.style.setProperty("--reveal-r", `${Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y))}px`);
     // Scopes the snapshot styles in globals.css to this switch, and stops colour transitions replaying inside it.
     root.classList.add("mode-switching");
     const transition = document.startViewTransition(() => setMode(mode));
-    transition.ready
-        .then(() => {
-            root.animate(
-                { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${radius}px at ${x}px ${y}px)`] },
-                { duration: REVEAL_MS, easing: "cubic-bezier(0.4, 0, 0.2, 1)", pseudoElement: "::view-transition-new(root)" },
-            );
-        })
-        .catch(() => { /* skipped, e.g. the tab was hidden; the mode has still changed */ });
-    transition.finished.finally(() => root.classList.remove("mode-switching"));
+    switching = transition;
+    transition.finished.finally(() => {
+        if (switching !== transition) return;
+        switching = null;
+        root.classList.remove("mode-switching");
+    });
 }
