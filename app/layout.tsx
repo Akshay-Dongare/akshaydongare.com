@@ -7,6 +7,7 @@ import { Footer } from "@/components/sections/Footer";
 import { BootSequence } from "@/components/boot/BootSequence";
 import { PrepaintGuard } from "@/components/boot/PrepaintGuard";
 import { getPackageStats } from "@/lib/downloads";
+import { BOOT_SKIP_SCRIPT, MODE_SCRIPT } from "@/lib/prepaint";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -94,16 +95,6 @@ const siteJsonLd = {
   url: "https://akshaydongare.com",
 };
 
-// This visit's choice wins, then the system setting, then light; dark lands before first paint, so no light flash.
-// A lasting choice in localStorage is deleted, so every new visit starts from the system. Both scripts also record their
-// decision in window.__prepaint, which PrepaintGuard reads if React wipes <html> (lib/prepaint.ts says when).
-const modeScript = `(function(){var m,p=window.__prepaint=window.__prepaint||{};try{localStorage.removeItem('mode')}catch(e){}try{m=sessionStorage.getItem('mode')}catch(e){}if(m!=='dark'&&m!=='light'){try{m=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'}catch(e){}}p.mode=m==='dark'?'dark':'light';if(m==='dark'){var d=document.documentElement;d.dataset.mode='dark';d.style.colorScheme='dark';var t=document.querySelector('meta[name="theme-color"]');if(t)t.content='#07090f'}})()`;
-
-// Runs before first paint so neither a repeat visitor nor someone with reduced motion
-// ever sees a frame of the mask. It also records the boot as played the moment it shows,
-// so a reload before hydration skips it like any other; BootSequence reads its class.
-const bootSkipScript = `(function(){var p=window.__prepaint=window.__prepaint||{};p.skipBoot=false;try{if(sessionStorage.getItem('bootPlayed')||matchMedia('(prefers-reduced-motion: reduce)').matches){p.skipBoot=true;document.documentElement.classList.add('skip-boot')}else sessionStorage.setItem('bootPlayed','true')}catch(e){}})()`;
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -114,8 +105,8 @@ export default function RootLayout({
       <head>
         {/* Owned here, not by viewport metadata, which Next re-inserts on every navigation. */}
         <meta name="theme-color" content="#faf6ee" suppressHydrationWarning />
-        <script dangerouslySetInnerHTML={{ __html: modeScript }} />
-        <script dangerouslySetInnerHTML={{ __html: bootSkipScript }} />
+        <script dangerouslySetInnerHTML={{ __html: MODE_SCRIPT }} />
+        <script dangerouslySetInnerHTML={{ __html: BOOT_SKIP_SCRIPT }} />
         {/* With no JS (scripting off, a blocked bundle, a stale page missing its chunk) the boot mask and Framer's
             inline opacity:0 never clear; a stylesheet !important beats a non-important inline style, so this does. */}
         <noscript>
