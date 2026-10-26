@@ -57,8 +57,10 @@ export function syncThemeColor() {
     setThemeColor(read());
 }
 
+// Also updates the pre-paint record, so if React ever wipes <html> again, PrepaintGuard restores this choice, not the first paint's.
 export function applyMode(mode: Mode) {
     const root = document.documentElement;
+    if (window.__prepaint) window.__prepaint.mode = mode;
     root.dataset.mode = mode;
     root.style.colorScheme = mode;
     setThemeColor(mode);

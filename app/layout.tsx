@@ -5,6 +5,7 @@ import { CursorProvider } from "@/components/cursor/CustomCursor";
 import { Navbar } from "@/components/nav/Navbar";
 import { Footer } from "@/components/sections/Footer";
 import { BootSequence } from "@/components/boot/BootSequence";
+import { PrepaintGuard } from "@/components/boot/PrepaintGuard";
 import { getPackageStats } from "@/lib/downloads";
 
 const geistSans = Geist({
@@ -94,13 +95,14 @@ const siteJsonLd = {
 };
 
 // This visit's choice wins, then the system setting, then light; dark lands before first paint, so no light flash.
-// A lasting choice in localStorage is deleted, so every new visit starts from the system.
-const modeScript = `(function(){var m;try{localStorage.removeItem('mode')}catch(e){}try{m=sessionStorage.getItem('mode')}catch(e){}if(m!=='dark'&&m!=='light'){try{m=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'}catch(e){}}if(m==='dark'){var d=document.documentElement;d.dataset.mode='dark';d.style.colorScheme='dark';var t=document.querySelector('meta[name="theme-color"]');if(t)t.content='#07090f'}})()`;
+// A lasting choice in localStorage is deleted, so every new visit starts from the system. Both scripts also record their
+// decision in window.__prepaint, which PrepaintGuard reads if React wipes <html> (lib/prepaint.ts says when).
+const modeScript = `(function(){var m,p=window.__prepaint=window.__prepaint||{};try{localStorage.removeItem('mode')}catch(e){}try{m=sessionStorage.getItem('mode')}catch(e){}if(m!=='dark'&&m!=='light'){try{m=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'}catch(e){}}p.mode=m==='dark'?'dark':'light';if(m==='dark'){var d=document.documentElement;d.dataset.mode='dark';d.style.colorScheme='dark';var t=document.querySelector('meta[name="theme-color"]');if(t)t.content='#07090f'}})()`;
 
 // Runs before first paint so neither a repeat visitor nor someone with reduced motion
 // ever sees a frame of the mask. It also records the boot as played the moment it shows,
 // so a reload before hydration skips it like any other; BootSequence reads its class.
-const bootSkipScript = `try{if(sessionStorage.getItem('bootPlayed')||matchMedia('(prefers-reduced-motion: reduce)').matches)document.documentElement.classList.add('skip-boot');else sessionStorage.setItem('bootPlayed','true')}catch(e){}`;
+const bootSkipScript = `(function(){var p=window.__prepaint=window.__prepaint||{};p.skipBoot=false;try{if(sessionStorage.getItem('bootPlayed')||matchMedia('(prefers-reduced-motion: reduce)').matches){p.skipBoot=true;document.documentElement.classList.add('skip-boot')}else sessionStorage.setItem('bootPlayed','true')}catch(e){}})()`;
 
 export default function RootLayout({
   children,
@@ -131,6 +133,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <PrepaintGuard />
         <BootSequence>
           <CursorProvider>
             {/* The first tab stop skips the seven header controls; data-nosnippet sits on the div, where Google honours it. */}

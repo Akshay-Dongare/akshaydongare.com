@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useLayoutEffect, useRef, useState } from "react";
 import { TypedLine } from "@/components/ui/TypedLine";
+import { readPrepaint } from "@/lib/prepaint";
 
 const MIN_HOLD_MS = 900;
 // Backstop only. The reveal fires two frames after hydration, so this should never
@@ -21,6 +22,17 @@ const READ_MS = 500;
 // Bounds the wait on the typing, in case its animation never reports finishing.
 const TYPING_BACKSTOP_MS = 4000;
 
+// Only for when the pre-paint script never ran: the same check it makes, marking the boot as played if it was not.
+function alreadyPlayed(): boolean {
+    try {
+        if (sessionStorage.getItem("bootPlayed")) return true;
+        sessionStorage.setItem("bootPlayed", "true");
+    } catch {
+        // Storage blocked: the boot plays, as it does with the script.
+    }
+    return false;
+}
+
 export function BootSequence({ children }: { children: React.ReactNode }) {
     const [maskMounted, setMaskMounted] = useState(true);
     const topRef = useRef<HTMLDivElement>(null);
@@ -28,15 +40,19 @@ export function BootSequence({ children }: { children: React.ReactNode }) {
     const lockupRef = useRef<HTMLDivElement>(null);
     const roleRef = useRef<HTMLSpanElement>(null);
 
-    useEffect(() => {
+    // A layout effect, so the skip lands before paint: if React client-renders the root (see PrepaintGuard), the mask
+    // is back in the DOM with skip-boot gone, and a passive effect would let it paint for a frame or more.
+    useLayoutEffect(() => {
         // The pre-paint script in layout.tsx has already decided, and on a first visit has already marked the boot
-        // as played, so its class is the answer here, not sessionStorage. Reading storage would see its own mark and
-        // cut the boot off. If storage is blocked the script adds nothing and the boot plays, as it always did.
+        // as played, so its record is the answer here, not sessionStorage. Reading storage would see its own mark and
+        // cut the boot off. Its record, not its class: React strips the class when it client-renders the root. If
+        // storage is blocked the script records no skip and the boot plays, as it always did; only if the script
+        // never ran does this decide for itself, the same way.
         // Two opaque panels sliding apart is large-area motion, a vestibular trigger under SC 2.3.3, so reduced
         // motion skips the reveal outright and the page renders as if it had finished.
         const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-        if (prefersReducedMotion || document.documentElement.classList.contains("skip-boot")) {
-            // Deliberate: neither the class nor matchMedia exists during SSR, so this
+        if (prefersReducedMotion || (readPrepaint()?.skipBoot ?? alreadyPlayed())) {
+            // Deliberate: neither the record nor matchMedia exists during SSR, so this
             // can only be decided after mount. A one-shot skip, not a render loop.
             // eslint-disable-next-line react-hooks/set-state-in-effect
             setMaskMounted(false);
