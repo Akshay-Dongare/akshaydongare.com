@@ -121,12 +121,14 @@ function MorphingPointCloud({ color, shared, reduced = false }: { color: string;
     }, [positions]);
 
     // ── Bigger, thicker dots ────────────────────────────────
+    // Built once: a mode switch changes only the colour, which the <points> below sets on this material in place.
+    // Rebuilding it linked a new GPU program mid-switch, a hitch in the reveal.
     const material = useMemo(() => {
         return new THREE.ShaderMaterial({
             transparent: true,
             depthWrite: false,
             uniforms: {
-                uColor: { value: new THREE.Color(color) },
+                uColor: { value: new THREE.Color() },
                 uGlobalOpacity: { value: 0.92 },
             },
             vertexShader: `
@@ -151,9 +153,10 @@ function MorphingPointCloud({ color, shared, reduced = false }: { color: string;
                 }
             `,
         });
-    }, [color]);
-    // A mode switch builds a new material; free the old one's GPU program.
+    }, []);
     useEffect(() => () => material.dispose(), [material]);
+    // A Color instance, so it is copied in exactly as new THREE.Color(color) has always given the shader.
+    const colorValue = useMemo(() => new THREE.Color(color), [color]);
 
     // The frame loop writes SharedState in place for the overlays; see the note above sh.cursorOverShape.
     // eslint-disable-next-line react-hooks/immutability
@@ -333,7 +336,7 @@ function MorphingPointCloud({ color, shared, reduced = false }: { color: string;
         posAttr.needsUpdate = true;
     });
 
-    return <points ref={pointsRef} geometry={geometry} material={material} />;
+    return <points ref={pointsRef} geometry={geometry} material={material} material-uniforms-uColor-value={colorValue} />;
 }
 
 // ═══ Tension Ring ════════════════════════════════════════════

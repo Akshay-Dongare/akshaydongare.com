@@ -91,13 +91,22 @@ export function revealMode(mode: Mode, origin: Element) {
     root.style.setProperty("--reveal-y", `${y}px`);
     // Out to the farthest corner, so the circle ends with the whole viewport open.
     root.style.setProperty("--reveal-r", `${Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y))}px`);
-    // Scopes the snapshot styles in globals.css to this switch, and stops colour transitions replaying inside it.
-    root.classList.add("mode-switching");
-    const transition = document.startViewTransition(() => setMode(mode));
+    const transition = document.startViewTransition(() => {
+        // Scopes the snapshot styles in globals.css to this switch, and stops colour transitions replaying inside it.
+        // Added with the mode, after the old snapshot, so the page restyles once instead of twice; transitions take
+        // their settings from the new style, so none starts.
+        root.classList.add("mode-switching");
+        setMode(mode);
+    });
     switching = transition;
     transition.finished.finally(() => {
-        if (switching !== transition) return;
-        switching = null;
-        root.classList.remove("mode-switching");
+        // Removing the class restyles the whole page, so it waits for an idle moment rather than the teardown frame.
+        const clear = () => {
+            if (switching !== transition) return;
+            switching = null;
+            root.classList.remove("mode-switching");
+        };
+        if ("requestIdleCallback" in window) requestIdleCallback(clear, { timeout: 500 });
+        else setTimeout(clear, 50);
     });
 }
