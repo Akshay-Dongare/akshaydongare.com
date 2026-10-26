@@ -147,6 +147,14 @@ Google builds the result from the server HTML, so these hold it to what a recrui
 - **Site name.** The WebSite JSON-LD pairs `name: "Akshay Dongare"` with the domain as
   `alternateName`, Google's documented fallback when it is not confident in the name.
 
+### Headers
+
+`next.config.ts` sends the OWASP secure-headers baseline on every path, less what Vercel already sends (HSTS):
+`X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy: strict-origin-when-cross-origin` and a
+`Permissions-Policy` that denies the camera, microphone, geolocation and the Topics API. There is no
+Content-Security-Policy on purpose: the pre-paint scripts and JSON-LD are inline, and a nonce-based policy would make
+every page render dynamically instead of prerendering.
+
 ### Accessible names and targets
 
 **A name starts with the words on screen.** SC 2.5.3 requires the visible text to be in the name, and

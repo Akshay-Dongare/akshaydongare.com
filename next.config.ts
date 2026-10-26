@@ -13,9 +13,23 @@ const nextConfig: NextConfig = {
       { source: '/profile.jpg', destination: '/Akshay_Headshot.jpg', permanent: true },
     ];
   },
-  // Requested directly, /_not-found answers 200, and every real 404 names it as canonical.
   async headers() {
-    return [{ source: '/_not-found', headers: [{ key: 'X-Robots-Tag', value: 'noindex' }] }];
+    return [
+      // The OWASP secure-headers baseline, less what Vercel already sends (HSTS). No Content-Security-Policy: the
+      // pre-paint scripts and JSON-LD are inline, and a nonce-based policy would render every page dynamically.
+      {
+        source: '/:path*',
+        headers: [
+          { key: 'X-Content-Type-Options', value: 'nosniff' },
+          { key: 'X-Frame-Options', value: 'DENY' },
+          { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+          // The site uses none of these; denying them also opts out of the Topics API, as /privacy promises no tracking.
+          { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=(), browsing-topics=()' },
+        ],
+      },
+      // Requested directly, /_not-found answers 200, and every real 404 names it as canonical.
+      { source: '/_not-found', headers: [{ key: 'X-Robots-Tag', value: 'noindex' }] },
+    ];
   },
 };
 
