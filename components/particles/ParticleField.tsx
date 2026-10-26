@@ -539,7 +539,9 @@ export function ParticleField({ color = "#8da3b5", className = "", active = true
         <div className={`w-full h-full pointer-events-auto absolute inset-0 z-0 ${className}`}>
             <Canvas
                 camera={{ position: [0, 0, 10], fov: 50 }}
-                gl={{ alpha: true, antialias: false, powerPreference: "high-performance" }}
+                // The default power preference: "high-performance" woke the discrete GPU on dual-GPU Macs for a decorative
+                // field, a switch that can stall a frame and costs battery. A few thousand points need no more.
+                gl={{ alpha: true, antialias: false }}
                 dpr={[1, 1.5]}
                 // "never" stops the render loop but keeps the GL context, geometry and simulation state,
                     // so scrolling back resumes for free and an offscreen canvas does not render at 60fps.

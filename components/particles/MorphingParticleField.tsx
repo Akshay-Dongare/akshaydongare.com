@@ -530,7 +530,9 @@ export function MorphingParticleField({ color = "#ffffff", className = "", activ
             <div className={`w-full h-full ${className}`}>
                 <Canvas
                     camera={{ position: [0, 0, 10], fov: 50 }}
-                    gl={{ alpha: true, antialias: false, powerPreference: "high-performance" }}
+                    // The default power preference: "high-performance" woke the discrete GPU on dual-GPU Macs for a decorative
+                    // field, a switch that can stall a frame and costs battery. A few thousand points need no more.
+                    gl={{ alpha: true, antialias: false }}
                     dpr={[1, 1.5]}
                     // "never" stops the loop but keeps the GL context, geometry and simulation, so scrolling back
                     // resumes free; without it the canvas runs at 60fps for the whole visit once seen.

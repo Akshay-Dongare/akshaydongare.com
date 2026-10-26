@@ -13,6 +13,7 @@ const ParticleField = dynamic(
 import Link from "next/link";
 import { PEPY_URL, type PackageStats } from "@/lib/downloads";
 import { useMode } from "@/lib/mode";
+import { useHasScrolled } from "@/lib/scrolled";
 import { ScrollCue } from "@/components/ui/ScrollCue";
 
 // Olive #7c8c4b on screen: the field's colour path darkens its input, so this is that colour pre-lightened.
@@ -25,17 +26,20 @@ export function ParticleSection({ stats }: { stats: PackageStats }) {
     const containerRef = useRef<HTMLDivElement>(null);
     const isInView = useInView(containerRef, { once: false, margin: "100px 0px 100px 0px" });
     const [shouldRenderParticles, setShouldRenderParticles] = useState(false);
+    // three.js is mounted once the reader scrolls toward the field, not merely because it sits near the fold, where the
+    // particle section does at load: there it was fetched, parsed and given a GL context in the middle of hydration.
+    // No field can be on screen at load, since the hero above them fills the viewport.
+    const scrolled = useHasScrolled();
     const light = useMode() === "light";
 
-    // Only render WebGL canvas when near viewport for performance
     useEffect(() => {
-        if (isInView) {
+        if (isInView && scrolled) {
             // A one-way latch on an IntersectionObserver, which has no SSR equivalent (AGENTS.md, Commands).
             // The canvas stays mounted for the visit, and the `active` prop pauses its render loop.
             // eslint-disable-next-line react-hooks/set-state-in-effect
             setShouldRenderParticles(true);
         }
-    }, [isInView]);
+    }, [isInView, scrolled]);
 
     return (
         <section
