@@ -156,15 +156,15 @@ function PointCloud({ color = "#8da3b5", reduced = false, blend = "add", fade = 
 
     // Soft Gaussian circles. Additive in dark, so dense silhouette regions stack into bright clusters
     // on the section's dark top; the vertex shader fades them out over its light bottom.
+    // Built once: a mode switch changes only the colour, the blending and the fade band, which the <points>
+    // below sets on this material in place. Rebuilding it linked a new GPU program mid-switch, a hitch in the reveal.
     const material = useMemo(() => new THREE.ShaderMaterial({
         transparent: true,
         depthWrite:  false,
-        // Light mode lays the same particles as colour instead: added light cannot darken paper.
-        blending:    blend === "normal" ? THREE.NormalBlending : THREE.AdditiveBlending,
         uniforms: {
-            uColor:         { value: new THREE.Color(color) },
+            uColor:         { value: new THREE.Color() },
             uGlobalOpacity: { value: 0.62 },
-            uFade:          { value: new THREE.Vector2(fade[0], fade[1]) },
+            uFade:          { value: new THREE.Vector2() },
         },
         vertexShader: `
             attribute float aOpacity;
@@ -205,9 +205,10 @@ function PointCloud({ color = "#8da3b5", reduced = false, blend = "add", fade = 
                 gl_FragColor = vec4(uColor, alpha);
             }
         `,
-    }), [color, blend, fade]);
-    // A mode switch builds a new material; free the old one's GPU program.
+    }), []);
     useEffect(() => () => material.dispose(), [material]);
+    // A Color instance, so it is copied in exactly as new THREE.Color(color) has always given the shader.
+    const colorValue = useMemo(() => new THREE.Color(color), [color]);
 
     useFrame((state, delta) => {
         // Nothing animates under reduced motion; the mount frame is the whole effect.
@@ -517,7 +518,17 @@ function PointCloud({ color = "#8da3b5", reduced = false, blend = "add", fade = 
         posAttr.needsUpdate = true;
     });
 
-    return <points ref={pointsRef} geometry={geometry} material={material} />;
+    // Light mode lays the same particles as colour instead: added light cannot darken paper.
+    return (
+        <points
+            ref={pointsRef}
+            geometry={geometry}
+            material={material}
+            material-blending={blend === "normal" ? THREE.NormalBlending : THREE.AdditiveBlending}
+            material-uniforms-uColor-value={colorValue}
+            material-uniforms-uFade-value={fade}
+        />
+    );
 }
 
 export function ParticleField({ color = "#8da3b5", className = "", active = true, blend = "add", fade = DARK_FADE }: { color?: string; className?: string; active?: boolean; blend?: "add" | "normal"; fade?: [number, number] }) {
