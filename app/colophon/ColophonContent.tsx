@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import Link from "next/link";
 
 export function ColophonContent() {
@@ -13,16 +13,16 @@ export function ColophonContent() {
         >
             <div className="max-w-[1000px] mx-auto px-6 md:px-12 lg:px-20">
 
-                <motion.h1
+                <m.h1
                     className="text-display-xl text-fg-90 mb-12"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1] }}
                 >
                     Colophon
-                </motion.h1>
+                </m.h1>
 
-                <motion.div
+                <m.div
                     className="max-w-none text-body text-fg-65 space-y-8"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -80,7 +80,7 @@ export function ColophonContent() {
                         I believe in learning through shared code. If you’re curious about how specific components or animations were built, the <Link href="https://github.com/Akshay-Dongare/akshaydongare.com" className="link-in-text text-fg-80 underline underline-offset-4 decoration-line-20 hover:text-fg-50 transition-colors cursor-none">full source code</Link> for this website is on GitHub.
                     </p>
 
-                </motion.div>
+                </m.div>
 
             </div>
         </div>

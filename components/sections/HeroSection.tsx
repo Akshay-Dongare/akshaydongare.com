@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef } from "react";
-import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
+import { m, useScroll, useTransform, useReducedMotion } from "framer-motion";
 import Link from "next/link";
 import { PYPI_URL, type PackageStats } from "@/lib/downloads";
 import { ScrollCue } from "@/components/ui/ScrollCue";
@@ -49,7 +49,7 @@ export function HeroSection({ stats }: { stats: PackageStats }) {
             >
                 {/* Bled 340px past both edges against 280px of travel plus ~58px from the 1.04 scale at the top, so
                     this layer's own edges never enter the wrapper and draw a line across the hero. */}
-                <motion.div
+                <m.div
                     className="absolute inset-x-0 origin-bottom"
                     style={{ y, scale, top: '-340px', height: 'calc(100% + 680px)' }}
                 >
@@ -58,7 +58,7 @@ export function HeroSection({ stats }: { stats: PackageStats }) {
 
                 {/* The backdrop is a CSS gradient rather than a photograph on purpose: no request, no layout shift.
                     It has no vignette over it by choice, since the approved hero is the one without. */}
-                </motion.div>
+                </m.div>
             </div>
 
             {/* min-h, and the text block in flow: on a short phone the content grows the hero instead of sliding under the nav. */}
@@ -66,7 +66,7 @@ export function HeroSection({ stats }: { stats: PackageStats }) {
 
                 {/* Em measure holds three lines; the height cap shrinks it on short screens. AGENTS.md, Hero layout.
                     Reveals run on mount, not in view: Google renders in a tall viewport where h-svh stretches. */}
-                <motion.div
+                <m.div
                     className="my-auto"
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -96,11 +96,11 @@ export function HeroSection({ stats }: { stats: PackageStats }) {
                     <h1 className="text-display-xl text-fg-100 font-sans max-w-[14em]" style={{ fontSize: "clamp(min(2.8rem, 6.5svh), min(6vw, 9.5svh), 5.5rem)" }}>
                         I build the layer between your application and the model, and I{"\u00a0"}make it hold.
                     </h1>
-                </motion.div>
+                </m.div>
 
                 {/* What a recruiter scans for in seconds, who, for whom and when, gets a row of its own at the foot,
                     set off from the claim by a hairline, with the keywords at its far end. */}
-                <motion.div
+                <m.div
                     className="mt-[clamp(1.5rem,6svh,3rem)] pt-6 border-t border-line-8 flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -127,7 +127,7 @@ export function HeroSection({ stats }: { stats: PackageStats }) {
                         Provider routing<br />
                         Auth &amp; concurrency
                     </p>
-                </motion.div>
+                </m.div>
             </div>
             <ScrollCue />
         </section>

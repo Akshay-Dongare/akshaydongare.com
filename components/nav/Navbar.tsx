@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { PillButton } from "@/components/ui/PillButton";
-import { motion, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
 import { ModeToggle } from "@/components/nav/ModeToggle";
 import { DecodeText } from "@/components/ui/DecodeText";
 import { useMode } from "@/lib/mode";
@@ -193,7 +193,7 @@ export function Navbar() {
             {/* MOBILE FULLSCREEN MENU */}
             <AnimatePresence>
                 {isMobileMenuOpen && (
-                    <motion.div
+                    <m.div
                         initial={{ opacity: 0, y: "-100%" }}
                         animate={{ opacity: 1, y: "0%" }}
                         exit={{ opacity: 0, y: "-100%" }}
@@ -209,7 +209,7 @@ export function Navbar() {
                     >
                         <div className="flex flex-col gap-6" onClick={(e) => e.stopPropagation()}>
                             {navLinks.map((link, i) => (
-                                <motion.div
+                                <m.div
                                     key={link.name}
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
@@ -223,10 +223,10 @@ export function Navbar() {
                                     >
                                         {link.name}
                                     </Link>
-                                </motion.div>
+                                </m.div>
                             ))}
 
-                            <motion.div
+                            <m.div
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: 0.2 + (navLinks.length * 0.05), duration: 0.4 }}
@@ -235,9 +235,9 @@ export function Navbar() {
                                 <PillButton href="/contact" theme={mode} onClick={() => setIsMobileMenuOpen(false)}>
                                     Connect with me
                                 </PillButton>
-                            </motion.div>
+                            </m.div>
                         </div>
-                    </motion.div>
+                    </m.div>
                 )}
             </AnimatePresence>
         </>

@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
 import { LANGCHAIN_ORG } from "@/lib/links";
@@ -17,16 +17,16 @@ export function AboutContent({ stats }: { stats: PackageStats }) {
             {/* One column for title, portrait and body; 20px body from lg holds the 740px measure near 80 characters. */}
             <div className="max-w-[820px] mx-auto px-6 md:px-10">
 
-                <motion.h1
+                <m.h1
                     className="text-display-xl text-fg-90 mb-16"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1] }}
                 >
                     I work on the unglamorous half of AI
-                </motion.h1>
+                </m.h1>
 
-                <motion.div
+                <m.div
                     className="relative mb-16 mx-auto w-full max-w-[320px] aspect-[4/5] rounded-[20px] md:rounded-3xl overflow-hidden"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -42,9 +42,9 @@ export function AboutContent({ stats }: { stats: PackageStats }) {
                         sizes="320px"
                         className="object-cover object-top"
                     />
-                </motion.div>
+                </m.div>
 
-                <motion.div
+                <m.div
                     className="font-sans leading-relaxed text-body lg:text-[1.25rem] space-y-8 text-fg-70 text-justify hyphens-auto"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -127,7 +127,7 @@ export function AboutContent({ stats }: { stats: PackageStats }) {
                         ))}
                     </div>
 
-                </motion.div>
+                </m.div>
             </div>
         </div>
     );

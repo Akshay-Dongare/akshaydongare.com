@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef, useState, useEffect } from "react";
-import { motion, useInView } from "framer-motion";
+import { m, useInView } from "framer-motion";
 import dynamic from "next/dynamic";
 
 // three.js + R3F is ~935KB parsed, kept out of the initial script set so the boot mask and LCP headline do not
@@ -57,7 +57,7 @@ export function ParticleSection({ stats }: { stats: PackageStats }) {
             <div className="absolute bottom-0 left-0 w-full h-[45%] pointer-events-none" data-theme="light" />
 
             <div className="absolute inset-0 z-10 pointer-events-none p-6 md:p-12 lg:p-20 pt-[clamp(5rem,10vw,10rem)]">
-                <motion.div
+                <m.div
                     initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, margin: "-10%" }}
@@ -77,7 +77,7 @@ export function ParticleSection({ stats }: { stats: PackageStats }) {
                             {stats.monthlyLong}
                         </Link> downloads a month means someone else’s production depends on your defaults.
                     </h2>
-                </motion.div>
+                </m.div>
             </div>
 
             {shouldRenderParticles && (
