@@ -53,7 +53,7 @@ export function ColophonContent() {
                         Page transitions and content reveals run on <strong className="text-fg-80 font-medium">Framer Motion</strong>, none longer than 350ms. The one-time intro, an iris wipe, runs on the browser’s own <strong className="text-fg-80 font-medium">Web Animations API</strong>, so nothing extra loads for it. With reduced motion set, nothing slides, and the particle fields hold a still frame.
                     </p>
                     <p>
-                        The cursor is a hyper-minimal 5px dot. In dark mode it uses <code className="font-mono text-fg-55 text-[0.8em]">mix-blend-mode: difference</code>, which inverts against any background; in light mode it is a solid ink dot with a paper halo, because difference drops out over the particle pigment. Position tracking uses raw DOM events mixed with React context at 60fps; the dot scales to 8px on hover via a 150ms spring. It runs only while the page has focus, so it never sits beside the system pointer.
+                        The cursor is a hyper-minimal 5px dot. In dark mode it uses <code className="font-mono text-fg-55 text-[0.8em]">mix-blend-mode: difference</code>, which inverts against any background; in light mode it is a solid ink dot with a paper halo, because difference drops out over the particle pigment. Position tracking uses raw DOM events driving a spring at 60fps; the dot scales to 8px on hover via a 150ms spring. It runs only while the page has focus, so it never sits beside the system pointer.
                     </p>
 
                     <h2 className="text-display-m mt-16 mb-4 text-fg-85">WebGL & Physics</h2>

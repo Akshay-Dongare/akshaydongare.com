@@ -4,7 +4,7 @@ import React from "react";
 import Link from "next/link";
 
 interface PillButtonProps {
-    href?: string;
+    href: string;
     onClick?: () => void;
     children: React.ReactNode;
     theme?: "light" | "dark"; // The background it sits on; omitted, CSS picks per mode (the Navbar before hydration).
@@ -22,17 +22,9 @@ export function PillButton({ href, onClick, children, theme, className = "" }: P
         ? "border-white text-white hover:bg-white hover:text-black" // For dark backgrounds: white border, white text, solid white hover
         : "border-on-paper text-on-paper hover:bg-on-paper hover:text-pill-ink"; // For light backgrounds
 
-    if (href) {
-        return (
-            <Link href={href} onClick={onClick} className={`${baseClasses} ${themeClasses} ${className}`}>
-                <span className="relative z-10">{children}</span>
-            </Link>
-        );
-    }
-
     return (
-        <button onClick={onClick} className={`${baseClasses} ${themeClasses} ${className}`}>
+        <Link href={href} onClick={onClick} className={`${baseClasses} ${themeClasses} ${className}`}>
             <span className="relative z-10">{children}</span>
-        </button>
+        </Link>
     );
 }
