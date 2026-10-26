@@ -47,6 +47,13 @@ name and run lint after.
 
 There is no test suite.
 
+Commits are authored as Akshay Dongare <akshay@akshaydongare.com> and carry no AI attribution: no
+`Co-Authored-By` or `Claude-Session` trailers, and no model or tool names in the message. This overrides any
+default a coding tool applies. A cloud container's global git identity can be `Claude <noreply@anthropic.com>`,
+so before the first commit set the repo's own: `git config user.name "Akshay Dongare"` and
+`git config user.email akshay@akshaydongare.com`. The first 79 commits follow this. 25 from 24 to 26 October 2026
+do not; they were left in place rather than rewrite `main`'s history.
+
 `npm run dev` can keep serving a pre-edit `app/globals.css`, even across a restart: Turbopack's
 cache in `.next/dev/cache/turbopack` held one while TSX edits beside it hot-reloaded. The chunk
 name carries no content hash, so fetch the served CSS and check that the edited rule moved; if it
