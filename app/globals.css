@@ -355,6 +355,51 @@ html.mode-switching *::after {
   transition: none !important;
 }
 
+/* A homepage Work card flying to its place on /work (lib/cardFlight.ts). Its group grows from the one card's box to
+   the other's, clipped to the card's corners, so the two snapshots read as one card changing shape; the rest of the
+   page cross-fades as PageTransition would. 400ms: navigation motion, not a content reveal. The landed cue waits for
+   the card to arrive. */
+::view-transition-group(card-flight),
+::view-transition-old(card-flight),
+::view-transition-new(card-flight) {
+  animation-duration: 400ms;
+  animation-timing-function: cubic-bezier(0.2, 0, 0, 1);
+}
+/* The box carries the landed card's fill, so where the outgoing snapshot, shorter than the box, runs out, the arriving
+   text fades in on a card rather than over the page. */
+::view-transition-group(card-flight) {
+  overflow: clip;
+  border-radius: 20px;
+  background-color: var(--work-card-hover-bg);
+}
+@media (min-width: 768px) {
+  ::view-transition-group(card-flight) {
+    border-radius: 24px;
+  }
+}
+/* The outgoing card holds still underneath and the arriving one fades in over a short window mid-flight, so the
+   card stays opaque and the two cards' text overlaps for about 140ms instead of the whole flight. */
+::view-transition-old(card-flight) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+::view-transition-new(card-flight) {
+  animation: card-flight-in 400ms linear both;
+  mix-blend-mode: normal;
+}
+@keyframes card-flight-in {
+  0%, 25% { opacity: 0; }
+  60%, 100% { opacity: 1; }
+}
+html.card-flight::view-transition-old(root),
+html.card-flight::view-transition-new(root) {
+  animation-duration: 300ms;
+}
+html.card-flight [data-landed],
+html.card-flight [data-landed] * {
+  animation-play-state: paused;
+}
+
 /* The /work card a reader arrived at holds its hover look for the first half, then eases back to rest: held, it
    read as a stuck hover or a hung page. 100% is left out so each property returns to the card's own value. */
 @keyframes landed-card {

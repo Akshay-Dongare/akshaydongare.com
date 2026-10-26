@@ -7,6 +7,7 @@ import type { PackageStats } from "@/lib/downloads";
 import { GAMI_AWARD_POST, GAMI_SITE, HARVARD_SITE, LINKEDIN_EXPERIENCE, LITELLM_REPO } from "@/lib/links";
 import { OrgLogo, type Org } from "@/components/ui/OrgLogo";
 import { landCardUnderPointer } from "@/lib/cardHandoff";
+import { cardArrived, FLIGHT_NAME, useCardFlight } from "@/lib/cardFlight";
 
 // affiliation names the organisation for cards whose title does not, so it is not left to the logo alone.
 // id is the anchor a homepage card links to; those four keep the homepage's order so a click lands in the same column.
@@ -148,7 +149,12 @@ export function WorkContent({ stats }: { stats: PackageStats }) {
     const ALL_PROJECTS = buildProjects(stats);
     const hash = useSyncExternalStore(subscribeHash, readHash, serverHash);
     const hashSynced = useSyncExternalStore(noSubscription, onClient, onServer);
-    useEffect(landCardUnderPointer, []);
+    const flight = useCardFlight();
+    // The handoff scroll comes first, so a card in flight lands where it rests and nothing moves after it arrives.
+    useEffect(() => {
+        landCardUnderPointer();
+        cardArrived(readHash());
+    }, []);
     return (
         <div
             data-hash-synced={hashSynced ? "" : undefined}
@@ -180,7 +186,8 @@ export function WorkContent({ stats }: { stats: PackageStats }) {
                     {ALL_PROJECTS.map((proj, i) => (
                         <motion.div
                             key={proj.title}
-                            initial={{ opacity: 0, y: 30 }}
+                            // The card in flight is already at rest when the browser takes the new snapshot.
+                            initial={flight && flight.id === proj.id ? false : { opacity: 0, y: 30 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.3, delay: 0.08 + (i * 0.03), ease: [0.25, 0.1, 0.25, 1] }}
                         >
@@ -189,6 +196,7 @@ export function WorkContent({ stats }: { stats: PackageStats }) {
                             <div
                                 id={proj.id}
                                 data-landed={proj.id && hash === proj.id ? "" : undefined}
+                                style={flight && flight.id === proj.id ? { viewTransitionName: FLIGHT_NAME } : undefined}
                                 className="group relative flex flex-col h-full scroll-mt-4 border border-[var(--work-card-edge)] rounded-[20px] md:rounded-3xl p-6 md:p-8 cursor-none bg-[var(--work-card)] shadow-[var(--work-card-shadow)] hover:bg-[var(--work-card-hover-bg)] hover:border-[var(--work-card-hover-edge)] hover:shadow-none landed:animate-[landed-card_2s_cubic-bezier(0,0,0.5,1)] transition-[background-color,border-color,box-shadow] duration-300 ease-[cubic-bezier(0,0,0.5,1)]"
                             >
                                 {/* A row of its own, since Tech Mahindra's 4:1 lockup breaks titles inline. 40px holds

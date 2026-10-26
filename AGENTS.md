@@ -324,6 +324,18 @@ The column lines up only because both grids share one geometry and /work opens w
 homepage's order, Airbnb and langchain-litellm, then ISO and Harvard. Keep the two orders in step, or
 every click lands on the neighbouring card. Touch, keyboard and modified clicks keep the anchor jump.
 
+**A homepage card flies to its place on /work.** A click, a tap or Enter on one of the four cards runs a view
+transition (`flyCard` in `lib/cardFlight.ts`). The card and its /work twin share the name `card-flight`, so the browser
+carries the one into the other over 400ms while the rest of the page fades as it always does. The update waits for
+/work to report its card mounted and scrolled (`cardArrived`, from WorkContent's mount effect, after
+`landCardUnderPointer`), so the flight ends where the card rests and nothing moves after it lands; after 1.5s it lands
+without the flight. The twin starts at rest, and the landed cue is paused under `html.card-flight` until the card
+arrives. The flying box is clipped to the card's corners and filled with the landed card's colour; the outgoing card
+holds still underneath while the arriving one fades in between 25% and 60% of the flight, so their text overlaps only
+briefly. Modified clicks, reduced motion and browsers without the API navigate as before. Nothing inside the update may
+wait on animation frames, which the browser holds until the new page is captured. Framer's exit never runs anyway:
+`app/template.tsx` remounts the page wrapper on every navigation, so the old page leaves at once.
+
 **Text never uses white or black utilities.** `text-fg-NN` replaces `text-white/NN`: in dark it
 is the same `color-mix` Tailwind emits for `text-white/NN`, in light a solid ink by role (NN 85
 and up `#1a1c13`, 65 to 80 `#272a1e`, 50 to 60 `#3d422c`). `text-lbl-NN` is the same on
