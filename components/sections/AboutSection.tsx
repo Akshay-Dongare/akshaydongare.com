@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
 import { PYPI_URL, type PackageStats } from "@/lib/downloads";
@@ -16,7 +16,7 @@ export function AboutSection({ stats }: { stats: PackageStats }) {
                 {/* LEFT COLUMN - 60% */}
                 <div className="w-full md:w-[60%] flex flex-col justify-center">
 
-                    <motion.h2
+                    <m.h2
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true, margin: "-10%" }}
@@ -29,9 +29,9 @@ export function AboutSection({ stats }: { stats: PackageStats }) {
                         >
                             {stats.long}
                         </Link> times and counting.
-                    </motion.h2>
+                    </m.h2>
 
-                    <motion.div
+                    <m.div
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
@@ -42,12 +42,12 @@ export function AboutSection({ stats }: { stats: PackageStats }) {
                             <span className="opacity-80 group-hover:opacity-100 transition-opacity">MORE ABOUT ME</span>
                             <span aria-hidden="true" className="shrink-0 whitespace-nowrap opacity-80 group-hover:opacity-100 transition-opacity">[ → ]</span>
                         </Link>
-                    </motion.div>
+                    </m.div>
 
                 </div>
 
                 {/* RIGHT COLUMN - 40% */}
-                <motion.div
+                <m.div
                     className="w-full md:w-[40%] flex justify-end items-end"
                     initial={{ opacity: 0, y: 40 }}
                     whileInView={{ opacity: 1, y: 0 }}
@@ -70,7 +70,7 @@ export function AboutSection({ stats }: { stats: PackageStats }) {
                             <div className="absolute inset-0 bg-gradient-to-t from-[rgba(0,0,0,0.18)] to-transparent pointer-events-none" />
                         </div>
                     </div>
-                </motion.div>
+                </m.div>
 
             </div>
             <ScrollCue tone="paper" />

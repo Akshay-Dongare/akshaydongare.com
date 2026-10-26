@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { PEPY_URL, PYPI_URL, type PackageStats } from "@/lib/downloads";
@@ -79,7 +79,7 @@ export function WorkSection({ stats }: { stats: PackageStats }) {
 
             <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20">
 
-                <motion.div
+                <m.div
                     className="flex justify-end mb-16 md:mb-20"
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
@@ -89,11 +89,11 @@ export function WorkSection({ stats }: { stats: PackageStats }) {
                     <h2 className="text-display-l text-on-paper max-w-[600px] text-right">
                         What I’ve built, and what it holds up under
                     </h2>
-                </motion.div>
+                </m.div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     {PROJECTS.map((project, i) => (
-                        <motion.article
+                        <m.article
                             key={project.org}
                             className="surface-paper group relative rounded-[20px] md:rounded-3xl overflow-hidden border border-[var(--card-edge)] bg-[var(--card)] shadow-[var(--card-shadow)] hover:bg-[var(--card-hover-bg)] hover:border-[var(--card-hover-edge)] hover:shadow-none transition-[background-color,border-color,box-shadow] duration-300 ease-[cubic-bezier(0,0,0.5,1)]"
                             initial={{ opacity: 0, y: 20 }}
@@ -144,7 +144,7 @@ export function WorkSection({ stats }: { stats: PackageStats }) {
                                     ))}
                                 </div>
                             </div>
-                        </motion.article>
+                        </m.article>
                     ))}
                 </div>
 
@@ -157,7 +157,7 @@ export function WorkSection({ stats }: { stats: PackageStats }) {
                 </div>
 
                 {/* Bottom Headline — sits on the dark portion of the gradient */}
-                <motion.div
+                <m.div
                     className="mt-32 w-full text-center"
                     initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
@@ -167,7 +167,7 @@ export function WorkSection({ stats }: { stats: PackageStats }) {
                     <p className="text-display-l text-fg-100 md:text-balance">
                         Open source you can read. Production work you can check.
                     </p>
-                </motion.div>
+                </m.div>
 
             </div>
             <ScrollCue />

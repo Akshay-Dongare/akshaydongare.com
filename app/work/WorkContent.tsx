@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useSyncExternalStore } from "react";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import Link from "next/link";
 import type { PackageStats } from "@/lib/downloads";
 import { GAMI_AWARD_POST, GAMI_SITE, HARVARD_SITE, LINKEDIN_EXPERIENCE, LITELLM_REPO } from "@/lib/links";
@@ -164,27 +164,27 @@ export function WorkContent({ stats }: { stats: PackageStats }) {
         >
             <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20">
 
-                <motion.h1
+                <m.h1
                     className="text-display-xl text-fg-90 mb-4"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1] }}
                 >
                     Work
-                </motion.h1>
+                </m.h1>
 
-                <motion.p
+                <m.p
                     className="text-body text-fg-55 max-w-[600px] mb-20"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.35, delay: 0.05, ease: [0.25, 0.1, 0.25, 1] }}
                 >
                     I mostly work on LLM infrastructure. Older projects are further down.
-                </motion.p>
+                </m.p>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     {ALL_PROJECTS.map((proj, i) => (
-                        <motion.div
+                        <m.div
                             key={proj.title}
                             // The card in flight is already at rest when the browser takes the new snapshot.
                             initial={flight && flight.id === proj.id ? false : { opacity: 0, y: 30 }}
@@ -231,7 +231,7 @@ export function WorkContent({ stats }: { stats: PackageStats }) {
                                     ))}
                                 </div>
                             </div>
-                        </motion.div>
+                        </m.div>
                     ))}
                 </div>
 

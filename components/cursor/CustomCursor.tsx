@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { motion, useSpring, MotionConfig } from "framer-motion";
+import { m, useSpring, LazyMotion, MotionConfig, domAnimation } from "framer-motion";
 
 export function CursorProvider({ children }: { children: React.ReactNode }) {
     const [isReady, setIsReady] = useState(false);
@@ -157,12 +157,12 @@ export function CursorProvider({ children }: { children: React.ReactNode }) {
     }, [cursorX, cursorY]);
 
     return (
-        <>
+        <LazyMotion features={domAnimation} strict>
             {/* One switch for every Framer Motion animation: reducedMotion="user" drops transform and layout
                 animation but keeps opacity, so content still fades in without moving, as SC 2.3.3 asks. */}
             <MotionConfig reducedMotion="user">{children}</MotionConfig>
             {isReady && (
-                <motion.div
+                <m.div
                     className="fixed top-0 left-0 pointer-events-none z-[9999] rounded-full forced-colors:hidden"
                     style={{
                         x: cursorX,
@@ -184,6 +184,6 @@ export function CursorProvider({ children }: { children: React.ReactNode }) {
                     }}
                 />
             )}
-        </>
+        </LazyMotion>
     );
 }

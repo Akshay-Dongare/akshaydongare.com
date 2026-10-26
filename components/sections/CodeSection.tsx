@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef } from "react";
-import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
+import { m, useScroll, useTransform, useReducedMotion } from "framer-motion";
 import Link from "next/link";
 import { ScrollCue } from "@/components/ui/ScrollCue";
 
@@ -144,7 +144,7 @@ export function CodeSection() {
             >
                 {/* Bled 200px past both edges against 140px of travel, so this layer's own edges never enter
                     the wrapper, where an edge would draw a hard line across the full width. */}
-                <motion.div
+                <m.div
                     className="absolute inset-x-0"
                     style={{ y: imageY, top: '-200px', height: 'calc(100% + 400px)' }}
                 >
@@ -153,7 +153,7 @@ export function CodeSection() {
 
                     {/* Dark overlay */}
                     <div className="absolute inset-0 bg-[var(--code-veil)]" />
-                </motion.div>
+                </m.div>
             </div>
 
             {/* Code Overlay */}
@@ -163,7 +163,7 @@ export function CodeSection() {
                 style={{ WebkitMaskImage: 'linear-gradient(to bottom, #000 85%, transparent 100%)', maskImage: 'linear-gradient(to bottom, #000 85%, transparent 100%)' }}
             >
 
-                <motion.div
+                <m.div
                     style={{ y: codeY }}
                     className="w-full md:w-1/2"
                 >
@@ -189,7 +189,7 @@ export function CodeSection() {
                         <code className="block w-max"><DiffLines source={TEST} /></code>
                     </pre>
                     </Link>
-                </motion.div>
+                </m.div>
 
             </div>
 

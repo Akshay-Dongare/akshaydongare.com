@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 
 export function PrivacyContent() {
     return (
@@ -12,16 +12,16 @@ export function PrivacyContent() {
         >
             <div className="max-w-[1000px] mx-auto px-6 md:px-12 lg:px-20">
 
-                <motion.h1
+                <m.h1
                     className="text-display-xl text-fg-90 mb-12"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1] }}
                 >
                     Privacy Policy
-                </motion.h1>
+                </m.h1>
 
-                <motion.div
+                <m.div
                     className="max-w-none text-body text-fg-65 space-y-8"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -50,7 +50,7 @@ export function PrivacyContent() {
                         {/* Set by hand when the policy text changes; computing it on the client broke hydration each new month. */}
                         Last updated: September 2026
                     </p>
-                </motion.div>
+                </m.div>
 
             </div>
         </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef, useState, useEffect } from "react";
-import { motion, useInView } from "framer-motion";
+import { m, useInView } from "framer-motion";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { useMode } from "@/lib/mode";
@@ -52,7 +52,7 @@ export function ContactSection() {
                 {/* Top Area */}
                 <div className="relative w-full max-w-[1400px] mx-auto flex flex-col gap-8 lg:gap-0 lg:flex-row lg:justify-between lg:items-start">
 
-                    <motion.h2
+                    <m.h2
                         className="text-display-xl text-fg-100 max-w-[800px]"
                         initial={{ opacity: 0, y: 30 }}
                         whileInView={{ opacity: 1, y: 0 }}
@@ -60,7 +60,7 @@ export function ContactSection() {
                         transition={{ duration: 0.35 }}
                     >
                         Tell me what you’re building.
-                    </motion.h2>
+                    </m.h2>
 
                     <div className="flex flex-col items-start lg:items-end gap-1 pointer-events-auto">
                         <Link

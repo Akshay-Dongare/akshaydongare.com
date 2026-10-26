@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import Link from "next/link";
 
 const LINKS = [
@@ -19,27 +19,27 @@ export function ContactContent() {
         >
             <div className="w-full max-w-[1000px] px-6 md:px-12 lg:px-20">
 
-                <motion.h1
+                <m.h1
                     className="text-display-xl text-fg-90 mb-6"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1] }}
                 >
                     Let’s talk.
-                </motion.h1>
+                </m.h1>
 
-                <motion.p
+                <m.p
                     className="text-body text-fg-55 max-w-[560px] mb-20 text-justify hyphens-auto"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.35, delay: 0.05, ease: [0.25, 0.1, 0.25, 1] }}
                 >
                     I finish my Master’s at NC State in December 2026 and can start on 11 January 2027. AI platform, LLM infrastructure, or backend and platform engineering: full time preferred, contract worth hearing about, anywhere in the US, remote, hybrid or relocating. Authorized to work in the US on F-1 OPT through January 2030. If you’re building on this layer, open an issue, or send a note.
-                </motion.p>
+                </m.p>
 
                 <div className="flex flex-col w-full border-b border-line-8">
                     {LINKS.map((link, i) => (
-                        <motion.div
+                        <m.div
                             key={link.label}
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
@@ -59,7 +59,7 @@ export function ContactContent() {
                                     [ → ]
                                 </span>
                             </Link>
-                        </motion.div>
+                        </m.div>
                     ))}
                 </div>
 

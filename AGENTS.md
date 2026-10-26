@@ -521,6 +521,11 @@ visible step across the full width of the joint. It closes on void too, so iOS
 rubber-band overscroll matches `body`'s `background-color`. If you change where a
 page's last section ends, change this to match.
 
+**Framer Motion loads lazily.** Components use `m.*`, not `motion.*`, under the one `<LazyMotion features={domAnimation}
+strict>` in `CursorProvider`, which saves 39KB (10KB gzipped) on every page; `strict` throws on a stray `motion.*`,
+which would pull the full bundle back in. `domAnimation` covers everything the site uses: animate, `whileInView`,
+exit, height and the cursor's springs. Layout or drag animation would need `domMax`.
+
 **Reveal timing.** Content fade-ins are capped at 350ms with delays under 200ms.
 NN/g found scroll-triggered reveals slower than 500ms cause users to skip the content
 outright, and the previous 800–1000ms reveals were outside that band. Keep new
