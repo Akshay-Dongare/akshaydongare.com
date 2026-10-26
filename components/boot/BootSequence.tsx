@@ -62,79 +62,59 @@ export function BootSequence({ children }: { children: React.ReactNode }) {
         const start = performance.now();
         let triggered = false;
         let cancelled = false;
-        let raf1 = 0;
-        let safety: ReturnType<typeof setTimeout> | undefined;
         let revealTimer: ReturnType<typeof setTimeout> | undefined;
+        let reveal: Animation[] = [];
 
-        // Imported here, not statically: nothing else uses gsap, so its ~82KB loads only when the reveal plays.
-        // Only this effect removes the opaque mask, so a failed import unmounts it rather than leave a black screen.
-        (async () => {
-            let gsap;
-            try {
-                gsap = (await import("gsap")).default;
-            } catch {
+        // The Web Animations API runs transform and opacity on the compositor, so the panels slide smoothly while
+        // hydration and the rest of a first load still hold the main thread; gsap tweened them from it, and cost a
+        // 68KB download on exactly the visit that plays this. The curves are gsap's: power2.in for the lockup, then
+        // expo.inOut for the panels, which start 0.18s before the lockup has gone.
+        const beginReveal = () => {
+            const top = topRef.current;
+            const bottom = bottomRef.current;
+            const lockup = lockupRef.current;
+            if (!top || !bottom || !lockup) {
                 setMaskMounted(false);
                 return;
             }
-            if (cancelled) return;
+            const panels: KeyframeAnimationOptions = { duration: 1100, delay: 220, easing: "cubic-bezier(0.87, 0, 0.13, 1)", fill: "forwards" };
+            reveal = [
+                lockup.animate({ opacity: [1, 0] }, { duration: 400, easing: "cubic-bezier(0.11, 0, 0.5, 0)", fill: "forwards" }),
+                top.animate({ transform: ["translateY(0)", "translateY(-101%)"] }, panels),
+                bottom.animate({ transform: ["translateY(0)", "translateY(101%)"] }, panels),
+            ];
+            // Only this effect removes the opaque mask, so it goes whether the reveal finishes or is cut short.
+            const unmount = () => setMaskMounted(false);
+            Promise.all(reveal.map((a) => a.finished)).then(unmount, unmount);
+        };
 
-            const beginReveal = () => {
-                const top = topRef.current;
-                const bottom = bottomRef.current;
-                const lockup = lockupRef.current;
-                if (!top || !bottom || !lockup) {
-                    setMaskMounted(false);
-                    return;
-                }
+        const trigger = () => {
+            if (triggered || cancelled) return;
+            triggered = true;
+            clearTimeout(safety);
+            // The typing runs in CSS from first paint, so its own animation is the clock: wait for the role
+            // line to finish, then READ_MS more. MIN_HOLD is measured from mount, so a slow hydration eats into
+            // the hold rather than adding to it.
+            const typed = roleRef.current?.getAnimations()[0]?.finished.catch(() => undefined);
+            const backstop = new Promise((resolve) => setTimeout(resolve, TYPING_BACKSTOP_MS));
+            Promise.race([typed ?? Promise.resolve(), backstop]).then(() => {
+                if (cancelled) return;
+                const remaining = Math.max(READ_MS, MIN_HOLD_MS - (performance.now() - start));
+                revealTimer = setTimeout(beginReveal, remaining);
+            });
+        };
 
-                const tl = gsap.timeline({
-                    onComplete: () => setMaskMounted(false),
-                });
-
-                tl.to(lockup, {
-                    opacity: 0,
-                    duration: 0.4,
-                    ease: "power2.in",
-                });
-
-                tl.to(
-                    [top, bottom],
-                    {
-                        yPercent: (i: number) => (i === 0 ? -101 : 101),
-                        duration: 1.1,
-                        ease: "expo.inOut",
-                    },
-                    "-=0.18"
-                );
-            };
-
-            const trigger = () => {
-                if (triggered || cancelled) return;
-                triggered = true;
-                clearTimeout(safety);
-                // The typing runs in CSS from first paint, so its own animation is the clock: wait for the role
-                // line to finish, then READ_MS more. MIN_HOLD is measured from mount, not from when gsap landed,
-                // so a slow chunk eats into the hold rather than adding to it.
-                const typed = roleRef.current?.getAnimations()[0]?.finished.catch(() => undefined);
-                const backstop = new Promise((resolve) => setTimeout(resolve, TYPING_BACKSTOP_MS));
-                Promise.race([typed ?? Promise.resolve(), backstop]).then(() => {
-                    if (cancelled) return;
-                    const remaining = Math.max(READ_MS, MIN_HOLD_MS - (performance.now() - start));
-                    revealTimer = setTimeout(beginReveal, remaining);
-                });
-            };
-
-            // Two frames after hydration is the first paint of real content, which is all the reveal waits on.
-            // The safety timer only backstops a dropped frame.
-            raf1 = requestAnimationFrame(() => requestAnimationFrame(trigger));
-            safety = setTimeout(trigger, SAFETY_TIMEOUT_MS);
-        })();
+        // Two frames after hydration is the first paint of real content, which is all the reveal waits on.
+        // The safety timer only backstops a dropped frame.
+        const raf1 = requestAnimationFrame(() => requestAnimationFrame(trigger));
+        const safety = setTimeout(trigger, SAFETY_TIMEOUT_MS);
 
         return () => {
             cancelled = true;
             cancelAnimationFrame(raf1);
             clearTimeout(safety);
             clearTimeout(revealTimer);
+            reveal.forEach((a) => a.cancel());
         };
     }, []);
 
@@ -162,8 +142,8 @@ export function BootSequence({ children }: { children: React.ReactNode }) {
                         ref={lockupRef}
                         className="absolute inset-0 flex items-center justify-center"
                     >
-                        {/* CSS-driven from first paint rather than gsap, which loads after hydration and would leave
-                            the lockup blank until it arrived. */}
+                        {/* CSS-driven from first paint rather than from script, which waits for hydration and would leave
+                            the lockup blank until it ran. */}
                         <div className="flex flex-col items-center gap-4 px-6 text-center font-mono text-fg-100">
                             <TypedLine
                                 chars={NAME.length}
