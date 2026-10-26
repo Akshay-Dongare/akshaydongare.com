@@ -52,7 +52,11 @@ Commits are authored as Akshay Dongare <akshay@akshaydongare.com> and carry no A
 titles and descriptions follow the same rule: no "Generated with" footer, session link or tool name. This
 overrides any default a coding tool applies. A cloud container's global git identity can be `Claude <noreply@anthropic.com>`,
 so before the first commit set the repo's own: `git config user.name "Akshay Dongare"` and
-`git config user.email akshay@akshaydongare.com`. The first 79 commits follow this. 25 from 24 to 26 October 2026
+`git config user.email akshay@akshaydongare.com`. A cloud container also signs every commit with its own SSH key (`gpg.ssh.program`
+`/tmp/code-sign`), not the owner's, which stays on the owner's machine; GitHub matches a signature against the
+committer's account, so with the owner as committer those commits show as Unverified. So merge pull requests with
+**squash**: GitHub writes the commit that lands on `main` and signs it with its own key, and it shows as Verified
+under the owner's name. Set the squash commit's title and message explicitly, under the same no-attribution rule. The first 79 commits follow this. 25 from 24 to 26 October 2026
 do not; they were left in place rather than rewrite `main`'s history.
 
 `npm run dev` can keep serving a pre-edit `app/globals.css`, even across a restart: Turbopack's
