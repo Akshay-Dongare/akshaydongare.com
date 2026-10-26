@@ -10,6 +10,8 @@ so Claude Code picks it up without a second copy to keep in sync.
 npm run dev      # start dev server at localhost:3000
 npm run build    # production build (also used to type-check — no separate tsc script)
 npm run lint     # ESLint directly (`next lint` was removed in Next 16)
+npm run typecheck # tsc --noEmit
+npm test         # unit tests in tests/, on Node's own runner
 npm run start    # serve the production build locally
 ```
 
@@ -45,7 +47,14 @@ config accepts any `eslint-plugin-react-hooks` ^7.1.0, so a blanket `npm update`
 move the plugin on its own and bring new errors, as 7.1 did; update packages by
 name and run lint after.
 
-There is no test suite.
+Tests run on Node's built-in runner, which strips TypeScript itself, so they add no dependency: `tests/*.test.ts` import
+the modules they test with a `.ts` extension (`allowImportingTsExtensions`), and nothing those modules import at runtime
+may go through the `@/` alias. They cover what has broken before and runs where nothing else looks: the download figures
+and their fallback (`lib/downloads.ts`, with `fetch` stubbed), both pre-paint scripts (`lib/prepaint.ts`, run in a
+`node:vm` stand-in for the page before first paint), and the particle generators' buffers. Each was checked by
+reintroducing a past bug: flooring the monthly figure, and marking the boot played only after hydration, both fail.
+`.github/workflows/ci.yml` runs lint, the type check and the tests on every pull request and on `main`; Vercel builds
+every pull request, so CI does not.
 
 Commits are authored as Akshay Dongare <akshay@akshaydongare.com> and carry no AI attribution: no
 `Co-Authored-By` or `Claude-Session` trailers, and no model or tool names in the message. Pull request
