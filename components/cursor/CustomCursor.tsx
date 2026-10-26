@@ -1,21 +1,7 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { motion, useSpring, MotionConfig } from "framer-motion";
-
-interface CursorContextType {
-    setHoverState: (state: boolean) => void;
-}
-
-const CursorContext = createContext<CursorContextType | undefined>(undefined);
-
-export function useCursor() {
-    const context = useContext(CursorContext);
-    if (!context) {
-        throw new Error("useCursor must be used within a CursorProvider");
-    }
-    return context;
-}
 
 export function CursorProvider({ children }: { children: React.ReactNode }) {
     const [isReady, setIsReady] = useState(false);
@@ -171,7 +157,7 @@ export function CursorProvider({ children }: { children: React.ReactNode }) {
     }, [cursorX, cursorY]);
 
     return (
-        <CursorContext.Provider value={{ setHoverState: setIsHovering }}>
+        <>
             {/* One switch for every Framer Motion animation: reducedMotion="user" drops transform and layout
                 animation but keeps opacity, so content still fades in without moving, as SC 2.3.3 asks. */}
             <MotionConfig reducedMotion="user">{children}</MotionConfig>
@@ -198,6 +184,6 @@ export function CursorProvider({ children }: { children: React.ReactNode }) {
                     }}
                 />
             )}
-        </CursorContext.Provider>
+        </>
     );
 }
