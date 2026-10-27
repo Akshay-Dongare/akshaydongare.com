@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
-import type { PackageStats } from "@/lib/downloads";
+import { PEPY_URL, PYPI_URL, type PackageStats } from "@/lib/downloads";
 import { GAMI_AWARD_POST, GAMI_SITE, HARVARD_SITE, LINKEDIN_EXPERIENCE, LITELLM_REPO } from "@/lib/links";
 import { OrgLogo, type Org } from "@/components/ui/OrgLogo";
 import { landCardUnderPointer } from "@/lib/cardHandoff";
@@ -29,7 +29,13 @@ const buildFeatured = (stats: PackageStats): Record<FeaturedId, Omit<Project, "i
     "langchain-litellm": {
         title: "langchain-litellm",
         logo: "langchain",
-        desc: `Creator and lead maintainer of LangChain’s official LiteLLM integration. Started as my own repository; now developed and released inside the langchain-ai organization, with its own page in the LangChain docs and an entry in the Python API reference. One interface to 140+ providers, plus router-backed load balancing, embeddings and OCR loading. ${stats.floor.total ? "Over " : ""}${stats.long} downloads across ${stats.releases} releases, and ${stats.floor.monthly ? "over" : "around"} ${stats.monthlyLong} every month.`,
+        desc: (
+            <>
+                Creator and lead maintainer of LangChain’s official LiteLLM integration. Started as my own repository; now developed and released inside the langchain-ai organization, with its own page in the LangChain docs and an entry in the Python API reference. One interface to 140+ providers, plus router-backed load balancing, embeddings and OCR loading.
+                {" "}{stats.floor.total && "Over "}<Link href={PYPI_URL} className={INLINE}>{stats.long}</Link> downloads across {stats.releases} releases,
+                and {stats.floor.monthly ? "over" : "around"} <Link href={PEPY_URL} className={INLINE}>{stats.monthlyLong}</Link> every month.
+            </>
+        ),
         tags: ["PYTHON", "PYPI", "CREATOR", "MAINTAINER"],
         link: LITELLM_REPO
     },

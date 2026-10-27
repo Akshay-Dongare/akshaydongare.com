@@ -99,14 +99,16 @@ never showing it; a mouse click at 40% down the Airbnb card landing with 40% of 
 marked landed, with `card-flight` gone; the hero's h1 and facts at full opacity in a 412x5000 viewport; every page
 answering 200 with no console error and the headers from `next.config.ts`, `/_not-found` carrying noindex (`next start`
 answers it 404, Vercel 200, so only the header is asserted), and the old URLs answering 308; the mode switch flipping
-`data-mode` both ways and `mode-switching` coming off after; and an unscrolled homepage fetching no three.js, while one
+`data-mode` both ways and `mode-switching` coming off after; every download figure on /, /work and /about a link to its
+source (under Download figures); and an unscrolled homepage fetching no three.js, while one
 scroll fetches it, so the marker string is known to still match; and a footer link or a homepage card pressed while the
 page glides landing where a calm press does. They wait on conditions, never on fixed sleeps, and there are no retries,
 so a spec that passes on a second try counts as a flake to fix. The mode switch's frame flash is deliberately not
 tested: headless Chromium never shows it (under Navbar Dark/Light Theme Detection). Each spec was
 checked by reintroducing a past bug: PrepaintGuard doing nothing, the boot marked played only after hydration, the
 hero's facts on the site's `-10%` in-view reveal, the handoff scroll removed (40% landed as 67%), a static three.js
-import on the homepage, and the mid-glide settle removed (a footer press landed 481px down) all fail.
+import on the homepage, the mid-glide settle removed (a footer press landed 481px down), and the /work card's figures
+as plain text all fail.
 
 The budget (`e2e/budget.ts`) reads `.next/diagnostics/route-bundle-stats.json`, which Next 16 writes on every build.
 Its chunk list per page matches the prerendered HTML's script tags exactly, less the nomodule polyfill a modern
@@ -716,7 +718,18 @@ stops there, so the underline marks the claim rather than the words around it. A
 the latest version is 0.6.6: its metadata last synced on 24 May 2026, although its download counts
 are current. No pepy URL avoids that header, so pepy backs only the monthly count, which it states
 as "in the last 30 days". The monthly figure keeps one decimal, rounded as pepy's page rounds it, so the number matches the page it links to ("1.2 million"). The default badge rounds to "1M", and the plain badge ignores `units`, so `lib/downloads.ts` reads pepy's personalized badge with `period=month&units=none` and formats the raw count itself; a compact badge still passes through if pepy ever ignores the option. PyPI lists every release but shows no download count at all, so the
-pill's accessible name calls it the package on PyPI, not a citation for the figure.
+pill's accessible name calls it the package on PyPI, not a citation for the figure. Every figure on the site is a
+link, both of them on /about and in the /work card too, where they once rendered as plain text, the card's as part of
+a template string. In body copy a figure looks like the paragraph's other links, underlined at rest; in display type,
+the hero, the homepage About h2 and the Particle headline, the underline comes on hover. In the /work card the two
+links take `INLINE`, whose `relative z-10` keeps them above the card's stretched GitHub link, so a click on a figure
+opens its source and a click anywhere else in the card still opens the repository. `e2e/figures.spec.ts` reads every
+figure on /, /work and /about and fails on one that is not a link holding the number alone, to PyPI or to pepy.
+The monthly figure is pepy's rolling last 30 days, which moves every day, so its one decimal flips whenever the count
+crosses a rounding line: on 27 October 2026 it fell from 1,153,181 to 1,136,309 between 02:40 and 04:33 UTC, and the
+site went from 1.2 million to 1.1 million. Each page regenerates on its own, and the first visit after its hour is up
+still gets the old page while the new one renders, so after a move two pages can disagree by that one decimal until
+each has regenerated.
 
 **A failed download figure keeps the last good page.** Each figure revalidates hourly. On the production server, if one
 fails to fetch or fails its check, `getPackageStats` throws, and Next keeps serving the last page that rendered and
