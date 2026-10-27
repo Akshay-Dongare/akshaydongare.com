@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import { m } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
 import { LANGCHAIN_ORG } from "@/lib/links";
@@ -17,20 +16,13 @@ export function AboutContent({ stats }: { stats: PackageStats }) {
             {/* One column for title, portrait and body; 20px body from lg holds the 740px measure near 80 characters. */}
             <div className="max-w-[820px] mx-auto px-6 md:px-10">
 
-                <m.h1
-                    className="text-display-xl text-fg-90 mb-16"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1] }}
-                >
+                <h1 className="enter text-display-xl text-fg-90 mb-16">
                     I work on the unglamorous half of AI
-                </m.h1>
+                </h1>
 
-                <m.div
-                    className="relative mb-16 mx-auto w-full max-w-[320px] aspect-[4/5] rounded-[20px] md:rounded-3xl overflow-hidden"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.35, delay: 0.1, ease: [0.25, 0.1, 0.25, 1] }}
+                <div
+                    className="enter relative mb-16 mx-auto w-full max-w-[320px] aspect-[4/5] rounded-[20px] md:rounded-3xl overflow-hidden"
+                    style={{ animationDelay: "100ms" }}
                 >
                     {/* priority: the page's LCP element must not lazy-load. sizes is the box's 320px cap, not a
                         viewport fraction, so the srcset stops at 320px x DPR, not 1197px (AGENTS.md, Branding). */}
@@ -42,13 +34,11 @@ export function AboutContent({ stats }: { stats: PackageStats }) {
                         sizes="320px"
                         className="object-cover object-top"
                     />
-                </m.div>
+                </div>
 
-                <m.div
-                    className="font-sans leading-relaxed text-body lg:text-[1.25rem] space-y-8 text-fg-70 text-justify hyphens-auto"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.35, delay: 0.08, ease: [0.25, 0.1, 0.25, 1] }}
+                <div
+                    className="enter font-sans leading-relaxed text-body lg:text-[1.25rem] space-y-8 text-fg-70 text-justify hyphens-auto"
+                    style={{ animationDelay: "80ms" }}
                 >
                     <p>
                         I’m Akshay Dongare, an AI platform engineer in Raleigh, North Carolina, finishing a Master’s in Computer Science at NC State. I work on LLM infrastructure: the gateways, provider routing, auth and concurrency that sit between an application and a model. The degree finishes in December 2026, and from 11 January 2027 this is the whole job: AI platform, LLM infrastructure, or the backend work underneath both, wherever in the country the team sits. I’m authorized to work in the US on F-1 OPT through January 2030.
@@ -127,7 +117,7 @@ export function AboutContent({ stats }: { stats: PackageStats }) {
                         ))}
                     </div>
 
-                </m.div>
+                </div>
             </div>
         </div>
     );

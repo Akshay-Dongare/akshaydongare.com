@@ -121,7 +121,9 @@ export function CodeSection() {
     // MotionConfig reducedMotion="user" does not reach a MotionValue driven by scroll, which is computed,
     // not animated, so collapsing the output range is the opt-out.
     const reduced = !!useReducedMotion();
-    const codeY = useTransform(scrollYProgress, [0, 1], reduced ? ["0%", "0%"] : ["0%", "-30%"]);
+    // At rest at 0.5, where the section fills the screen, so the label sits at its 128px top padding just when it is read
+    // and when the link takes focus. The block is about 1,490px tall, so starting at 0% put it 223px up by then, clipped.
+    const codeY = useTransform(scrollYProgress, [0, 0.5, 1], reduced ? ["0%", "0%", "0%"] : ["15%", "0%", "-15%"]);
     // Pixels, not percent: a percentage is of the layer's own height, which makes sizing the bleed circular.
     // In px the guarantee is arithmetic: travel 140, bleed 200, the edge never shows.
     const imageY = useTransform(scrollYProgress, [0, 1], reduced ? [0, 0] : [0, 140]);
@@ -157,15 +159,18 @@ export function CodeSection() {
             </div>
 
             {/* Code Overlay */}
-            {/* The diff can run past the section, most on phones; fade it out rather than let the edge slice the glyphs. */}
+            {/* The diff can run past the section, most on phones; fade it out rather than let the edge slice the glyphs.
+                Clip, not hidden: a hidden box still scrolls, and focusing the link scrolled it 128px, taking the label off screen. */}
             <div
-                className="relative w-full h-full max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 pt-32 overflow-hidden z-10 pointer-events-none"
+                className="relative w-full h-full max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 pt-32 overflow-clip z-10 pointer-events-none"
                 style={{ WebkitMaskImage: 'linear-gradient(to bottom, #000 85%, transparent 100%)', maskImage: 'linear-gradient(to bottom, #000 85%, transparent 100%)' }}
             >
 
+                {/* Held at rest while the link has keyboard focus: the browser aims its focus scroll at the drifted
+                    position, and the drift then moves on under it, which left the label above the screen. */}
                 <m.div
                     style={{ y: codeY }}
-                    className="w-full md:w-1/2"
+                    className="w-full md:w-1/2 has-focus-visible:transform-none!"
                 >
                     {/* Named by its visible label plus a hidden PR title, so the two cannot drift apart (SC 2.5.3). Below md the link
                         is the scroller, since browsers make a scroller with nothing focusable inside a Tab stop of its own. */}
