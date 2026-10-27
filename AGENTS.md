@@ -526,6 +526,16 @@ never inside the wrapper. If you add a section, check the joint rather than eyeb
 it; the deltas above are all 0 and should stay that way. The code overlay also fades out over its last 15%, in both
 modes, because on a phone the diff runs past the section and the Contact joint sliced its glyphs.
 
+**The Code label is on screen whenever the section is.** "Read this diff on GitHub" is the only sign the diff is a
+link, so the overlay's drift is at rest when the section fills the screen: `15%` to `0%` to `-15%` across the scroll,
+the same 30% of travel. It used to run `0%` to `-30%`, and the block is about 1,490px tall, so by the time the section
+filled the screen the label sat 96px above it, at 1280x720, 1440x900 and 390x664 alike. Two things keep it there under
+keyboard focus too. The overlay clips with `overflow: clip`, not `hidden`: a hidden box is still a scroll container,
+and focusing the link scrolled it by its 128px top padding. And the drift holds at rest while the link has
+`:focus-visible`, because the browser aims its focus scroll at the drifted position and the drift then moves on under
+it: Tab from above left the label 20 to 43px above the viewport. With both, focus puts the label 112px down from either
+direction, as reduced motion does, and the snap back on blur is about 5px.
+
 **The order and the gradients are coupled.** `ParticleSection` is the dark→light bridge
 and `WorkSection` is the light→dark bridge back, so the two light sections must sit
 between them. Reordering anything across that arc means re-deriving the seam colours,
