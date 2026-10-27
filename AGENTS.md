@@ -203,6 +203,18 @@ so a mouse scrolls it with shift and the wheel. Do not put `tabindex="-1"` on th
 forbids a `tabindex` descendant in an `<a>`, and axe cannot judge it either way, because it skips
 `aria-hidden` elements; only a Tab walk finds a hidden stop.
 
+**Focus follows a client navigation and a ScrollCue.** Next 16.4.2 leaves focus where it was (its layout-router
+"intentionally leaves focus untouched"), so after a footer link the next Tab went back into the footer, and after a nav
+link a keyboard reader tabbed through the header again. `focusWithoutScroll` in `lib/focus.ts` focuses with
+`preventScroll`, because the router, the hash landing and ScrollCue own the scroll, and gives a target that is not
+focusable `tabindex="-1"` only until it blurs, or a later click on it would keep taking focus, as `tabIndex` on `<main>`
+once did. `PageTransition` focuses the new page's h1 on every mount but the first load's, which it notes in a layout
+effect so pages can ask; /work arriving with a hash focuses that card's title link after `landCardUnderPointer`, and
+`PageTransition` leaves focus a page already placed. ScrollCue focuses the next section's heading, or the Code section
+itself, which has none. A pointer click shows no ring, since programmatic focus after one does not match
+`:focus-visible`; measured on a production build, a click on a card, a cue, a footer or a nav link leaves nothing
+matching it, light and dark, with and without reduced motion. Next's route announcer still speaks the title.
+
 **Links in `.text-body` copy fill their line (`.link-in-text`).** SC 2.5.8 exempts links in a sentence
 and stock axe skips them, but the Vercel Toolbar's audit flagged Harvard University on /work. When it
 fits on one line it is a 21px-tall box 22px from the tail of the GAMI link: forcing axe's target-size
