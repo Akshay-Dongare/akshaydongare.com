@@ -32,6 +32,9 @@ jobs:
       - run: npm run lint
       - run: npm run typecheck
       - run: npm test
+      # Warns, never fails, when lib/downloads.ts's FALLBACK floors fall behind the live figures (scripts/check-fallback.ts).
+      - run: node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/check-fallback.ts
+        continue-on-error: true
 
   browser:
     name: Browser tests, JS budget

@@ -74,11 +74,15 @@ the modules they test with a `.ts` extension (`allowImportingTsExtensions`), and
 may go through the `@/` alias. They cover what has broken before and runs where nothing else looks: the download figures
 and their fallback (`lib/downloads.ts`, with `fetch` stubbed), both pre-paint scripts (`lib/prepaint.ts`, run in a
 `node:vm` stand-in for the page before first paint), and the particle generators' buffers. Each was checked by
-reintroducing a past bug: flooring the monthly figure, and marking the boot played only after hydration, both fail.
+reintroducing a past bug: flooring the monthly figure, accepting a "0" badge, and marking the boot played only after
+hydration, all fail.
 `.github/workflows/ci.yml` runs lint, the type check and the tests on every pull request and on `main`, and beside
 that job a second one builds the site and runs the browser tests and the JS budget. It builds in the runner rather
 than testing the Vercel preview, which sits behind Vercel Authentication, and because the budget reads the build's own
-output. It caches Playwright's browser download, keyed on the Playwright version, and uploads traces when a spec fails.
+output. It caches Playwright's browser download, keyed on the Playwright version, and uploads traces when a spec fails. The first job's last step, `scripts/check-fallback.ts`, fetches the live download
+figures and prints a `::warning::` with the values to paste in when `FALLBACK` (under Download figures) has fallen more
+than 10% behind them or is no longer a floor under them. A network error is a warning too, and the step never fails
+the job. Dependabot's weekly pull requests run it, so it needs no schedule; the owner ruled out a scheduled workflow.
 
 The browser tests (`e2e/*.spec.ts`, Playwright, Chromium only) cover what only a real browser shows, most of the fixes
 of October 2026. `playwright.config.ts` builds and starts the production server itself, since the pre-paint scripts,
@@ -686,6 +690,24 @@ the latest version is 0.6.6: its metadata last synced on 24 May 2026, although i
 are current. No pepy URL avoids that header, so pepy backs only the monthly count, which it states
 as "in the last 30 days". The monthly figure keeps one decimal, rounded as pepy's page rounds it, so the number matches the page it links to ("1.2 million"). The default badge rounds to "1M", and the plain badge ignores `units`, so `lib/downloads.ts` reads pepy's personalized badge with `period=month&units=none` and formats the raw count itself; a compact badge still passes through if pepy ever ignores the option. PyPI lists every release but shows no download count at all, so the
 pill's accessible name calls it the package on PyPI, not a citation for the figure.
+
+**A failed download figure keeps the last good page.** Each figure revalidates hourly. On the production server, if one
+fails to fetch or fails its check, `getPackageStats` throws, and Next keeps serving the last page that rendered and
+retries on the next request, as its ISR guide says under "Handling uncaught exceptions". The error names the figure and
+the reason, so a pepy or PyPI outage shows in Vercel's runtime logs and nowhere on the page. Measured on `next start`
+with a 30s window and fetch to pepy and PyPI rejecting: /, /work, /about, the meta description and the OG image (byte
+for byte) kept the build's figures for three windows, every response 200, a 404 still a 404, and the next window after
+the outage ended served the new figures. Only `next build` (`NEXT_PHASE` is `phase-production-build` in its workers)
+and `next dev` fall back instead, so a deploy never fails and local work runs offline.
+- **Floors.** All-time downloads and the release count only go up, so a live value below `FALLBACK` is a fault, "0"
+  included, and is rejected like a non-numeric badge. The monthly count can fall, so its floor is half of
+  `FALLBACK`'s, 500K: a real slump still shows, an empty month does not.
+- **`FALLBACK` is a floor and is worded as one.** It holds 15M, 1M and 34 releases, set on 27 October 2026 when pepy
+  said 16M and 1.2M (the compact 16M can be rounded up from 15.5M, so 15M). Where it renders, `stats.floor` puts
+  "over" before the figure, outside the link: "over 15 million downloads", "Over 1 million downloads a month", and
+  "and over 1 million every month" in place of "around" on /about and /work; the Work pills and the OG chip say
+  "15M+". So a stale fallback still reads true. The release count has no qualifier, and the CI warning keeps it
+  current.
 
 **Copy and wrapping.** Visible copy uses the typographic apostrophe ’, never `&apos;` or a straight
 tick. h2 and h3 balance their lines and paragraphs use `text-wrap: pretty`; the hero h1, the Mission

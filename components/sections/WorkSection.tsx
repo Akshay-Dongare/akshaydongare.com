@@ -12,6 +12,9 @@ import { handOffCard } from "@/lib/cardHandoff";
 import { flyCard } from "@/lib/cardFlight";
 import { FEATURED, type FeaturedId } from "@/lib/work";
 
+// A fallback figure is a floor, so its pill says "15M+".
+const atLeast = (value: string, floor: boolean) => (floor ? `${value}+` : value);
+
 // All four are open at once: a recruiter gives the page seconds, and a name behind a click
 // is a name they never read. The full account of each lives on /work, under the same id.
 type Card = { org: string; logo: Org; role: React.ReactNode; line: React.ReactNode; pills: { label: string; href: string; name: string }[] };
@@ -39,8 +42,8 @@ const buildProjects = (stats: PackageStats): Record<FeaturedId, Card> => ({
             </>
         ),
         pills: [
-            { label: `${stats.compact} downloads`, href: PYPI_URL, name: `${stats.compact} downloads: langchain-litellm on PyPI` },
-            { label: `${stats.monthlyCompact} a month`, href: PEPY_URL, name: `${stats.monthlyCompact} a month: the last 30 days on pepy.tech` },
+            { label: `${atLeast(stats.compact, stats.floor.total)} downloads`, href: PYPI_URL, name: `${atLeast(stats.compact, stats.floor.total)} downloads: langchain-litellm on PyPI` },
+            { label: `${atLeast(stats.monthlyCompact, stats.floor.monthly)} a month`, href: PEPY_URL, name: `${atLeast(stats.monthlyCompact, stats.floor.monthly)} a month: the last 30 days on pepy.tech` },
         ],
     },
     iso: {
