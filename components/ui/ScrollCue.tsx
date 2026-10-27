@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { focusWithoutScroll } from "@/lib/focus";
 
 // The far bottom-left of every homepage section but the last, bobbing as one unit so it reads as a prompt; a click scrolls on.
 // tone "paper" is for sections that end on a light ground in dark mode (Particle, About).
@@ -11,7 +12,10 @@ export function ScrollCue({ tone = "auto" }: { tone?: "auto" | "paper" }) {
         const next = sections[sections.indexOf(here as Element) + 1];
         const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
         // An explicit scroll, because scrollIntoView would honour the nav's scroll padding and stop 96px short.
-        if (next) window.scrollTo({ top: next.getBoundingClientRect().top + window.scrollY, behavior: reduced ? "auto" : "smooth" });
+        if (!next) return;
+        window.scrollTo({ top: next.getBoundingClientRect().top + window.scrollY, behavior: reduced ? "auto" : "smooth" });
+        // Focus follows, so the next Tab starts in that section; the Code section has no heading, so it takes the section.
+        focusWithoutScroll(next.querySelector<HTMLElement>("h1, h2, h3") ?? (next as HTMLElement));
     };
 
     const ink = tone === "paper" ? "text-on-paper/75 hover:text-on-paper" : "text-lbl-55 hover:text-lbl-90 light:hover:text-fg-100";
