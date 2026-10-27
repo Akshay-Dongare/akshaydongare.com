@@ -1,7 +1,6 @@
 "use client";
 
-import React, { useEffect, useSyncExternalStore } from "react";
-import { m } from "framer-motion";
+import React, { useEffect, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import type { PackageStats } from "@/lib/downloads";
 import { GAMI_AWARD_POST, GAMI_SITE, HARVARD_SITE, LINKEDIN_EXPERIENCE, LITELLM_REPO } from "@/lib/links";
@@ -151,6 +150,8 @@ export function WorkContent({ stats }: { stats: PackageStats }) {
     const hash = useSyncExternalStore(subscribeHash, readHash, serverHash);
     const hashSynced = useSyncExternalStore(noSubscription, onClient, onServer);
     const flight = useCardFlight();
+    // Taken once, at mount: the flight ends before the card's entrance would, and adding the class then would start it.
+    const [restingId] = useState(flight?.id);
     // The handoff scroll comes first, so a card in flight lands where it rests and nothing moves after it arrives.
     // After a client navigation focus goes to the landed card's title link, so a keyboard reader continues from that card.
     useEffect(() => {
@@ -168,32 +169,24 @@ export function WorkContent({ stats }: { stats: PackageStats }) {
         >
             <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20">
 
-                <m.h1
-                    className="text-display-xl text-fg-90 mb-4"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1] }}
-                >
+                <h1 className="enter text-display-xl text-fg-90 mb-4">
                     Work
-                </m.h1>
+                </h1>
 
-                <m.p
-                    className="text-body text-fg-55 max-w-[600px] mb-20"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.35, delay: 0.05, ease: [0.25, 0.1, 0.25, 1] }}
+                <p
+                    className="enter text-body text-fg-55 max-w-[600px] mb-20"
+                    style={{ animationDelay: "50ms" }}
                 >
                     I mostly work on LLM infrastructure. Older projects are further down.
-                </m.p>
+                </p>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     {ALL_PROJECTS.map((proj, i) => (
-                        <m.div
+                        <div
                             key={proj.title}
                             // The card in flight is already at rest when the browser takes the new snapshot.
-                            initial={flight && flight.id === proj.id ? false : { opacity: 0, y: 30 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.3, delay: 0.08 + (i * 0.03), ease: [0.25, 0.1, 0.25, 1] }}
+                            className={proj.id && proj.id === restingId ? undefined : "enter [--enter-y:30px] [--enter-ms:300ms]"}
+                            style={{ animationDelay: `${80 + i * 30}ms` }}
                         >
                             {/* The title link stretches over the card through its ::after, so the card stays one target while
                                 the description can hold links of its own; an <a> inside an <a> is invalid HTML. */}
@@ -235,7 +228,7 @@ export function WorkContent({ stats }: { stats: PackageStats }) {
                                     ))}
                                 </div>
                             </div>
-                        </m.div>
+                        </div>
                     ))}
                 </div>
 
