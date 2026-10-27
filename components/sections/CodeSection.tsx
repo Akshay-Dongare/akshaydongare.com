@@ -100,7 +100,7 @@ function DiffLines({ source }: { source: string }) {
                             ? "text-fg-50"
                             : "text-fg-55";
                 return (
-                    <div key={i} className={cls}>
+                    <div key={i} className={`${cls} w-fit pointer-events-auto`}>
                         {line || "\u00A0"}
                     </div>
                 );
@@ -173,16 +173,19 @@ export function CodeSection() {
                     className="w-full md:w-1/2 has-focus-visible:transform-none!"
                 >
                     {/* Named by its visible label plus a hidden PR title, so the two cannot drift apart (SC 2.5.3). Below md the link
-                        is the scroller, since browsers make a scroller with nothing focusable inside a Tab stop of its own. */}
+                        is the scroller, since browsers make a scroller with nothing focusable inside a Tab stop of its own.
+                        From md, a mouse hovers and clicks only on ink: the link passes the pointer through and the label and
+                        each line take it back at their own width, so the empty half of a 620px block no longer lights the label.
+                        Touch keeps the whole block, where a tap anywhere opens the PR. */}
                     <Link
                         href={PR_URL}
-                        className="group block pointer-events-auto cursor-none max-md:overflow-x-auto max-md:overscroll-x-contain max-md:-mx-6 max-md:px-6 max-md:focus-visible:-outline-offset-2"
+                        className="group block pointer-events-auto md:pointer-fine:pointer-events-none cursor-none max-md:overflow-x-auto max-md:overscroll-x-contain max-md:-mx-6 max-md:px-6 max-md:focus-visible:-outline-offset-2"
                     >
                         {/* Visible at rest rather than on hover: touch has no hover, and the
-                            code has to look clickable before anyone taps it. */}
-                        <span className="mb-5 flex items-center gap-2 text-label text-lbl-55 group-hover:text-lbl-90 light:group-hover:text-fg-100 transition-colors">
+                            code has to look clickable before anyone taps it. The arrow takes the label's colour, so the two read as one. */}
+                        <span className="mb-5 flex w-fit items-center gap-2 pointer-events-auto text-label text-lbl-55 group-hover:text-lbl-hover transition-colors">
                             Read this diff on GitHub
-                            <span aria-hidden="true" className="shrink-0 whitespace-nowrap text-fg-55 group-hover:text-fg-90 transition-colors">[ &rarr; ]</span>
+                            <span aria-hidden="true" className="shrink-0 whitespace-nowrap">[ &rarr; ]</span>
                         </span>
                         <span className="sr-only">: pull request 161, remove global litellm module mutations from _client_params</span>
                     <pre aria-hidden="true" className="font-mono text-[0.75rem] leading-relaxed whitespace-pre max-md:w-max">
