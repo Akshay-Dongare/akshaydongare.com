@@ -1,7 +1,8 @@
 name: CI
 
-# Lint, types and unit tests on every pull request and on main. Vercel builds every pull request already, so the
-# build is not repeated here; Next 16's build no longer runs the linter, so this is the only place lint is enforced.
+# Lint, types and unit tests on every pull request and on main; Next 16's build no longer runs the linter, so this is
+# the only place lint is enforced. The browser job builds here as well as on Vercel: previews sit behind Vercel
+# Authentication, and the budget reads the build's own output.
 on:
   pull_request:
   push:
@@ -10,6 +11,8 @@ on:
 permissions:
   contents: read
 
+# Every action is pinned to a full commit SHA, with its release in a comment: a tag can be moved to other code, a
+# commit cannot. Dependabot's github-actions updates rewrite both.
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
@@ -20,8 +23,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-node@v5
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 22
           cache: npm
@@ -29,3 +32,38 @@ jobs:
       - run: npm run lint
       - run: npm run typecheck
       - run: npm test
+
+  browser:
+    name: Browser tests, JS budget
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      # The browser build follows the Playwright version, so that is the cache key. The system libraries are not
+      # cached, so a hit still installs them.
+      - id: playwright-version
+        run: echo "version=$(node -p "require('@playwright/test/package.json').version")" >> "$GITHUB_OUTPUT"
+      - id: playwright-cache
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.playwright-version.outputs.version }}
+      - if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: npx playwright install --with-deps --only-shell chromium
+      - if: steps.playwright-cache.outputs.cache-hit == 'true'
+        run: npx playwright install-deps chromium-headless-shell
+      # playwright.config.ts builds and starts the production server itself.
+      - run: npm run e2e
+      - if: ${{ !cancelled() }}
+        run: npm run budget
+      - if: failure()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: playwright-traces
+          path: test-results/
+          retention-days: 7
