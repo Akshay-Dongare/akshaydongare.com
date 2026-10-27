@@ -7,28 +7,29 @@ import { useRouter } from "next/navigation";
 import { PEPY_URL, PYPI_URL, type PackageStats } from "@/lib/downloads";
 import { GAMI_AWARD_POST, GAMI_SITE, LANGCHAIN_ORG, LINKEDIN_EXPERIENCE, LITELLM_REPO } from "@/lib/links";
 import { ScrollCue } from "@/components/ui/ScrollCue";
-import { OrgLogo } from "@/components/ui/OrgLogo";
+import { OrgLogo, type Org } from "@/components/ui/OrgLogo";
 import { handOffCard } from "@/lib/cardHandoff";
 import { flyCard } from "@/lib/cardFlight";
+import { FEATURED, type FeaturedId } from "@/lib/work";
 
 // A fallback figure is a floor, so its pill says "15M+".
 const atLeast = (value: string, floor: boolean) => (floor ? `${value}+` : value);
 
 // All four are open at once: a recruiter gives the page seconds, and a name behind a click
-// is a name they never read. The full account of each lives on /work.
-const buildProjects = (stats: PackageStats) => [
-    {
+// is a name they never read. The full account of each lives on /work, under the same id.
+type Card = { org: string; logo: Org; role: React.ReactNode; line: React.ReactNode; pills: { label: string; href: string; name: string }[] };
+
+const buildProjects = (stats: PackageStats): Record<FeaturedId, Card> => ({
+    airbnb: {
         org: "Airbnb",
-        slug: "airbnb",
-        logo: "airbnb" as const,
+        logo: "airbnb",
         role: "AI Platform · contract",
         line: "Made the internal LLM gateway about 28 services use safe to serve two providers in one process. Shipped as a version bump, so no consumer had to migrate.",
         pills: [{ label: "28 services, zero migrations", href: LINKEDIN_EXPERIENCE, name: "28 services, zero migrations: the Airbnb role on LinkedIn" }],
     },
-    {
+    "langchain-litellm": {
         org: "LangChain",
-        slug: "langchain-litellm",
-        logo: "langchain" as const,
+        logo: "langchain",
         role: (
             <>
                 <Link href={LITELLM_REPO} className="relative z-10 underline underline-offset-4 decoration-line-20 hover:decoration-current transition-colors cursor-none">langchain-litellm</Link>
@@ -45,18 +46,16 @@ const buildProjects = (stats: PackageStats) => [
             { label: `${atLeast(stats.monthlyCompact, stats.floor.monthly)} a month`, href: PEPY_URL, name: `${atLeast(stats.monthlyCompact, stats.floor.monthly)} a month: the last 30 days on pepy.tech` },
         ],
     },
-    {
+    iso: {
         org: "ISO",
-        slug: "iso",
-        logo: "iso" as const,
+        logo: "iso",
         role: "Companion · applied AI engineer",
         line: "Designed the agentic graph patterns ISO’s standards assistant runs on, and the evaluation that keeps its answers on official ISO sources.",
         pills: [{ label: "Grounded in ISO sources", href: LINKEDIN_EXPERIENCE, name: "Grounded in ISO sources: the ISO role on LinkedIn" }],
     },
-    {
+    harvard: {
         org: "Harvard University",
-        slug: "harvard",
-        logo: "harvard" as const,
+        logo: "harvard",
         role: (
             <>
                 <Link href={GAMI_SITE} className="relative z-10 underline underline-offset-4 decoration-line-20 hover:decoration-current transition-colors cursor-none">Global Alliance for Medical Innovation</Link>
@@ -66,10 +65,12 @@ const buildProjects = (stats: PackageStats) => [
         line: "A WhatsApp assistant answering blood donation questions in Kenya, with query rewriting and guardrails for personal data and prompt injection.",
         pills: [{ label: "Best Presentation, 2025", href: GAMI_AWARD_POST, name: "Best Presentation, 2025: the award post on LinkedIn" }],
     },
-];
+});
 
 export function WorkSection({ stats }: { stats: PackageStats }) {
-    const PROJECTS = buildProjects(stats);
+    const cards = buildProjects(stats);
+    // In FEATURED's order, which /work shares, so a click lands on the same card there (lib/cardHandoff.ts).
+    const PROJECTS = FEATURED.map((slug) => ({ slug, ...cards[slug] }));
     const router = useRouter();
 
     return (

@@ -46,7 +46,7 @@ export function ParticleSection({ stats }: { stats: PackageStats }) {
             ref={containerRef}
             // Same long-press problem as the contact canvas: a finger held on the field makes iOS select the headline
             // and raise the Copy / Search callout. Coarse pointers only, so the sentence stays selectable with a mouse.
-            className="relative w-full h-svh overflow-hidden pointer-coarse:select-none [-webkit-touch-callout:none]"
+            className="relative w-full min-h-svh overflow-hidden pointer-coarse:select-none [-webkit-touch-callout:none]"
             style={{ background: 'var(--spine-particle)', marginBottom: '-1px' }}
             // An inverted cursor dot vanishes over the light pigment, so CursorProvider draws it solid here.
             data-cursor="solid"
@@ -56,7 +56,10 @@ export function ParticleSection({ stats }: { stats: PackageStats }) {
             {/* Light theme sentinel covers the bottom portion — shifts Navbar to charcoal text */}
             <div className="absolute bottom-0 left-0 w-full h-[45%] pointer-events-none" data-theme="light" />
 
-            <div className="absolute inset-0 z-10 pointer-events-none p-6 md:p-12 lg:p-20 pt-[clamp(5rem,10vw,10rem)]">
+            {/* min-h, and the text in flow, as in the hero: on a short screen the headline grows the section instead of
+                being cut off. md:pt-12 lg:pt-20 keep the top where p-6 md:p-12 lg:p-20 always put it, over the clamp;
+                the bottom clears the ScrollCue. */}
+            <div className="relative z-10 min-h-svh pointer-events-none px-6 md:px-12 lg:px-20 pt-[clamp(5rem,10vw,10rem)] md:pt-12 lg:pt-20 pb-[clamp(4.5rem,8vw,6rem)]">
                 <m.div
                     initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}

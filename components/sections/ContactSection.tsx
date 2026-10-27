@@ -41,13 +41,14 @@ export function ContactSection() {
             ref={containerRef}
             // Press-and-hold is the interaction (1.1s on touch), which iOS reads as selecting the CONNECT label and
             // raising the Copy / Search callout mid-charge. Both are off for this section only.
-            className="relative w-full h-svh overflow-hidden pointer-coarse:select-none [-webkit-touch-callout:none]"
+            className="relative w-full min-h-svh overflow-hidden pointer-coarse:select-none [-webkit-touch-callout:none]"
             style={{ background: 'var(--spine-contact)' }}
             data-theme="dark"
             // An inverted cursor dot vanishes over the light pigment, so CursorProvider draws it solid here.
             data-cursor="solid"
         >
-            <div className="absolute inset-0 z-10 p-6 md:p-12 lg:p-20 pt-[clamp(5rem,10vw,10rem)] pb-12 flex flex-col justify-between pointer-events-none">
+            {/* min-h, and the text in flow, as in the hero: on a short screen CONNECT grows the section instead of being cut off. */}
+            <div className="relative z-10 min-h-svh p-6 md:p-12 lg:p-20 pt-[clamp(5rem,10vw,10rem)] pb-12 flex flex-col justify-between pointer-events-none">
 
                 {/* Top Area */}
                 <div className="relative w-full max-w-[1400px] mx-auto flex flex-col gap-8 lg:gap-0 lg:flex-row lg:justify-between lg:items-start">
