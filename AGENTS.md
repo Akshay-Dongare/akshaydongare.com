@@ -50,7 +50,10 @@ move the plugin on its own and bring new errors, as 7.1 did; update packages by
 name and run lint after.
 
 Dependabot (`.github/dependabot.yml`) opens update pull requests weekly, for npm and for the workflow's actions, and
-each goes through CI and a Vercel preview like any other. What must move together shares one pull request, majors
+each goes through CI and a Vercel preview like any other. Every action in the workflow is pinned to a full commit SHA
+with its release in a comment, because a tag can be moved to other code and a commit cannot, which is how the
+tj-actions/changed-files compromise of March 2025 reached its users; Dependabot rewrites the SHA and the comment
+together. Pin any new action the same way, resolving the tag with `git ls-remote`. What must move together shares one pull request, majors
 included: `next` with `eslint-config-next`, React with its types and with R3F, whose peer range caps React's minor, and
 three with its types. npm only warns on a broken peer range, so a React bump without R3F would arrive green. The rest
 of npm shares one minor-and-patch pull request and its majors come one at a time, but a package whose newest release is
