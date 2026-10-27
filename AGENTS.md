@@ -63,7 +63,9 @@ three with its types. npm only warns on a broken peer range, so a React bump wit
 of npm shares one minor-and-patch pull request and its majors come one at a time, but a package whose newest release is
 a major leaves that group entirely, patches and all. So `eslint` and `typescript` take no majors from the bot:
 eslint-config-next's plugins cap eslint at ^9 and typescript-eslint caps TypeScript below 6, so those majors would
-arrive red; drop each rule once its range opens. `@types/node` takes none either: it follows the Node major that Vercel
+arrive red; drop each rule once its range opens. `framer-motion` takes no majors by choice: 14.4 added 16KB raw and
+6.3KB gzipped to every page's first load, past the budget, for features the site does not use, where 12.43 added 1.4KB
+(#44, closed). `@types/node` takes none either: it follows the Node major that Vercel
 and CI build on, 22, so change it, Vercel's Node version and CI's `node-version` together, by hand.
 `eslint-plugin-react-hooks` comes in through `eslint-config-next`, so it moves only in the `next` group, where CI's lint
 is what catches a new rule. A release waits seven days before it is proposed (`cooldown`), because compromised npm
