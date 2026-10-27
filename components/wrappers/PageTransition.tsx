@@ -1,6 +1,7 @@
 "use client";
 
-import { useLayoutEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef } from "react";
+import { afterClientNavigation, focusWithoutScroll, notePageMount } from "@/lib/focus";
 
 // The entrances that play from first paint (.enter in globals.css).
 const ENTRANCES = new Set(["enter", "enter-fade"]);
@@ -12,20 +13,27 @@ let serverPage: Element | null = typeof document === "undefined" ? null : docume
 // An AnimatePresence exit here would never run, so there is none. The entrance is CSS, not Framer, so the prerendered
 // page paints before the bundle has loaded and hydrated.
 export default function PageTransition({ children }: { children: React.ReactNode }) {
-    const ref = useRef<HTMLDivElement>(null);
+    const page = useRef<HTMLDivElement>(null);
+    const self = useRef({});
+    useLayoutEffect(() => notePageMount(self.current), []);
     // When React abandons hydration and client-renders the root (see PrepaintGuard), every element is new and its
     // entrance would start again, so a page that had already faded in blinked out and back. Those finish at once.
     useLayoutEffect(() => {
         const server = serverPage;
         serverPage = null;
-        const page = ref.current;
-        if (!page || !server || server === page) return;
-        for (const a of page.getAnimations({ subtree: true })) {
+        if (!page.current || !server || server === page.current) return;
+        for (const a of page.current.getAnimations({ subtree: true })) {
             if (a instanceof CSSAnimation && ENTRANCES.has(a.animationName)) a.finish();
         }
     }, []);
+    // After a client navigation focus moves to the new page's h1, so the next Tab starts in its content. A page that
+    // already placed focus, as /work does on the card it was sent to, keeps it; child effects run first.
+    useEffect(() => {
+        if (!afterClientNavigation() || page.current?.contains(document.activeElement)) return;
+        focusWithoutScroll(page.current?.querySelector("h1") ?? null);
+    }, []);
     return (
-        <div ref={ref} data-page className="enter [--enter-ms:300ms] w-full h-full min-h-screen">
+        <div ref={page} data-page className="enter [--enter-ms:300ms] w-full h-full min-h-screen">
             {children}
         </div>
     );
