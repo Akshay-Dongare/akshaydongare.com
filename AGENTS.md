@@ -50,7 +50,11 @@ move the plugin on its own and bring new errors, as 7.1 did; update packages by
 name and run lint after.
 
 Dependabot (`.github/dependabot.yml`) opens update pull requests weekly, for npm and for the workflow's actions, and
-each goes through CI and a Vercel preview like any other. Every action in the workflow is pinned to a full commit SHA
+each goes through CI like any other, but with no Vercel deployment: `vercel.json` turns deployments off for
+`dependabot/**`. CI's browser job already builds every pull request, and each deployment Vercel keeps adds to the
+project's Function Storage, which the free plan caps at 10GB; a day of 89 deployments in October 2026 brought a 75%
+warning. The pattern needs both stars, because minimatch's single `*` stops at a slash and Dependabot's branches
+carry two (`dependabot/npm_and_yarn/...`), so `dependabot/*` matches none of them. Every action in the workflow is pinned to a full commit SHA
 with its release in a comment, because a tag can be moved to other code and a commit cannot, which is how the
 tj-actions/changed-files compromise of March 2025 reached its users; Dependabot rewrites the SHA and the comment
 together. Pin any new action the same way, resolving the tag with `git ls-remote`. What must move together shares one pull request, majors
