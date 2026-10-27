@@ -13,6 +13,8 @@ npm run lint     # ESLint directly (`next lint` was removed in Next 16)
 npm run typecheck # tsc --noEmit
 npm test         # unit tests in tests/, on Node's own runner
 npm run start    # serve the production build locally
+npm run e2e      # browser tests in e2e/, against a fresh production build on port 3100
+npm run budget   # first-load JS per route against e2e/budget.json; run after a build
 ```
 
 Lint is clean and expected to stay that way, so a non-zero exit means you
@@ -70,8 +72,41 @@ may go through the `@/` alias. They cover what has broken before and runs where 
 and their fallback (`lib/downloads.ts`, with `fetch` stubbed), both pre-paint scripts (`lib/prepaint.ts`, run in a
 `node:vm` stand-in for the page before first paint), and the particle generators' buffers. Each was checked by
 reintroducing a past bug: flooring the monthly figure, and marking the boot played only after hydration, both fail.
-`.github/workflows/ci.yml` runs lint, the type check and the tests on every pull request and on `main`; Vercel builds
-every pull request, so CI does not.
+`.github/workflows/ci.yml` runs lint, the type check and the tests on every pull request and on `main`, and beside
+that job a second one builds the site and runs the browser tests and the JS budget. It builds in the runner rather
+than testing the Vercel preview, which sits behind Vercel Authentication, and because the budget reads the build's own
+output. It caches Playwright's browser download, keyed on the Playwright version, and uploads traces when a spec fails.
+
+The browser tests (`e2e/*.spec.ts`, Playwright, Chromium only) cover what only a real browser shows, most of the fixes
+of October 2026. `playwright.config.ts` builds and starts the production server itself, since the pre-paint scripts,
+the hydration fallback and the first-load chunks all differ under `next dev`; locally it reuses a server already on
+port 3100, so after an edit stop that server first, or the specs test the old build. Every spec runs at 1440 and at
+375 wide, and each asserts the outcome a reader sees, never how it is produced, so the boot, the entrances and focus
+handling can change underneath them: the PrepaintGuard repro under BootSequence, with no mask and `<html>` keeping
+`skip-boot` and dark; a first visit painting the mask, and a reload while it is still up painting none; reduced motion
+never showing it; a mouse click at 40% down the Airbnb card landing with 40% of its /work twin under the pointer,
+marked landed, with `card-flight` gone; the hero's h1 and facts at full opacity in a 412x5000 viewport; every page
+answering 200 with no console error and the headers from `next.config.ts`, `/_not-found` carrying noindex (`next start`
+answers it 404, Vercel 200, so only the header is asserted), and the old URLs answering 308; the mode switch flipping
+`data-mode` both ways and `mode-switching` coming off after; and an unscrolled homepage fetching no three.js, while one
+scroll fetches it, so the marker string is known to still match. They wait on conditions, never on fixed sleeps, and
+there are no retries, so a spec that passes on a second try counts as a flake to fix. The mode switch's frame flash is
+deliberately not tested: headless Chromium never shows it (under Navbar Dark/Light Theme Detection). Each spec was
+checked by reintroducing a past bug: PrepaintGuard doing nothing, the boot marked played only after hydration, the
+hero's facts on the site's `-10%` in-view reveal, the handoff scroll removed (40% landed as 67%), and a static three.js
+import on the homepage all fail.
+
+The budget (`e2e/budget.ts`) reads `.next/diagnostics/route-bundle-stats.json`, which Next 16 writes on every build.
+Its chunk list per page matches the prerendered HTML's script tags exactly, less the nomodule polyfill a modern
+browser never fetches, so it is the first load as served; a browser fetches more right after (about 680KB on /),
+because Link prefetches other routes' chunks. The file gives raw bytes, so the script gzips the same chunks itself.
+In October 2026 / was 625KB raw and 197KB gzipped, and each route's budget is its figure plus 20KB raw and 6KB gzipped,
+rounded up: Framer Motion's full bundle coming back (39KB raw, 10KB gzipped) breaks it, and the static three.js import
+took / to 1346KB. A pull request that means to grow runs `npm run budget -- --update` and commits `e2e/budget.json`,
+saying why. A new route without a budget fails, as does a budget for a route that is gone. The stale Turbopack cache
+note below applies to the build the specs run on, too. `@playwright/test` is 1.63.0, the version whose Chromium is
+preinstalled in cloud containers; if Dependabot moves it past that, launch locally with
+`executablePath: '/opt/pw-browsers/chromium'` rather than running `playwright install`.
 
 Commits are authored as Akshay Dongare <akshay@akshaydongare.com> and carry no AI attribution: no
 `Co-Authored-By` or `Claude-Session` trailers, and no model or tool names in the message. Pull request
@@ -106,9 +141,9 @@ Every page passes through this chain (defined in `app/layout.tsx`):
 BootSequence → CursorProvider → Navbar + <main> + Footer
 ```
 
-- **BootSequence** (`components/boot/BootSequence.tsx`): Plays a one-time iris-wipe animation on first visit (gated by `sessionStorage`). Renders children directly on repeat visits. The pre-paint script in `app/layout.tsx` decides and records it: it sets `bootPlayed` as the boot first paints, or adds `skip-boot`, and records the decision in `window.__prepaint` (`lib/prepaint.ts`), which the component reads in a layout effect, not the class and not storage. Not the class, because React can strip it: when anything edits the server HTML before hydration (an extension, Chrome translate, autofill, a password manager), React 19 abandons hydration and client-renders the root, and taking over `<html>` removes every attribute and re-applies only its JSX props. Whether an extension wins that race varies per load, so a reload replayed the intro at random, and the same wipe flipped a dark visit to light; the production build logs nothing. `PrepaintGuard` (`components/boot/PrepaintGuard.tsx`), the first child of `<body>`, puts `skip-boot`, `data-mode`, `colorScheme` and the theme colour back from the record in a layout effect, after that commit and before paint, and the skip is a layout effect too, so a client-rendered load paints as a hydrated one. Do not move either back to a passive effect or back to reading `<html>`. To reproduce, add an init script that sets `sessionStorage.bootPlayed` and appends a space to the `h1` on `DOMContentLoaded`, then load a production build: the mask must be absent and `<html>` must carry `skip-boot`. If the scripts never ran, the component falls back to the same sessionStorage check. The mark used to wait for hydration, so a reload in the seconds before it played the whole boot again while a later reload skipped it, which read as random. Each tab is its own visit, so a new tab plays it once. A press skips it, since a new tab is how recruiters arrive from LinkedIn or email and an impatient click used to go through the mask to the hero's PyPI link: a `pointerdown` or a key before the reveal starts it at once and drops the typing hold, and one during it calls `finish()` on the panels, so the mask goes at once. The mask takes pointer events until the panels begin to part, 220ms into the reveal, so the click that skips lands on the mask rather than on a link the reader cannot see, and a Tab that skips is held back, since its focus would land behind the panels (SC 2.4.11). Keys with Cmd, Ctrl or Alt are browser shortcuts and pass untouched. A skip counts as the intro having played, there is no hint on screen, and nothing changes for anyone who waits: measured on a production build, a click during the typing opens the page 1.4s later on the same URL, and one during the reveal removes the mask within two frames (16 to 25ms). The listeners go when the mask does. Its lockup types itself like a terminal: `[ AKSHAY DONGARE ]` is clipped open a character at a time behind a block caret, the rule draws under it, and the role line prints after: the name at 50ms a character and the role at 20ms, done by about 2.1s from first paint, and the panels open 500ms after the role line finishes, waiting on its animation (`TypedLine`, `.typed-*` in globals.css). At 26ms and 7ms a character, with the panels on a fixed 900ms hold, it read as text flashing past before anyone could read it; keep the pace at reading speed. It is CSS so it runs before hydration. The reveal is the Web Animations API, which runs transform and opacity on the compositor, so the panels slide smoothly while hydration still holds the main thread; gsap tweened them from that thread and cost a 68KB download on exactly the visit that plays it. The curves are gsap's former ones: `power2.in` as `cubic-bezier(0.11, 0, 0.5, 0)` and `expo.inOut` as `cubic-bezier(0.87, 0, 0.13, 1)`.
+- **BootSequence** (`components/boot/BootSequence.tsx`): Plays a one-time iris-wipe animation on first visit (gated by `sessionStorage`). Renders children directly on repeat visits. The pre-paint script in `app/layout.tsx` decides and records it: it sets `bootPlayed` as the boot first paints, or adds `skip-boot`, and records the decision in `window.__prepaint` (`lib/prepaint.ts`), which the component reads in a layout effect, not the class and not storage. Not the class, because React can strip it: when anything edits the server HTML before hydration (an extension, Chrome translate, autofill, a password manager), React 19 abandons hydration and client-renders the root, and taking over `<html>` removes every attribute and re-applies only its JSX props. Whether an extension wins that race varies per load, so a reload replayed the intro at random, and the same wipe flipped a dark visit to light; the production build logs nothing. `PrepaintGuard` (`components/boot/PrepaintGuard.tsx`), the first child of `<body>`, puts `skip-boot`, `data-mode`, `colorScheme` and the theme colour back from the record in a layout effect, after that commit and before paint, and the skip is a layout effect too, so a client-rendered load paints as a hydrated one. Do not move either back to a passive effect or back to reading `<html>`. To reproduce, add an init script that sets `sessionStorage.bootPlayed` and appends a space to the `h1` on `DOMContentLoaded`, then load a production build: the mask must be absent and `<html>` must carry `skip-boot`. If the scripts never ran, the component falls back to the same sessionStorage check. If the bundle never runs, nothing removes the mask, so a CSS backstop (`boot-mask-backstop`) hides it 10s after first paint; the boot is over within about 2s of hydration, 6s at most, which leaves a slow network room to play it. The mark used to wait for hydration, so a reload in the seconds before it played the whole boot again while a later reload skipped it, which read as random. Each tab is its own visit, so a new tab plays it once. A press skips it, since a new tab is how recruiters arrive from LinkedIn or email and an impatient click used to go through the mask to the hero's PyPI link: a `pointerdown` or a key before the reveal starts it at once and drops the typing hold, and one during it calls `finish()` on the panels, so the mask goes at once. The mask takes pointer events until the panels begin to part, 220ms into the reveal, so the click that skips lands on the mask rather than on a link the reader cannot see, and a Tab that skips is held back, since its focus would land behind the panels (SC 2.4.11). Keys with Cmd, Ctrl or Alt are browser shortcuts and pass untouched. A skip counts as the intro having played, there is no hint on screen, and nothing changes for anyone who waits: measured on a production build, a click during the typing opens the page 1.4s later on the same URL, and one during the reveal removes the mask within two frames (16 to 25ms). The listeners go when the mask does. Its lockup types itself like a terminal: `[ AKSHAY DONGARE ]` is clipped open a character at a time behind a block caret, the rule draws under it, and the role line prints after: the name at 50ms a character and the role at 20ms, done by about 2.1s from first paint, and the panels open 500ms after the role line finishes, waiting on its animation (`TypedLine`, `.typed-*` in globals.css). At 26ms and 7ms a character, with the panels on a fixed 900ms hold, it read as text flashing past before anyone could read it; keep the pace at reading speed. It is CSS so it runs before hydration. The reveal is the Web Animations API, which runs transform and opacity on the compositor, so the panels slide smoothly while hydration still holds the main thread; gsap tweened them from that thread and cost a 68KB download on exactly the visit that plays it. The curves are gsap's former ones: `power2.in` as `cubic-bezier(0.11, 0, 0.5, 0)` and `expo.inOut` as `cubic-bezier(0.87, 0, 0.13, 1)`.
 - **CursorProvider** (`components/cursor/CustomCursor.tsx`): Replaces the native cursor with a hyper-minimal 5px dot that behaves the same in both modes, so a mode switch never changes how it feels: white with `mix-blend-mode: difference`, so it inverts whatever it is over, except over the two particle fields (`data-cursor="solid"` on `ParticleSection` and `ContactSection`), where it turns solid with a 1.5px ring in the page colour, ink and cream in light, white and void in dark (`--cursor-solid`, `--cursor-solid-ring`). An inverted dot falls to 1.1:1 on the light olive pigment and 2.1:1 on the terracotta, and the ring keeps the solid one visible on the brightest dark-mode cores too. Light used to be a solid ink dot everywhere, which made the two modes feel different. Scales to 8px on hover via a 150ms spring. It runs only while the page has focus and the pointer is inside it: with another app in front, macOS will not let the browser hide its pointer, so the dot hides and the native pointer returns rather than showing both. Back from another app, macOS can keep its arrow up while Chrome re-sets the same hidden cursor object, so on focus, a tab switch, a Back restore and pointer re-entry the provider toggles `html.cursor-resync` three times, 150ms apart; that swaps `none` for a transparent 1px image through `--hidden-cursor`, a new object Chrome has to set. Keep `var(--hidden-cursor, none)`: plain `none` brings the arrow back. Tracking uses raw DOM events driving a Framer spring at 60fps; nothing consumes a cursor context, so there is none. Native `cursor: none` is set globally in `globals.css`, on `<html>` itself as well as `body` and controls, plus `html::view-transition` in a rule of its own: the mode switch's view transition puts a snapshot layer off `<html>` under the pointer for 600ms, and the arrow came back over it.
-- **`app/template.tsx`**: Wraps every route in a `PageTransition` fade/slide — this is the Next.js `template.tsx` (re-mounts on every navigation, unlike `layout.tsx`).
+- **`app/template.tsx`**: Wraps every route in a `PageTransition` fade/slide — this is the Next.js `template.tsx` (re-mounts on every navigation, unlike `layout.tsx`). The fade is the CSS `.enter` entrance, so each remount replays it. When React abandons hydration and client-renders the root, every element is new and the entrance would replay over a page that had already faded in, a blink; `PageTransition` compares itself with the wrapper the server HTML arrived with and finishes the entrances in its subtree when they differ. With the reproduction above, main's wrapper went back to opacity 0 at 220ms and faded in again; it now holds at 1.
 
 ### Navbar Dark/Light Theme Detection
 
@@ -167,7 +202,8 @@ Google builds the result from the server HTML, so these hold it to what a recrui
 - **First-screen reveals run on mount.** Google renders in a tall viewport, and every `h-svh`
   section stretches with it: at 412x5000 the hero is 5000px and its h1 sits at y 4708, outside
   a `whileInView` margin, so it stayed at the server-rendered `opacity:0`. Anything on the first
-  screen uses `animate`, never `whileInView`.
+  screen enters on mount, never `whileInView`, and in CSS, not Framer (under Reveal timing), so it
+  shows whether or not the bundle runs.
 - **Not-found.** `/_not-found` carries `X-Robots-Tag: noindex`. Requested directly it answers
   200, and every real 404 names it as canonical through the root layout's `./`.
 - **Site name.** The WebSite JSON-LD pairs `name: "Akshay Dongare"` with the domain as
@@ -379,7 +415,8 @@ transition (`flyCard` in `lib/cardFlight.ts`). The card and its /work twin share
 carries the one into the other over 400ms while the rest of the page fades as it always does. The update waits for
 /work to report its card mounted and scrolled (`cardArrived`, from WorkContent's mount effect, after
 `landCardUnderPointer`), so the flight ends where the card rests and nothing moves after it lands; after 1.5s it lands
-without the flight. The twin starts at rest, and the landed cue is paused under `html.card-flight` until the card
+without the flight. The twin starts at rest: WorkContent leaves the entrance class off its wrapper, decided once at
+mount, since adding the class when the flight clears would start the entrance then. The rest of /work enters as usual, and the landed cue is paused under `html.card-flight` until the card
 arrives. The flying box is clipped to the card's corners and filled with the landed card's colour; the outgoing card
 holds still underneath while the arriving one fades in between 25% and 60% of the flight, so their text overlaps only
 briefly. Modified clicks, reduced motion and browsers without the API navigate as before. Nothing inside the update may
@@ -561,6 +598,16 @@ never inside the wrapper. If you add a section, check the joint rather than eyeb
 it; the deltas above are all 0 and should stay that way. The code overlay also fades out over its last 15%, in both
 modes, because on a phone the diff runs past the section and the Contact joint sliced its glyphs.
 
+**The Code label is on screen whenever the section is.** "Read this diff on GitHub" is the only sign the diff is a
+link, so the overlay's drift is at rest when the section fills the screen: `15%` to `0%` to `-15%` across the scroll,
+the same 30% of travel. It used to run `0%` to `-30%`, and the block is about 1,490px tall, so by the time the section
+filled the screen the label sat 96px above it, at 1280x720, 1440x900 and 390x664 alike. Two things keep it there under
+keyboard focus too. The overlay clips with `overflow: clip`, not `hidden`: a hidden box is still a scroll container,
+and focusing the link scrolled it by its 128px top padding. And the drift holds at rest while the link has
+`:focus-visible`, because the browser aims its focus scroll at the drifted position and the drift then moves on under
+it: Tab from above left the label 20 to 43px above the viewport. With both, focus puts the label 112px down from either
+direction, as reduced motion does, and the snap back on blur is about 5px.
+
 **The order and the gradients are coupled.** `ParticleSection` is the dark→light bridge
 and `WorkSection` is the light→dark bridge back, so the two light sections must sit
 between them. Reordering anything across that arc means re-deriving the seam colours,
@@ -578,10 +625,24 @@ strict>` in `CursorProvider`, which saves 39KB (10KB gzipped) on every page; `st
 which would pull the full bundle back in. `domAnimation` covers everything the site uses: animate, `whileInView`,
 exit, height and the cursor's springs. Layout or drag animation would need `domMax`.
 
+**First-screen entrances are CSS.** The page wrapper, the hero's two blocks and the opening of every sub-page (h1,
+intro, and /work's cards, /contact's links and /about's portrait and body) use `.enter` in globals.css, not Framer: a
+fade and a rise from first paint, on Framer's former timing, `cubic-bezier(0.25, 0.1, 0.25, 1)` over 0.35s, or 0.3s
+through `[--enter-ms:300ms]`, with the delay inline as `animationDelay` and a 30px rise through `[--enter-y:30px]`. Framer
+rendered them as inline `opacity:0` and started them at hydration, so nothing on the first screen painted before
+196KB gzipped of script had loaded and run. Measured on `next start` with a repeat visit at 412px, 4x CPU and slow 4G,
+median of five: the h1 first shows at 0.85s on /, 0.82s on /work and 0.85s on /about, against 2.59s, 2.51s and 2.43s,
+and LCP falls from 2.96s, 2.88s and 2.87s to 1.18s, 1.15s and 1.24s. CLS is unchanged against main on an unthrottled
+load, 0.0006 at 375 and 0.0001 at 1440, all of it the hero's typing caret, which rides on `left`. Under the throttle /
+showed 0.0005 against 0.0001, because the typing used to run while its parent was still invisible. The fill is
+`backwards` with no end keyframe, so a finished entrance leaves no transform, as Framer did. Reduced motion keeps the
+fade and drops the rise, as `MotionConfig reducedMotion="user"` does. Below the fold the reveals stay on Framer's
+`whileInView`, and they are the only `opacity:0` left in the server HTML, which the `<noscript>` style in layout.tsx clears.
+
 **Reveal timing.** Content fade-ins are capped at 350ms with delays under 200ms.
 NN/g found scroll-triggered reveals slower than 500ms cause users to skip the content
 outright, and the previous 800–1000ms reveals were outside that band. Keep new
-`transition={{ duration }}` values on content at or under 0.35s. This does not apply to
+`transition={{ duration }}` values on content, and `--enter-ms`, at or under 0.35s. This does not apply to
 the WebGL particle physics, which are continuous rather than reveal animations.
 
 **The reader has seconds, so nothing they need sits behind a click.** The hero's `<dl>`

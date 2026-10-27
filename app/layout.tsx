@@ -107,8 +107,10 @@ export default function RootLayout({
         <meta name="theme-color" content="#faf6ee" suppressHydrationWarning />
         <script dangerouslySetInnerHTML={{ __html: MODE_SCRIPT }} />
         <script dangerouslySetInnerHTML={{ __html: BOOT_SKIP_SCRIPT }} />
-        {/* With no JS (scripting off, a blocked bundle, a stale page missing its chunk) the boot mask and Framer's
-            inline opacity:0 never clear; a stylesheet !important beats a non-important inline style, so this does. */}
+        {/* With scripting off, the boot mask and the inline opacity:0 of Framer's below-the-fold reveals never clear; a
+            stylesheet !important beats a non-important inline style, so this does. The first screen needs none of it,
+            since its entrances are CSS. With scripting on and a bundle that never runs, noscript does nothing: the
+            first screen still shows, the mask goes by its CSS backstop, and the reveals further down stay hidden. */}
         <noscript>
           <style>{`.boot-mask{display:none!important}[style*="opacity:0"]{opacity:1!important;transform:none!important}`}</style>
         </noscript>

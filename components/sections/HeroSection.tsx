@@ -65,13 +65,9 @@ export function HeroSection({ stats }: { stats: PackageStats }) {
             <div className="relative w-full min-h-svh max-w-[1400px] mx-auto z-10 flex flex-col pt-[clamp(5.5rem,14svh,7rem)] pb-[clamp(4.5rem,8vw,6rem)] px-[clamp(1.5rem,5vw,3rem)]">
 
                 {/* Em measure holds three lines; the height cap shrinks it on short screens. AGENTS.md, Hero layout.
-                    Reveals run on mount, not in view: Google renders in a tall viewport where h-svh stretches. */}
-                <m.div
-                    className="my-auto"
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1], delay: 0.08 }}
-                >
+                    Reveals run on mount, not in view: Google renders in a tall viewport where h-svh stretches. They are CSS
+                    (.enter in globals.css), so the first screen paints before the bundle has loaded and hydrated. */}
+                <div className="enter [--enter-y:30px] my-auto" style={{ animationDelay: "80ms" }}>
                     <div className="flex flex-col gap-1.5 mb-6">
                         {/* self-start: a stretched flex item would set the clip's 100% to the column, not the text. */}
                         <TypedLine
@@ -96,15 +92,13 @@ export function HeroSection({ stats }: { stats: PackageStats }) {
                     <h1 className="text-display-xl text-fg-100 font-sans max-w-[14em]" style={{ fontSize: "clamp(min(2.8rem, 6.5svh), min(6vw, 9.5svh), 5.5rem)" }}>
                         I build the layer between your application and the model, and I{"\u00a0"}make it hold.
                     </h1>
-                </m.div>
+                </div>
 
                 {/* What a recruiter scans for in seconds, who, for whom and when, gets a row of its own at the foot,
                     set off from the claim by a hairline, with the keywords at its far end. */}
-                <m.div
-                    className="mt-[clamp(1.5rem,6svh,3rem)] pt-6 border-t border-line-8 flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1], delay: 0.16 }}
+                <div
+                    className="enter mt-[clamp(1.5rem,6svh,3rem)] pt-6 border-t border-line-8 flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6"
+                    style={{ animationDelay: "160ms" }}
                 >
                     <dl className="grid grid-cols-[auto_1fr] gap-x-5 gap-y-2.5 items-baseline">
                         <dt className="text-label text-lbl-60">AI systems for</dt>
@@ -127,7 +121,7 @@ export function HeroSection({ stats }: { stats: PackageStats }) {
                         Provider routing<br />
                         Auth &amp; concurrency
                     </p>
-                </m.div>
+                </div>
             </div>
             <ScrollCue />
         </section>
