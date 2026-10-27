@@ -228,7 +228,12 @@ homepage, where it scrolls instead, without the brackets a screen reader would r
 rule by putting `aria-hidden` on the visible text: axe goes quiet while "click AD" still fails.
 
 **The Code link is named by its content and is the phone scroller.** It wraps the label and both diff
-`<pre>`s, so a tap anywhere opens the PR. Its name is the visible label plus an `sr-only` tail with the
+`<pre>`s, so a tap anywhere opens the PR. A mouse from `md` is held to the ink: the link takes
+`pointer-events: none` under `(pointer: fine)`, and the label (`w-fit`) and every diff line (`w-fit`) take it back,
+so hover, the cursor's grow and a click all happen only over text. The link is a 620px by 1,490px block, and half of
+its area was empty, 341px of it to the right of the label alone, so the label lit up with the pointer nowhere near
+any text: 607 of 1,206 sampled points at 1440x900 were more than 8px from a glyph, and none are now. On hover the label
+and its `[ → ]`, which share one colour, take `lbl-hover`. Its name is the visible label plus an `sr-only` tail with the
 PR number and title, so the two cannot drift apart, and the `<pre>`s are `aria-hidden`, or the whole diff
 would be the name. Below `md` the link carries `overflow-x-auto` and the `-mx-6 px-6` bleed, and the
 `<pre>`s never scroll. Chrome and Firefox make a scroller with nothing focusable inside a Tab stop of its
@@ -426,7 +431,9 @@ wait on animation frames, which the browser holds until the new page is captured
 **Text never uses white or black utilities.** `text-fg-NN` replaces `text-white/NN`: in dark it
 is the same `color-mix` Tailwind emits for `text-white/NN`, in light a solid ink by role (NN 85
 and up `#1a1c13`, 65 to 80 `#272a1e`, 50 to 60 `#3d422c`). `text-lbl-NN` is the same on
-`.text-label` call sites and turns rust `#6b2a11` in light. Ink at partial alpha cannot stand in
+`.text-label` call sites and turns rust `#6b2a11` in light. The Code label's hover is `text-lbl-hover`: white/90 in
+dark, and in light the same rust 0.07 darker in OKLCH, `#561600`, so it deepens rather than jumping to ink as
+`light:hover:text-fg-100` does on the other labels. Ink at partial alpha cannot stand in
 for these: `#1a1c13` at 0.5 on sage measures 3.04:1. Borders and underlines use `line-NN`, light
 grounds in dark mode use `on-paper`.
 

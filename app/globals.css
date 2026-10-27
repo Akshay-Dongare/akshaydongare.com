@@ -46,6 +46,7 @@
   --color-fg-55: var(--fg-55);
   --color-fg-50: var(--fg-50);
   --color-lbl-100: var(--lbl-100);
+  --color-lbl-hover: var(--lbl-hover);
   --color-lbl-90: var(--lbl-90);
   --color-lbl-85: var(--lbl-85);
   --color-lbl-80: var(--lbl-80);
@@ -68,7 +69,8 @@
 }
 
 /* fg-NN is white at NN% in dark and a solid ink in light, where partial-alpha ink fails 4.5:1;
-   lbl-NN is the same for .text-label, rust in light. */
+   lbl-NN is the same for .text-label, rust in light. lbl-hover is a label under the pointer: white/90 in dark,
+   and in light the same rust 0.07 darker in OKLCH, so it deepens rather than turning to ink. */
 :root, [data-mode="light"] {
   --fg-100: #1a1c13;
   --fg-90: #1a1c13;
@@ -81,6 +83,7 @@
   --fg-55: #3d422c;
   --fg-50: #3d422c;
   --lbl-100: #6b2a11;
+  --lbl-hover: #561600;
   --lbl-90: #6b2a11;
   --lbl-85: #6b2a11;
   --lbl-80: #6b2a11;
@@ -163,6 +166,7 @@
   --fg-55: color-mix(in oklab, #ffffff 55%, transparent);
   --fg-50: color-mix(in oklab, #ffffff 50%, transparent);
   --lbl-100: #ffffff;
+  --lbl-hover: color-mix(in oklab, #ffffff 90%, transparent);
   --lbl-90: color-mix(in oklab, #ffffff 90%, transparent);
   --lbl-85: color-mix(in oklab, #ffffff 85%, transparent);
   --lbl-80: color-mix(in oklab, #ffffff 80%, transparent);
