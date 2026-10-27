@@ -8,6 +8,7 @@ import { GAMI_AWARD_POST, GAMI_SITE, HARVARD_SITE, LINKEDIN_EXPERIENCE, LITELLM_
 import { OrgLogo, type Org } from "@/components/ui/OrgLogo";
 import { landCardUnderPointer } from "@/lib/cardHandoff";
 import { cardArrived, FLIGHT_NAME, useCardFlight } from "@/lib/cardFlight";
+import { afterClientNavigation, focusWithoutScroll } from "@/lib/focus";
 
 // affiliation names the organisation for cards whose title does not, so it is not left to the logo alone.
 // id is the anchor a homepage card links to; those four keep the homepage's order so a click lands in the same column.
@@ -151,9 +152,12 @@ export function WorkContent({ stats }: { stats: PackageStats }) {
     const hashSynced = useSyncExternalStore(noSubscription, onClient, onServer);
     const flight = useCardFlight();
     // The handoff scroll comes first, so a card in flight lands where it rests and nothing moves after it arrives.
+    // After a client navigation focus goes to the landed card's title link, so a keyboard reader continues from that card.
     useEffect(() => {
         landCardUnderPointer();
-        cardArrived(readHash());
+        const id = readHash();
+        if (id && afterClientNavigation()) focusWithoutScroll(document.getElementById(id)?.querySelector<HTMLElement>("h2 a") ?? null);
+        cardArrived(id);
     }, []);
     return (
         <div
