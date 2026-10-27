@@ -54,12 +54,12 @@ export function AboutContent({ stats }: { stats: PackageStats }) {
                             className="link-in-text text-fg-85 underline underline-offset-4 decoration-line-20 hover:text-fg-55 transition-colors cursor-none"
                         >
                             langchain-ai
-                        </Link> organization as LangChain’s official LiteLLM integration, with its own page in the LangChain docs and an entry in the Python API reference. One interface to 140+ model providers, plus router-backed load balancing, embeddings and OCR loading. <Link
+                        </Link> organization as LangChain’s official LiteLLM integration, with its own page in the LangChain docs and an entry in the Python API reference. One interface to 140+ model providers, plus router-backed load balancing, embeddings and OCR loading. {stats.floor.total && "Over "}<Link
                             href={PYPI_URL}
                             className="link-in-text text-fg-85 hover:underline hover:underline-offset-4 hover:decoration-line-40 hover:text-fg-70 transition-colors cursor-none"
                         >
                             {stats.long}
-                        </Link> downloads across {stats.releases} releases, and around {stats.monthlyLong} every month. I also contribute upstream to <Link
+                        </Link> downloads across {stats.releases} releases, and {stats.floor.monthly ? "over" : "around"} {stats.monthlyLong} every month. I also contribute upstream to <Link
                             href="https://github.com/langchain-ai/langchain/pulls?q=is%3Apr+author%3AAkshay-Dongare+"
                             className="link-in-text text-fg-85 underline underline-offset-4 decoration-line-20 hover:text-fg-55 transition-colors cursor-none"
                         >

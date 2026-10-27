@@ -70,7 +70,7 @@ export function ParticleSection({ stats }: { stats: PackageStats }) {
                     >
                         {/* The overlay is pointer-events-none so the mouse reaches the
                             particle field; the link has to opt back in explicitly. */}
-                        <Link
+                        {stats.floor.monthly && "Over "}<Link
                             href={PEPY_URL}
                             className="whitespace-nowrap pointer-events-auto cursor-none hover:underline hover:underline-offset-[10px] hover:decoration-line-40 transition-colors"
                         >

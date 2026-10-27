@@ -24,7 +24,7 @@ async function loadGeist(): Promise<ArrayBuffer | null> {
 
 function chips(stats: PackageStats) {
     return [
-        `${stats.compact} DOWNLOADS`,
+        `${stats.compact}${stats.floor.total ? "+" : ""} DOWNLOADS`,
         `${stats.monthlyCompact}+ EVERY MONTH`,
         "MAINTAINED IN THE LANGCHAIN ORG",
     ];

@@ -11,6 +11,9 @@ import { OrgLogo } from "@/components/ui/OrgLogo";
 import { handOffCard } from "@/lib/cardHandoff";
 import { flyCard } from "@/lib/cardFlight";
 
+// A fallback figure is a floor, so its pill says "15M+".
+const atLeast = (value: string, floor: boolean) => (floor ? `${value}+` : value);
+
 // All four are open at once: a recruiter gives the page seconds, and a name behind a click
 // is a name they never read. The full account of each lives on /work.
 const buildProjects = (stats: PackageStats) => [
@@ -38,8 +41,8 @@ const buildProjects = (stats: PackageStats) => [
             </>
         ),
         pills: [
-            { label: `${stats.compact} downloads`, href: PYPI_URL, name: `${stats.compact} downloads: langchain-litellm on PyPI` },
-            { label: `${stats.monthlyCompact} a month`, href: PEPY_URL, name: `${stats.monthlyCompact} a month: the last 30 days on pepy.tech` },
+            { label: `${atLeast(stats.compact, stats.floor.total)} downloads`, href: PYPI_URL, name: `${atLeast(stats.compact, stats.floor.total)} downloads: langchain-litellm on PyPI` },
+            { label: `${atLeast(stats.monthlyCompact, stats.floor.monthly)} a month`, href: PEPY_URL, name: `${atLeast(stats.monthlyCompact, stats.floor.monthly)} a month: the last 30 days on pepy.tech` },
         ],
     },
     {
