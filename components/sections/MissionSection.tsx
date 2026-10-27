@@ -20,7 +20,7 @@ export function MissionSection() {
     return (
         <section
             ref={containerRef}
-            className="relative w-full h-svh overflow-hidden"
+            className="relative w-full min-h-svh overflow-hidden"
             style={{ background: 'var(--spine-mission)', marginBottom: '-1px' }}
             data-theme="dark"
         >
@@ -31,7 +31,9 @@ export function MissionSection() {
                 <div className="absolute inset-0 opacity-40" style={{ background: 'var(--depth-mission)' }} />
             </m.div>
 
-            <div className="relative w-full h-full max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 pt-[clamp(5rem,10vw,10rem)] pb-12 flex flex-col justify-between z-10">
+            {/* min-h, and the text in flow, as in the hero: on a short screen the text grows the section instead of being
+                cut off, and the bottom padding keeps it clear of the ScrollCue. */}
+            <div className="relative w-full min-h-svh max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 pt-[clamp(5rem,10vw,10rem)] pb-[clamp(4.5rem,8vw,6rem)] flex flex-col justify-between z-10">
 
                 {/* Top block */}
                 <div className="flex flex-col md:flex-row justify-between items-start gap-10 md:gap-0 mt-12 md:mt-24">

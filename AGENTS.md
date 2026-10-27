@@ -545,6 +545,19 @@ than the visible area and pushes bottom-anchored content under the collapsing UR
 not `dvh` either, which would re-animate section height as that bar moves). They carry
 `marginBottom: '-1px'` to prevent sub-pixel rendering gaps.
 
+The four sections that carry text, Hero, Particle, Mission and Contact, use `min-h-svh` with the text in
+normal flow, so on a short screen the text grows the section instead of being cut off where nobody can
+scroll to it. At `h-svh` with the text in an `absolute inset-0` overlay, the Mission APPROACH paragraph
+ran about 85px past the foot of a 548px section on an iPhone SE, the h2 was cut on a landscape phone, and
+the paragraph was cut at 200% zoom on a 1366x768 laptop; at 400% the Particle headline and CONNECT went
+as well (WCAG 1.4.4, 1.4.10). Where the content fits, the section is exactly one svh tall and nothing moves: heights and every
+text position measured identical to the `h-svh` version at 375x667, 375x812, 1280x800, 1366x768 and
+1440x900, in both modes. `overflow-hidden` stays on the section, as on the hero, for the parallax and
+canvas layers; with the text in flow it can no longer clip it. Text in a section with a `ScrollCue` ends
+on `pb-[clamp(4.5rem,8vw,6rem)]`, which clears the cue. The Particle sentinels are percentages, so the
+Navbar switches at the same place where the section fits, and at the same fraction where it grows; the
+canvases are `inset-0`, so a grown section gets a taller field, and the climax's floor stays at its foot.
+
 ```
 HeroSection       void → deep                        (dark)
 ParticleSection   deep → surface → mist              ← dark-to-light bridge (5 stops)
@@ -580,6 +593,16 @@ stopping it dead. Every joint on the home page now sits at 3.3x or below with a 
 and Hero into ParticleSection sits at 3.0x, which is floored by 8-bit colour rather than by the
 curve. The closest to the ceiling is About into Work at 768px in dark mode, 3.28x, since the homepage
 portrait took a fixed 4:5 frame and the About section got shorter there.
+
+A section that grows stretches its gradient and flattens its slope. That helps Hero into Particle, Particle
+into About and Contact into the footer, and costs Mission into Code: the code ramp holds its slope while
+Mission's falls, so the ratio is 2.0x times Mission's growth. It is 2.4x at 375x548, 2.8x at 844x340, and
+3.0x at 1366x768 at 200% zoom, the highest at any 100% or 200% laptop size. Only at 200% on a phone or
+400% anywhere, where Mission runs to three or four screens, does it pass the ceiling, and there the
+`h-svh` version already measured 6x to 20x at other joints. Mission's whole ramp is 8 levels, so holding
+its slope at that height would need a flat band; the stops were left alone. The hero already grows on
+short landscape screens, so at 844x340 dark Hero into Particle measures 4.3x and Contact into the footer
+3.6x, before and after this change.
 
 **Every joint is measured, and they are all 0.** Adjacent sections must agree on the
 colour at their shared edge; a mismatch shows up as a hard line across the full width,
@@ -630,9 +653,11 @@ through `[--enter-ms:300ms]`, with the delay inline as `animationDelay` and a 30
 rendered them as inline `opacity:0` and started them at hydration, so nothing on the first screen painted before
 196KB gzipped of script had loaded and run. Measured on `next start` with a repeat visit at 412px, 4x CPU and slow 4G,
 median of five: the h1 first shows at 0.85s on /, 0.82s on /work and 0.85s on /about, against 2.59s, 2.51s and 2.43s,
-and LCP falls from 2.96s, 2.88s and 2.87s to 1.18s, 1.15s and 1.24s. CLS is unchanged against main on an unthrottled
-load, 0.0006 at 375 and 0.0001 at 1440, all of it the hero's typing caret, which rides on `left`. Under the throttle /
-showed 0.0005 against 0.0001, because the typing used to run while its parent was still invisible. The fill is
+and LCP falls from 2.96s, 2.88s and 2.87s to 1.18s, 1.15s and 1.24s. CLS is 0 on every route, first visit and
+repeat, at 320, 375 and 1440. It was not: the typing caret rode on `left`, so each character was a layout shift, which
+gave the homepage 0.0006 at 375 on a repeat visit and every route up to 0.0004 on a first one, from the boot lockup. It
+rides on `translate` now, across a box as wide as its line (`.typed-caret` in globals.css), and lands on the same
+offsets, within a device pixel of edge rounding. The fill is
 `backwards` with no end keyframe, so a finished entrance leaves no transform, as Framer did. Reduced motion keeps the
 fade and drops the rise, as `MotionConfig reducedMotion="user"` does. Below the fold the reveals stay on Framer's
 `whileInView`, and they are the only `opacity:0` left in the server HTML, which the `<noscript>` style in layout.tsx clears.
