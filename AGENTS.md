@@ -96,12 +96,13 @@ marked landed, with `card-flight` gone; the hero's h1 and facts at full opacity 
 answering 200 with no console error and the headers from `next.config.ts`, `/_not-found` carrying noindex (`next start`
 answers it 404, Vercel 200, so only the header is asserted), and the old URLs answering 308; the mode switch flipping
 `data-mode` both ways and `mode-switching` coming off after; and an unscrolled homepage fetching no three.js, while one
-scroll fetches it, so the marker string is known to still match. They wait on conditions, never on fixed sleeps, and
-there are no retries, so a spec that passes on a second try counts as a flake to fix. The mode switch's frame flash is
-deliberately not tested: headless Chromium never shows it (under Navbar Dark/Light Theme Detection). Each spec was
+scroll fetches it, so the marker string is known to still match; and a footer link or a homepage card pressed while the
+page glides landing where a calm press does. They wait on conditions, never on fixed sleeps, and there are no retries,
+so a spec that passes on a second try counts as a flake to fix. The mode switch's frame flash is deliberately not
+tested: headless Chromium never shows it (under Navbar Dark/Light Theme Detection). Each spec was
 checked by reintroducing a past bug: PrepaintGuard doing nothing, the boot marked played only after hydration, the
-hero's facts on the site's `-10%` in-view reveal, the handoff scroll removed (40% landed as 67%), and a static three.js
-import on the homepage all fail.
+hero's facts on the site's `-10%` in-view reveal, the handoff scroll removed (40% landed as 67%), a static three.js
+import on the homepage, and the mid-glide settle removed (a footer press landed 481px down) all fail.
 
 The budget (`e2e/budget.ts`) reads `.next/diagnostics/route-bundle-stats.json`, which Next 16 writes on every build.
 Its chunk list per page matches the prerendered HTML's script tags exactly, less the nomodule polyfill a modern
@@ -262,6 +263,17 @@ effect so pages can ask; /work arriving with a hash focuses that card's title li
 itself, which has none. A pointer click shows no ring, since programmatic focus after one does not match
 `:focus-visible`; measured on a production build, a click on a card, a cue, a footer or a nav link leaves nothing
 matching it, light and dark, with and without reduced motion. Next's route announcer still speaks the title.
+
+**A link pressed mid-glide lands where the router puts it.** Tab moves focus with a smooth scroll (`scroll-behavior:
+smooth` on `<html>`), and Chromium applies one more frame of a smooth scroll still running when an instant scroll lands,
+so the router's jump to the top, or to a hash, ended one frame's travel away in the glide's direction. Measured on a production build, Enter on
+a footer link 50 to 800ms after the Tab that reached it opened /work up to 253px down, and Enter on a homepage card left
+its /work card up to 942px off screen; a bare page with nothing but the smooth scroll and an instant write reproduces
+it, and no write before the jump cancels the glide. So `PageTransition` reads the position in a microtask after the
+router's layout-phase scroll and puts the page back there on the next frame, if it moved; its passive effect takes the
+position again while that frame is pending, which keeps /work's pointer handoff. Reduced motion has no glide and never
+showed it. Dropping the smooth scroll would fix it too, but it would change how every focus jump, skip link and Page
+Down moves, so that is for the owner to decide, not a fix to slip in.
 
 **Links in `.text-body` copy fill their line (`.link-in-text`).** SC 2.5.8 exempts links in a sentence
 and stock axe skips them, but the Vercel Toolbar's audit flagged Harvard University on /work. When it
