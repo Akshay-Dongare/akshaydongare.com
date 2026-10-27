@@ -19,6 +19,8 @@ const NAME_END_MS = NAME_START_MS + NAME.length * 50;
 const ROLE_START_MS = NAME_END_MS + 200;
 const ROLE_MS = ROLE.length * 20;
 const READ_MS = 500;
+// The lockup fades for this long before the panels begin to part.
+const PANEL_DELAY_MS = 220;
 // Bounds the wait on the typing, in case its animation never reports finishing.
 const TYPING_BACKSTOP_MS = 4000;
 
@@ -35,6 +37,7 @@ function alreadyPlayed(): boolean {
 
 export function BootSequence({ children }: { children: React.ReactNode }) {
     const [maskMounted, setMaskMounted] = useState(true);
+    const maskRef = useRef<HTMLDivElement>(null);
     const topRef = useRef<HTMLDivElement>(null);
     const bottomRef = useRef<HTMLDivElement>(null);
     const lockupRef = useRef<HTMLDivElement>(null);
@@ -63,6 +66,7 @@ export function BootSequence({ children }: { children: React.ReactNode }) {
         let triggered = false;
         let cancelled = false;
         let revealTimer: ReturnType<typeof setTimeout> | undefined;
+        let passTimer: ReturnType<typeof setTimeout> | undefined;
         let reveal: Animation[] = [];
 
         // The Web Animations API runs transform and opacity on the compositor, so the panels slide smoothly while
@@ -70,22 +74,50 @@ export function BootSequence({ children }: { children: React.ReactNode }) {
         // 68KB download on exactly the visit that plays this. The curves are gsap's: power2.in for the lockup, then
         // expo.inOut for the panels, which start 0.18s before the lockup has gone.
         const beginReveal = () => {
+            if (reveal.length) return;
+            clearTimeout(safety);
+            clearTimeout(revealTimer);
             const top = topRef.current;
             const bottom = bottomRef.current;
             const lockup = lockupRef.current;
             if (!top || !bottom || !lockup) {
-                setMaskMounted(false);
+                unmount();
                 return;
             }
-            const panels: KeyframeAnimationOptions = { duration: 1100, delay: 220, easing: "cubic-bezier(0.87, 0, 0.13, 1)", fill: "forwards" };
+            const panels: KeyframeAnimationOptions = { duration: 1100, delay: PANEL_DELAY_MS, easing: "cubic-bezier(0.87, 0, 0.13, 1)", fill: "forwards" };
             reveal = [
                 lockup.animate({ opacity: [1, 0] }, { duration: 400, easing: "cubic-bezier(0.11, 0, 0.5, 0)", fill: "forwards" }),
                 top.animate({ transform: ["translateY(0)", "translateY(-101%)"] }, panels),
                 bottom.animate({ transform: ["translateY(0)", "translateY(101%)"] }, panels),
             ];
+            // Once the panels move, the page shows between them, so a click there belongs to the page.
+            passTimer = setTimeout(() => maskRef.current?.style.setProperty("pointer-events", "none"), PANEL_DELAY_MS);
             // Only this effect removes the opaque mask, so it goes whether the reveal finishes or is cut short.
-            const unmount = () => setMaskMounted(false);
             Promise.all(reveal.map((a) => a.finished)).then(unmount, unmount);
+        };
+
+        // A press skips the intro: before the reveal it opens the panels now, during it it ends them. The mask takes
+        // pointer events until the panels move, so the click that skips is not delivered to a link the reader cannot
+        // see, and a Tab is held back for the same reason, since focus would land behind the panels (SC 2.4.11).
+        // Cmd, Ctrl and Alt combinations are the browser's shortcuts and pass untouched.
+        const onPress = (e: Event) => {
+            if (e instanceof KeyboardEvent) {
+                if (e.metaKey || e.ctrlKey || e.altKey) return;
+                if (e.key === "Tab" && !reveal.length) e.preventDefault();
+            }
+            if (!reveal.length) beginReveal();
+            else reveal.forEach((a) => a.finish());
+        };
+        const removeListeners = () => {
+            window.removeEventListener("pointerdown", onPress, true);
+            window.removeEventListener("keydown", onPress, true);
+        };
+        window.addEventListener("pointerdown", onPress, true);
+        window.addEventListener("keydown", onPress, true);
+
+        const unmount = () => {
+            removeListeners();
+            setMaskMounted(false);
         };
 
         const trigger = () => {
@@ -98,7 +130,7 @@ export function BootSequence({ children }: { children: React.ReactNode }) {
             const typed = roleRef.current?.getAnimations()[0]?.finished.catch(() => undefined);
             const backstop = new Promise((resolve) => setTimeout(resolve, TYPING_BACKSTOP_MS));
             Promise.race([typed ?? Promise.resolve(), backstop]).then(() => {
-                if (cancelled) return;
+                if (cancelled || reveal.length) return;
                 const remaining = Math.max(READ_MS, MIN_HOLD_MS - (performance.now() - start));
                 revealTimer = setTimeout(beginReveal, remaining);
             });
@@ -111,9 +143,11 @@ export function BootSequence({ children }: { children: React.ReactNode }) {
 
         return () => {
             cancelled = true;
+            removeListeners();
             cancelAnimationFrame(raf1);
             clearTimeout(safety);
             clearTimeout(revealTimer);
+            clearTimeout(passTimer);
             reveal.forEach((a) => a.cancel());
         };
     }, []);
@@ -124,9 +158,10 @@ export function BootSequence({ children }: { children: React.ReactNode }) {
             {/* The mask is in the server HTML, so without data-nosnippet Google can quote it as the snippet. */}
             {maskMounted && (
                 <div
+                    ref={maskRef}
                     aria-hidden="true"
                     data-nosnippet
-                    className="boot-mask fixed inset-0 z-[9999] pointer-events-none overflow-hidden"
+                    className="boot-mask fixed inset-0 z-[9999] overflow-hidden"
                 >
                     <div
                         ref={topRef}
