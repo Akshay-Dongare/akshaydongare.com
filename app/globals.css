@@ -456,7 +456,10 @@ html.skip-boot .boot-mask {
 /* A line that types itself like a terminal (components/ui/TypedLine.tsx, used by the boot screen and the hero). The
    text is clipped open in --chars steps, one per character, and a block caret rides the clip's edge on the same
    steps. A "pass" caret waits at the start, types, and leaves; a "type" caret shows only while its line types; a "rest"
-   caret appears with its line, stays solid while it types, then keeps blinking at the end. */
+   caret appears with its line, stays solid while it types, then keeps blinking at the end.
+   The caret's box spans the whole line and draws the block in ::before, so it rides on translate, where 100% is the
+   line's width. On left, every step was a layout shift: the hero's typing was all of the homepage's CLS, and the boot
+   lockup's all of every route's on a first visit. */
 .typed-line {
   position: relative;
   display: inline-block;
@@ -469,9 +472,17 @@ html.skip-boot .boot-mask {
   position: absolute;
   top: 50%;
   left: 0;
-  width: 0.6em;
+  width: 100%;
   height: 1.1em;
   translate: 0 -50%;
+  pointer-events: none;
+}
+.typed-caret::before {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  left: 0;
+  width: 0.6em;
   background: currentColor;
 }
 .typed-caret-pass {
@@ -500,8 +511,8 @@ html.skip-boot .boot-mask {
   to { clip-path: inset(0); }
 }
 @keyframes typed-caret-ride {
-  from { left: 0; }
-  to { left: 100%; }
+  from { translate: 0 -50%; }
+  to { translate: 100% -50%; }
 }
 @keyframes typed-caret-leave {
   to { opacity: 0; }
