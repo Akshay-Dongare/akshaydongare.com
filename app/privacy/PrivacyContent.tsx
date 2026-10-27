@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import { m } from "framer-motion";
 
 export function PrivacyContent() {
     return (
@@ -12,20 +11,13 @@ export function PrivacyContent() {
         >
             <div className="max-w-[1000px] mx-auto px-6 md:px-12 lg:px-20">
 
-                <m.h1
-                    className="text-display-xl text-fg-90 mb-12"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1] }}
-                >
+                <h1 className="enter text-display-xl text-fg-90 mb-12">
                     Privacy Policy
-                </m.h1>
+                </h1>
 
-                <m.div
-                    className="max-w-none text-body text-fg-65 space-y-8"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.35, delay: 0.05, ease: [0.25, 0.1, 0.25, 1] }}
+                <div
+                    className="enter max-w-none text-body text-fg-65 space-y-8"
+                    style={{ animationDelay: "50ms" }}
                 >
                     <p>
                         This is my personal portfolio and playground. I don’t believe in invasive tracking, unnecessary cookies, or monetizing your attention.
@@ -50,7 +42,7 @@ export function PrivacyContent() {
                         {/* Set by hand when the policy text changes; computing it on the client broke hydration each new month. */}
                         Last updated: September 2026
                     </p>
-                </m.div>
+                </div>
 
             </div>
         </div>

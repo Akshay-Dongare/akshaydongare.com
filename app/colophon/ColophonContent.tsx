@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import { m } from "framer-motion";
 import Link from "next/link";
 
 export function ColophonContent() {
@@ -13,20 +12,13 @@ export function ColophonContent() {
         >
             <div className="max-w-[1000px] mx-auto px-6 md:px-12 lg:px-20">
 
-                <m.h1
-                    className="text-display-xl text-fg-90 mb-12"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1] }}
-                >
+                <h1 className="enter text-display-xl text-fg-90 mb-12">
                     Colophon
-                </m.h1>
+                </h1>
 
-                <m.div
-                    className="max-w-none text-body text-fg-65 space-y-8"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.35, delay: 0.05, ease: [0.25, 0.1, 0.25, 1] }}
+                <div
+                    className="enter max-w-none text-body text-fg-65 space-y-8"
+                    style={{ animationDelay: "50ms" }}
                 >
                     <p>
                         This website was designed and developed from scratch. It serves as both a portfolio and an ongoing experiment in frontend engineering, interaction design, and systems thinking.
@@ -80,7 +72,7 @@ export function ColophonContent() {
                         I believe in learning through shared code. If you’re curious about how specific components or animations were built, the <Link href="https://github.com/Akshay-Dongare/akshaydongare.com" className="link-in-text text-fg-80 underline underline-offset-4 decoration-line-20 hover:text-fg-50 transition-colors cursor-none">full source code</Link> for this website is on GitHub.
                     </p>
 
-                </m.div>
+                </div>
 
             </div>
         </div>
