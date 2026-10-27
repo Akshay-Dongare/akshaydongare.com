@@ -359,8 +359,12 @@ pointer, so `lib/cardHandoff.ts` moves the page: the click records how far down 
 /work replaces Next's hash scroll with one that puts the same fraction of the matching card under the
 pointer. It measures layout offsets, not `getBoundingClientRect`, because the page is still sliding in.
 The column lines up only because both grids share one geometry and /work opens with the four in the
-homepage's order, Airbnb and langchain-litellm, then ISO and Harvard. Keep the two orders in step, or
-every click lands on the neighbouring card. Touch, keyboard and modified clicks keep the anchor jump.
+homepage's order, Airbnb and langchain-litellm, then ISO and Harvard. `lib/work.ts` keeps the two orders
+in step, or every click lands on the neighbouring card: `FEATURED` lists the four ids once, both pages
+build their featured cards from it as a `Record<FeaturedId, …>` and render them in its order, and the
+handoff and flight helpers take a `FeaturedId`, so a renamed, missing or stray id fails `npm run
+typecheck`. Before it, both pages spelled the slugs out, and a rename on one side passed lint, types and
+tests while the flight waited out its 1.5s timeout and landed with no cue. Touch, keyboard and modified clicks keep the anchor jump.
 
 **A homepage card flies to its place on /work.** A click, a tap or Enter on one of the four cards runs a view
 transition (`flyCard` in `lib/cardFlight.ts`). The card and its /work twin share the name `card-flight`, so the browser
