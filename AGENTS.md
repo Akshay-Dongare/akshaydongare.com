@@ -642,9 +642,11 @@ through `[--enter-ms:300ms]`, with the delay inline as `animationDelay` and a 30
 rendered them as inline `opacity:0` and started them at hydration, so nothing on the first screen painted before
 196KB gzipped of script had loaded and run. Measured on `next start` with a repeat visit at 412px, 4x CPU and slow 4G,
 median of five: the h1 first shows at 0.85s on /, 0.82s on /work and 0.85s on /about, against 2.59s, 2.51s and 2.43s,
-and LCP falls from 2.96s, 2.88s and 2.87s to 1.18s, 1.15s and 1.24s. CLS is unchanged against main on an unthrottled
-load, 0.0006 at 375 and 0.0001 at 1440, all of it the hero's typing caret, which rides on `left`. Under the throttle /
-showed 0.0005 against 0.0001, because the typing used to run while its parent was still invisible. The fill is
+and LCP falls from 2.96s, 2.88s and 2.87s to 1.18s, 1.15s and 1.24s. CLS is 0 on every route, first visit and
+repeat, at 320, 375 and 1440. It was not: the typing caret rode on `left`, so each character was a layout shift, which
+gave the homepage 0.0006 at 375 on a repeat visit and every route up to 0.0004 on a first one, from the boot lockup. It
+rides on `translate` now, across a box as wide as its line (`.typed-caret` in globals.css), and lands on the same
+offsets, within a device pixel of edge rounding. The fill is
 `backwards` with no end keyframe, so a finished entrance leaves no transform, as Framer did. Reduced motion keeps the
 fade and drops the rise, as `MotionConfig reducedMotion="user"` does. Below the fold the reveals stay on Framer's
 `whileInView`, and they are the only `opacity:0` left in the server HTML, which the `<noscript>` style in layout.tsx clears.
