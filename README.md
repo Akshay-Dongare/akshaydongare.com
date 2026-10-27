@@ -9,7 +9,7 @@ do in infrastructure engineering.
 ## Stack
 
 Next.js 16 (App Router) · React 19 · TypeScript · Tailwind CSS v4 · Framer Motion ·
-React Three Fiber / Three.js · MDX
+React Three Fiber / Three.js
 
 Every route is statically prerendered. Most of the interface is client-rendered
 regardless, because the cursor, the scroll choreography and both particle fields
@@ -65,8 +65,10 @@ npm run dev
 ```
 
 ```bash
-npm run build   # also the type check; there is no separate tsc script
+npm run build       # production build
 npm run lint
+npm run typecheck   # tsc --noEmit
+npm test            # unit tests in tests/, on Node's own runner
 ```
 
 No environment variables, no services, no database. It builds offline apart from

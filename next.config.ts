@@ -1,9 +1,7 @@
 import type { NextConfig } from 'next';
-import createMDX from '@next/mdx';
 
 const nextConfig: NextConfig = {
   devIndicators: false, // Disables the bottom-left 'N' dev tools icon
-  pageExtensions: ['js', 'jsx', 'mdx', 'ts', 'tsx'],
   // URLs from the previous site that Google still knows, sent to their real equivalents (308).
   // /blog has no equivalent and stays a 404: Google treats a redirect to an unrelated page as one.
   async redirects() {
@@ -33,12 +31,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-const withMDX = createMDX({
-  // Add markdown plugins here, as desired
-  options: {
-    remarkPlugins: [],
-    rehypePlugins: [],
-  },
-})
-
-export default withMDX(nextConfig);
+export default nextConfig;
