@@ -599,8 +599,11 @@ The two systems are intentionally different in character: the first is a quiet, 
 a 100px margin alone mounted it on every homepage load: three.js fetched at about 415ms, parsed and given a GL context
 mid-hydration, a 300 to 460ms main-thread task on a load nobody had scrolled (headless, software GL). A field mounts once
 it is near and the page has been scrolled at all (`useHasScrolled` in `lib/scrolled.ts`, which counts a page opened
-already scrolled). Neither can be on screen at load, because the hero above them always fills the viewport. Canvases take the
-default power preference: `"high-performance"` woke the discrete GPU on dual-GPU Macs for a decorative field.
+already scrolled). Neither can be on screen at load, because the hero above them always fills the viewport. Both canvases set
+`powerPreference: "default"` explicitly: `"high-performance"` wakes the discrete GPU on dual-GPU Macs for a decorative
+field, and leaving the key out does not avoid it, because R3F 9.5 builds the renderer from `{ ...defaultProps, ...gl }`
+and its defaults set `"high-performance"`. #34 removed the key for this reason and Chromium still reported
+`"high-performance"` on both contexts until it was set.
 
 **`components/particles/ParticleField.tsx`** — Used in `ParticleSection`. The "Static Prelude." 5,000 particles in a procedurally-generated cosmic dark-matter filament layout (`lib/particleData.ts`), rendered as soft Gaussian circles via a custom GLSL `ShaderMaterial` with `THREE.AdditiveBlending`. On the dark upper section gradient, overlapping particles accumulate into bright holographic clusters; on the light lower gradient they fade gracefully — no code change needed, this emerges from the additive compositing math.
 
