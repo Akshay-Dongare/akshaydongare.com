@@ -105,7 +105,7 @@ export function HeroSection({ stats }: { stats: PackageStats }) {
                         <dd className="text-[1.0625rem] md:text-[1.1875rem] font-medium text-fg-90">Airbnb · ISO · Harvard{"\u00a0"}University</dd>
                         <dt className="text-label text-lbl-60">Creator of</dt>
                         <dd className="text-[1.0625rem] md:text-[1.1875rem] font-medium text-fg-90">
-                            langchain-litellm, <Link
+                            langchain-litellm, {stats.floor.total && "over "}<Link
                                 href={PYPI_URL}
                                 className="min-[375px]:whitespace-nowrap pointer-events-auto cursor-none hover:underline hover:underline-offset-4 hover:decoration-line-40"
                             >
