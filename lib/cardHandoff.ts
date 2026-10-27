@@ -1,12 +1,13 @@
 import type { MouseEvent } from "react";
+import type { FeaturedId } from "@/lib/work";
 
 // A page cannot move the pointer, so a homepage Work card hands /work the spot it was clicked and /work moves the
 // page instead. Module state, not storage: it lives exactly as long as the client navigation that carries it.
-type CardHandoff = { id: string; y: number; clientY: number };
+type CardHandoff = { id: FeaturedId; y: number; clientY: number };
 
 let pending: CardHandoff | null = null;
 
-export function handOffCard(e: MouseEvent<HTMLElement>, id: string) {
+export function handOffCard(e: MouseEvent<HTMLElement>, id: FeaturedId) {
     pending = null;
     // Plain mouse clicks only: a key press has no pointer, a modified click opens elsewhere, touch keeps the anchor jump.
     if (e.detail === 0 || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;

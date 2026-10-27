@@ -1,4 +1,5 @@
 import { useSyncExternalStore, type MouseEvent } from "react";
+import type { FeaturedId } from "@/lib/work";
 
 // A homepage Work card flies to its place on /work through a view transition: the clicked card and its /work twin
 // share one view-transition-name, so the browser carries the one into the other while the rest of the page
@@ -8,7 +9,7 @@ export const FLIGHT_NAME = "card-flight";
 // Bounds the wait for /work, so a slow navigation lands without the flight rather than holding the screen.
 const ARRIVAL_TIMEOUT_MS = 1500;
 
-type Flight = { id: string };
+type Flight = { id: FeaturedId };
 
 let flight: Flight | null = null;
 let arrive: (() => void) | null = null;
@@ -33,7 +34,7 @@ export function useCardFlight(): Flight | null {
 
 // Starts the flight from a homepage card's link, or leaves the click to the link: modified clicks open elsewhere,
 // and reduced motion and browsers without view transitions keep the plain navigation.
-export function flyCard(e: MouseEvent<HTMLAnchorElement>, id: string, navigate: () => void) {
+export function flyCard(e: MouseEvent<HTMLAnchorElement>, id: FeaturedId, navigate: () => void) {
     if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
     if (!("startViewTransition" in document) || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const card = e.currentTarget.closest("article");
@@ -58,7 +59,7 @@ export function flyCard(e: MouseEvent<HTMLAnchorElement>, id: string, navigate: 
 }
 
 // /work calls this once its card is mounted and scrolled into place; the browser then takes the new snapshot.
-export function cardArrived(id: string | undefined) {
+export function cardArrived(id: FeaturedId | undefined) {
     if (!flight || flight.id !== id) return;
     const done = arrive;
     arrive = null;
