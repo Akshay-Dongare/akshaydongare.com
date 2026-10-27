@@ -13,6 +13,8 @@ npm run lint     # ESLint directly (`next lint` was removed in Next 16)
 npm run typecheck # tsc --noEmit
 npm test         # unit tests in tests/, on Node's own runner
 npm run start    # serve the production build locally
+npm run e2e      # browser tests in e2e/, against a fresh production build on port 3100
+npm run budget   # first-load JS per route against e2e/budget.json; run after a build
 ```
 
 Lint is clean and expected to stay that way, so a non-zero exit means you
@@ -70,8 +72,41 @@ may go through the `@/` alias. They cover what has broken before and runs where 
 and their fallback (`lib/downloads.ts`, with `fetch` stubbed), both pre-paint scripts (`lib/prepaint.ts`, run in a
 `node:vm` stand-in for the page before first paint), and the particle generators' buffers. Each was checked by
 reintroducing a past bug: flooring the monthly figure, and marking the boot played only after hydration, both fail.
-`.github/workflows/ci.yml` runs lint, the type check and the tests on every pull request and on `main`; Vercel builds
-every pull request, so CI does not.
+`.github/workflows/ci.yml` runs lint, the type check and the tests on every pull request and on `main`, and beside
+that job a second one builds the site and runs the browser tests and the JS budget. It builds in the runner rather
+than testing the Vercel preview, which sits behind Vercel Authentication, and because the budget reads the build's own
+output. It caches Playwright's browser download, keyed on the Playwright version, and uploads traces when a spec fails.
+
+The browser tests (`e2e/*.spec.ts`, Playwright, Chromium only) cover what only a real browser shows, most of the fixes
+of October 2026. `playwright.config.ts` builds and starts the production server itself, since the pre-paint scripts,
+the hydration fallback and the first-load chunks all differ under `next dev`; locally it reuses a server already on
+port 3100, so after an edit stop that server first, or the specs test the old build. Every spec runs at 1440 and at
+375 wide, and each asserts the outcome a reader sees, never how it is produced, so the boot, the entrances and focus
+handling can change underneath them: the PrepaintGuard repro under BootSequence, with no mask and `<html>` keeping
+`skip-boot` and dark; a first visit painting the mask, and a reload while it is still up painting none; reduced motion
+never showing it; a mouse click at 40% down the Airbnb card landing with 40% of its /work twin under the pointer,
+marked landed, with `card-flight` gone; the hero's h1 and facts at full opacity in a 412x5000 viewport; every page
+answering 200 with no console error and the headers from `next.config.ts`, `/_not-found` carrying noindex (`next start`
+answers it 404, Vercel 200, so only the header is asserted), and the old URLs answering 308; the mode switch flipping
+`data-mode` both ways and `mode-switching` coming off after; and an unscrolled homepage fetching no three.js, while one
+scroll fetches it, so the marker string is known to still match. They wait on conditions, never on fixed sleeps, and
+there are no retries, so a spec that passes on a second try counts as a flake to fix. The mode switch's frame flash is
+deliberately not tested: headless Chromium never shows it (under Navbar Dark/Light Theme Detection). Each spec was
+checked by reintroducing a past bug: PrepaintGuard doing nothing, the boot marked played only after hydration, the
+hero's facts on the site's `-10%` in-view reveal, the handoff scroll removed (40% landed as 67%), and a static three.js
+import on the homepage all fail.
+
+The budget (`e2e/budget.ts`) reads `.next/diagnostics/route-bundle-stats.json`, which Next 16 writes on every build.
+Its chunk list per page matches the prerendered HTML's script tags exactly, less the nomodule polyfill a modern
+browser never fetches, so it is the first load as served; a browser fetches more right after (about 680KB on /),
+because Link prefetches other routes' chunks. The file gives raw bytes, so the script gzips the same chunks itself.
+In October 2026 / was 625KB raw and 197KB gzipped, and each route's budget is its figure plus 20KB raw and 6KB gzipped,
+rounded up: Framer Motion's full bundle coming back (39KB raw, 10KB gzipped) breaks it, and the static three.js import
+took / to 1346KB. A pull request that means to grow runs `npm run budget -- --update` and commits `e2e/budget.json`,
+saying why. A new route without a budget fails, as does a budget for a route that is gone. The stale Turbopack cache
+note below applies to the build the specs run on, too. `@playwright/test` is 1.63.0, the version whose Chromium is
+preinstalled in cloud containers; if Dependabot moves it past that, launch locally with
+`executablePath: '/opt/pw-browsers/chromium'` rather than running `playwright install`.
 
 Commits are authored as Akshay Dongare <akshay@akshaydongare.com> and carry no AI attribution: no
 `Co-Authored-By` or `Claude-Session` trailers, and no model or tool names in the message. Pull request
