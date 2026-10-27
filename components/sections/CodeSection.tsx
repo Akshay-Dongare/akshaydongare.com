@@ -97,8 +97,8 @@ function DiffLines({ source }: { source: string }) {
                     : line.startsWith("-")
                         ? "text-diff-del"
                         : line.startsWith("#")
-                            ? "text-fg-50"
-                            : "text-fg-55";
+                            ? "text-diff-note"
+                            : "text-diff-ctx";
                 return (
                     <div key={i} className={`${cls} w-fit pointer-events-auto`}>
                         {line || "\u00A0"}
@@ -183,7 +183,7 @@ export function CodeSection() {
                     >
                         {/* Visible at rest rather than on hover: touch has no hover, and the
                             code has to look clickable before anyone taps it. The arrow takes the label's colour, so the two read as one. */}
-                        <span className="mb-5 flex w-fit items-center gap-2 pointer-events-auto text-label text-lbl-55 group-hover:text-lbl-hover transition-colors">
+                        <span className="mb-5 flex w-fit items-center gap-2 pointer-events-auto text-label text-lbl-55 light:text-fg-100 group-hover:text-lbl-hover transition-colors">
                             Read this diff on GitHub
                             <span aria-hidden="true" className="shrink-0 whitespace-nowrap">[ &rarr; ]</span>
                         </span>

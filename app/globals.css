@@ -66,11 +66,13 @@
   --color-pill-ink: var(--pill-ink);
   --color-diff-add: var(--diff-add);
   --color-diff-del: var(--diff-del);
+  --color-diff-ctx: var(--diff-ctx);
+  --color-diff-note: var(--diff-note);
 }
 
 /* fg-NN is white at NN% in dark and a solid ink in light, where partial-alpha ink fails 4.5:1;
-   lbl-NN is the same for .text-label, rust in light. lbl-hover is a label under the pointer: white/90 in dark,
-   and in light the same rust 0.07 darker in OKLCH, so it deepens rather than turning to ink. */
+   lbl-NN is the same for .text-label, rust in light. lbl-hover is a label link under the pointer: white/90 in dark,
+   rust in light, where those links rest in ink (light:text-fg-100), so a hover lights up in both modes. */
 :root, [data-mode="light"] {
   --fg-100: #1a1c13;
   --fg-90: #1a1c13;
@@ -83,7 +85,7 @@
   --fg-55: #3d422c;
   --fg-50: #3d422c;
   --lbl-100: #6b2a11;
-  --lbl-hover: #561600;
+  --lbl-hover: #6b2a11;
   --lbl-90: #6b2a11;
   --lbl-85: #6b2a11;
   --lbl-80: #6b2a11;
@@ -107,8 +109,14 @@
   --more-hover-edge: rgba(26, 28, 19, 0.14);
   --more-ink-hover: #1a1c13;
   --pill-ink: #faf6ee;
-  --diff-add: #165626;
-  --diff-del: #88282c;
+  /* Dark's diff pops because its red and green are brighter and more saturated than the grey around them. Light
+     mirrors that: unchanged lines a neutral grey at 4.89:1, the changes saturated (OKLCH chroma 0.14 and 0.18) at
+     5.43:1 and 5.87:1, all against the darkest ground behind the code. Unchanged lines in olive ink at 9.27:1 were
+     the strongest text in the block, and the old green and red, at 7.8:1, sank into them. */
+  --diff-add: #00722a;
+  --diff-del: #b32322;
+  --diff-ctx: #6b6961;
+  --diff-note: #6b6961;
   --page-bg: #faf6ee;
   --menu-bg: #faf6ee;
   --code-veil: rgba(250, 246, 238, 0.5);
@@ -185,6 +193,8 @@
   --pill-ink: #ffffff;
   --diff-add: #7fd0a3;
   --diff-del: #e08b94;
+  --diff-ctx: var(--fg-55);
+  --diff-note: var(--fg-50);
   --page-bg: var(--blend-void);
   --menu-bg: #07090f;
   --code-veil: rgba(7, 9, 15, 0.5);
