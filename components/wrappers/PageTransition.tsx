@@ -32,6 +32,30 @@ export default function PageTransition({ children }: { children: React.ReactNode
         if (!afterClientNavigation() || page.current?.contains(document.activeElement)) return;
         focusWithoutScroll(page.current?.querySelector("h1") ?? null);
     }, []);
+    // Chromium applies one more frame of a smooth scroll still running when an instant scroll lands, so a link pressed
+    // while the page glides, as it does after Tab moves focus, opened the new page that frame's travel away from where
+    // the router put it: up to 253px down from the top, or a /work card 942px off screen. The router scrolls in its own
+    // layout effect, so a microtask reads its position, and the next frame puts the page back there. Passive effects can
+    // run on either side of that frame; when they run first, they may move the target, as /work's pointer handoff does.
+    const settle = useRef<{ y: number; frame: number } | null>(null);
+    useLayoutEffect(() => {
+        if (!afterClientNavigation()) return;
+        queueMicrotask(() => {
+            const s = { y: window.scrollY, frame: 0 };
+            s.frame = requestAnimationFrame(() => {
+                settle.current = null;
+                if (window.scrollY !== s.y) window.scrollTo({ top: s.y, behavior: "instant" });
+            });
+            settle.current = s;
+        });
+        return () => {
+            if (settle.current) cancelAnimationFrame(settle.current.frame);
+            settle.current = null;
+        };
+    }, []);
+    useEffect(() => {
+        if (settle.current) settle.current.y = window.scrollY;
+    }, []);
     return (
         <div ref={page} data-page className="enter [--enter-ms:300ms] w-full h-full min-h-screen">
             {children}
