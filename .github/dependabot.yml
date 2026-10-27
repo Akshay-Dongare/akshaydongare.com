@@ -39,6 +39,10 @@ updates:
         update-types: ["version-update:semver-major"]
       - dependency-name: typescript
         update-types: ["version-update:semver-major"]
+      # framer-motion 13 and 14 add 6.3KB gzipped to every page's first load, over the JS budget, and nothing the site
+      # uses; 12.x keeps arriving in minor-and-patch. Drop this rule when a major is worth its bytes.
+      - dependency-name: framer-motion
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: github-actions
     directory: /
