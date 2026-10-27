@@ -3,7 +3,6 @@
 @source "../app";
 @source "../components";
 @source "../lib";
-@source "../mdx-components.tsx";
 
 @theme inline {
   --font-sans: var(--font-geist-sans);
@@ -12,7 +11,6 @@
 
 :root {
   --color-charcoal: #1c1c1c;
-  --color-border: rgba(28,28,28,0.12);
 
   /* Deep Obsidian Blend System */
   --blend-void: #07090f;
@@ -581,10 +579,6 @@ html:not(.custom-cursor-active) .cursor-none {
   font-size: 0.8125rem;
   text-transform: uppercase;
   letter-spacing: 0.12em;
-}
-@utility text-code {
-  font-family: var(--font-geist-mono), monospace;
-  font-size: 0.8rem;
 }
 
 @layer utilities {

@@ -1,0 +1,46 @@
+# Weekly dependency pull requests. CI runs lint, types and tests on each one and Vercel builds a preview, so a bump
+# that breaks something arrives red rather than on main. The notes under Commands in AGENTS.md say why the groups are
+# what they are.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    # A release waits a week before it is proposed: compromised npm versions have been found and pulled within days.
+    # Security updates skip the wait.
+    cooldown:
+      default-days: 7
+    commit-message:
+      prefix: chore
+      include: scope
+    groups:
+      # A dependency joins the first group it matches, so the pairs that must move together come first, majors
+      # included. eslint-config-next stays on next's version.
+      next:
+        patterns: [next, eslint-config-next]
+      react:
+        patterns: [react, react-dom, "@types/react", "@types/react-dom"]
+      three:
+        patterns: [three, "@types/three", "@react-three/*"]
+      # Everything else shares one pull request; its majors come one at a time.
+      minor-and-patch:
+        patterns: ["*"]
+        update-types: [minor, patch]
+    ignore:
+      # Follows the Node major the site builds on, which changes by hand.
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+    commit-message:
+      prefix: ci
+      include: scope
+    groups:
+      actions:
+        patterns: ["*"]

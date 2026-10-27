@@ -8,7 +8,7 @@ so Claude Code picks it up without a second copy to keep in sync.
 
 ```bash
 npm run dev      # start dev server at localhost:3000
-npm run build    # production build (also used to type-check — no separate tsc script)
+npm run build    # production build
 npm run lint     # ESLint directly (`next lint` was removed in Next 16)
 npm run typecheck # tsc --noEmit
 npm test         # unit tests in tests/, on Node's own runner
@@ -47,6 +47,16 @@ config accepts any `eslint-plugin-react-hooks` ^7.1.0, so a blanket `npm update`
 move the plugin on its own and bring new errors, as 7.1 did; update packages by
 name and run lint after.
 
+Dependabot (`.github/dependabot.yml`) opens update pull requests weekly, for npm and for the workflow's actions, and
+each goes through CI and a Vercel preview like any other. What must move together shares one pull request, majors
+included: `next` with `eslint-config-next`, React with its types, three with its types and R3F. The rest of npm shares
+one minor-and-patch pull request, and its majors come one at a time. `eslint-plugin-react-hooks` comes in through
+`eslint-config-next`, so it moves only in the `next` group, where CI's lint is what catches a new rule. A release waits
+seven days before it is proposed (`cooldown`), because compromised npm versions have been caught and pulled within
+days; security updates skip the wait. `@types/node` takes no majors from it: it follows the Node major that Vercel and
+CI build on, 22, so change it, Vercel's Node version and CI's `node-version` together, by hand. The bot's pull requests are squash-merged like any other, with
+the title and message set as below.
+
 Tests run on Node's built-in runner, which strips TypeScript itself, so they add no dependency: `tests/*.test.ts` import
 the modules they test with a `.ts` extension (`allowImportingTsExtensions`), and nothing those modules import at runtime
 may go through the `@/` alias. They cover what has broken before and runs where nothing else looks: the download figures
@@ -79,7 +89,7 @@ rule did not move.
 ## Architecture
 
 ### Tech Stack
-Next.js 16 App Router · React 19 · TypeScript · Tailwind CSS v4 · Framer Motion · React Three Fiber / Three.js · MDX
+Next.js 16 App Router · React 19 · TypeScript · Tailwind CSS v4 · Framer Motion · React Three Fiber / Three.js
 
 ### Layout Wrapper Chain
 
@@ -408,11 +418,11 @@ The `--blend-*` token family defines the unified scroll palette:
 - **Light arm**: `--blend-mist` (#c8d4e0) → `--blend-parchment` (#f2efe9) → `--blend-warm` (#e9e4da)
 - **Accent**: `--blend-accent` (#6b9fd4) · `--blend-accent-dim` (#3a6288) · `--blend-slate` (#5b7fa6)
 
-Of the old palette only `--color-charcoal` and `--color-border` remain, in `:root`: `body`, the dark `--on-paper` and
-`mdx-components.tsx` read them. Every other colour is a mode token, under Modes.
+Of the old palette only `--color-charcoal` remains, in `:root`: `body` and the dark `--on-paper` read it. Every other
+colour is a mode token, under Modes.
 
 **Tailwind reads the code, not the docs.** `globals.css` opens with `@import "tailwindcss" source(none)` and one
-`@source` each for `app`, `components`, `lib` and `mdx-components.tsx`. Automatic detection also read this file, and
+`@source` each for `app`, `components` and `lib`. Automatic detection also read this file, and
 every class-like word in it became CSS: `tracking-[-0.02em]` and `leading-[1.05]`, quoted here as deleted overrides,
 shipped as live rules. `@source not "../AGENTS.md"` cannot fix it, because the scanner follows the `CLAUDE.md` symlink
 back to this file and still reads it. A new top-level folder that holds classes needs its own `@source` line, or its
@@ -438,12 +448,12 @@ beside `text-body` on ten other call sites. Those were deleted, and every other 
 identical at 375 and 1440: font size, line height, weight, tracking and family on every
 element, plus page height.
 
-The display classes, `.text-label` and `.text-code` followed, so `@layer utilities` holds only
+The display classes and `.text-label` followed, as did `.text-code` until it went with MDX, so `@layer utilities` holds only
 `.link-in-text`, which no call site overrides. The move woke six dead overrides. The owner kept one:
 the Footer wordmark renders its `font-medium tracking-tight leading-none`, 500 on -0.025em and 1.0.
 The other five were deleted so each heading matches its siblings on the same class: the /about
 Timeline h2 stays 400, the home About and Work headings stay on 1.1, /contact's h1 stays at -0.02em,
-and the unused MDX h1 stays on display-l's normal tracking. Seven copies of a class's own value
+and the MDX h1, since deleted with the pipeline, stayed on display-l's normal tracking. Seven copies of a class's own value
 (`leading-[1.05]`, one `tracking-[-0.02em]`) went too. Across every page, the 404 and the open phone
 menu at 375 and 1440, only the wordmark changed, and each page got shorter by exactly its two-line
 leading cut, 4.5px and 8.6px. Measured on `npm run build` and `next start`, with each build's CSS
@@ -658,9 +668,9 @@ not.
 
 **`components/particles/MorphingParticleField.tsx`** — Used in `ContactSection`. The "Dynamic Climax." 8,000 particles morphing between geometric shapes (`lib/shapeGenerators.ts`). Cursor-hover charge (tension ring SVG overlay) → violent shatter → gravity/floor-bounce physics → reform. Custom GLSL `ShaderMaterial` with per-particle opacity. Mutable `SharedState` ref bridges the `useFrame` WebGL loop and HTML overlays (`TensionRing`, `ShapeWord`) without React re-renders. Easter-egg words cycle after each reform: `["imagine.", "build.", "endure.", "connect.", "evolve."]`.
 
-### MDX Writing System
+### MDX
 
-There is currently no writing section. `app/writing/` was removed because its three posts were placeholders that all resolved to the same stub. The MDX pipeline is still wired up and unused: `next.config.ts` keeps `createMDX` and `mdx` in `pageExtensions`, `mdx-components.tsx` still holds the component overrides, and `rehype-pretty-code` + `shiki` remain installed. Dropping an `.mdx` file under `app/` will just work; nothing needs re-adding first.
+There is no writing section and no MDX pipeline. `app/writing/` was removed because its three posts were placeholders that all resolved to the same stub. The pipeline outlived it unused until it went too: `@next/mdx`, `@mdx-js/loader`, `@mdx-js/react`, `rehype-pretty-code` and `shiki`, `mdx-components.tsx`, and the `createMDX` wrapper and `mdx` page extension in `next.config.ts`, 138 packages in all, none of which reached a visitor. To write in MDX again, follow Next's MDX guide, and give `mdx-components.tsx` its own `@source` line in `globals.css`, or its classes render unstyled (under Color System).
 
 ### Sub-Pages
 

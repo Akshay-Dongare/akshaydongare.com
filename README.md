@@ -9,7 +9,7 @@ do in infrastructure engineering.
 ## Stack
 
 Next.js 16 (App Router) · React 19 · TypeScript · Tailwind CSS v4 · Framer Motion ·
-React Three Fiber / Three.js · MDX
+React Three Fiber / Three.js
 
 Every route is statically prerendered. Most of the interface is client-rendered
 regardless, because the cursor, the scroll choreography and both particle fields
