@@ -14,11 +14,11 @@
     "budget": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON e2e/budget.ts"
   },
   "dependencies": {
-    "@react-three/fiber": "^9.5.0",
+    "@react-three/fiber": "^9.8.2",
     "framer-motion": "^12.34.5",
     "next": "16.4.2",
-    "react": "19.2.9",
-    "react-dom": "19.2.9",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
     "three": "^0.183.2"
   },
   "devDependencies": {
