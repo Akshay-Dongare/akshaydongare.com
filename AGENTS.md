@@ -49,13 +49,20 @@ name and run lint after.
 
 Dependabot (`.github/dependabot.yml`) opens update pull requests weekly, for npm and for the workflow's actions, and
 each goes through CI and a Vercel preview like any other. What must move together shares one pull request, majors
-included: `next` with `eslint-config-next`, React with its types, three with its types and R3F. The rest of npm shares
-one minor-and-patch pull request, and its majors come one at a time. `eslint-plugin-react-hooks` comes in through
-`eslint-config-next`, so it moves only in the `next` group, where CI's lint is what catches a new rule. A release waits
-seven days before it is proposed (`cooldown`), because compromised npm versions have been caught and pulled within
-days; security updates skip the wait. `@types/node` takes no majors from it: it follows the Node major that Vercel and
-CI build on, 22, so change it, Vercel's Node version and CI's `node-version` together, by hand. The bot's pull requests are squash-merged like any other, with
-the title and message set as below.
+included: `next` with `eslint-config-next`, React with its types and with R3F, whose peer range caps React's minor, and
+three with its types. npm only warns on a broken peer range, so a React bump without R3F would arrive green. The rest
+of npm shares one minor-and-patch pull request and its majors come one at a time, but a package whose newest release is
+a major leaves that group entirely, patches and all. So `eslint` and `typescript` take no majors from the bot:
+eslint-config-next's plugins cap eslint at ^9 and typescript-eslint caps TypeScript below 6, so those majors would
+arrive red; drop each rule once its range opens. `@types/node` takes none either: it follows the Node major that Vercel
+and CI build on, 22, so change it, Vercel's Node version and CI's `node-version` together, by hand.
+`eslint-plugin-react-hooks` comes in through `eslint-config-next`, so it moves only in the `next` group, where CI's lint
+is what catches a new rule. A release waits seven days before it is proposed (`cooldown`), because compromised npm
+versions have been caught and pulled within days. Security updates skip both the wait and the groups: one moves only
+the vulnerable package, so a security pull request for `next` leaves `eslint-config-next` behind; set it to the same
+version in that pull request before merging. The bot's pull requests are squash-merged like any other, with the title
+and message set as below, but GitHub credits a squash commit to whoever opened the pull request, so they land on `main`
+as `dependabot[bot]`: the one exception to the authorship rule, and not one the merger can change.
 
 Tests run on Node's built-in runner, which strips TypeScript itself, so they add no dependency: `tests/*.test.ts` import
 the modules they test with a `.ts` extension (`allowImportingTsExtensions`), and nothing those modules import at runtime

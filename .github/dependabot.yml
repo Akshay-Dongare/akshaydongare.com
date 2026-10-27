@@ -15,21 +15,29 @@ updates:
       prefix: chore
       include: scope
     groups:
-      # A dependency joins the first group it matches, so the pairs that must move together come first, majors
-      # included. eslint-config-next stays on next's version.
+      # A dependency joins the first group it matches, so the sets that must move together come first, majors
+      # included. Version updates keep eslint-config-next on next's version; a security update moves next alone.
       next:
         patterns: [next, eslint-config-next]
+      # R3F's peer range caps React's minor, and npm only warns when it breaks.
       react:
-        patterns: [react, react-dom, "@types/react", "@types/react-dom"]
+        patterns: [react, react-dom, "@types/react", "@types/react-dom", "@react-three/*"]
       three:
-        patterns: [three, "@types/three", "@react-three/*"]
-      # Everything else shares one pull request; its majors come one at a time.
+        patterns: [three, "@types/three"]
+      # Everything else shares one pull request and its majors come one at a time. A package whose newest release is
+      # a major leaves this group entirely, which is why the majors below are ignored.
       minor-and-patch:
         patterns: ["*"]
         update-types: [minor, patch]
     ignore:
       # Follows the Node major the site builds on, which changes by hand.
       - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
+      # eslint-config-next's plugins cap eslint at ^9, and typescript-eslint caps TypeScript below 6. Drop each rule
+      # once its range opens.
+      - dependency-name: eslint
+        update-types: ["version-update:semver-major"]
+      - dependency-name: typescript
         update-types: ["version-update:semver-major"]
 
   - package-ecosystem: github-actions

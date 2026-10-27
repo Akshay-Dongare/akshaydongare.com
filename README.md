@@ -65,8 +65,10 @@ npm run dev
 ```
 
 ```bash
-npm run build   # also the type check; there is no separate tsc script
+npm run build       # production build
 npm run lint
+npm run typecheck   # tsc --noEmit
+npm test            # unit tests in tests/, on Node's own runner
 ```
 
 No environment variables, no services, no database. It builds offline apart from
