@@ -40,7 +40,7 @@ export default function NotFound() {
                             <span className="text-display-m text-fg-80 group-hover:text-fg-100 transition-colors duration-300">
                                 {d.label}
                             </span>
-                            <span className="hidden md:block shrink-0 whitespace-nowrap text-label text-lbl-50 group-hover:text-lbl-80 light:group-hover:text-fg-100 transition-colors duration-300">
+                            <span className="hidden md:block shrink-0 whitespace-nowrap text-label text-lbl-50 group-hover:text-lbl-80 light:text-fg-100 light:group-hover:text-lbl-hover transition-colors duration-300">
                                 {d.note}
                             </span>
                         </Link>

@@ -434,9 +434,20 @@ wait on animation frames, which the browser holds until the new page is captured
 **Text never uses white or black utilities.** `text-fg-NN` replaces `text-white/NN`: in dark it
 is the same `color-mix` Tailwind emits for `text-white/NN`, in light a solid ink by role (NN 85
 and up `#1a1c13`, 65 to 80 `#272a1e`, 50 to 60 `#3d422c`). `text-lbl-NN` is the same on
-`.text-label` call sites and turns rust `#6b2a11` in light. The Code label's hover is `text-lbl-hover`: white/90 in
-dark, and in light the same rust 0.07 darker in OKLCH, `#561600`, so it deepens rather than jumping to ink as
-`light:hover:text-fg-100` does on the other labels. Ink at partial alpha cannot stand in
+`.text-label` call sites and turns rust `#6b2a11` in light. A label that is a link or a button (the Code
+label, ScrollCue, APPROACH, the footer links, the © line, and the notes on /404 and the error page) lights up on
+hover in both modes. In dark it brightens from white/50-80 to white/80-100. In light it rests in ink (`light:text-fg-100`)
+and turns rust on hover (`lbl-hover`, `#6b2a11`), with its `[ → ]` following the label's colour. They used to rest in
+rust and go to ink, which in light read as the reverse of dark's lighting up, and a deeper rust (`#561600`) on hover
+was too close to the rust it started from to see. Static labels stay rust.
+
+**The Code diff keeps dark's hierarchy in light.** Dark's red and green pop because they are brighter and more
+saturated than the grey of the unchanged lines. Light had it inverted: unchanged lines in olive ink at 9.27:1 were the
+strongest text in the block, and the forest green and maroon, at 7.8:1 and low chroma, sank into them. The diff now
+has its own tokens: unchanged and `#` lines take `diff-ctx` and `diff-note`, a neutral grey `#6b6961` at 4.89:1 in
+light and exactly `fg-55` and `fg-50` in dark, and the changes take `diff-add` `#00722a` and `diff-del` `#b32322`,
+OKLCH chroma 0.14 and 0.18, at 5.43:1 and 5.87:1. Each ratio is against the darkest ground behind the code,
+`rgb(247,241,229)`, so do not lighten the grey: at 0.54 OKLCH lightness it falls to 4.47:1. Ink at partial alpha cannot stand in
 for these: `#1a1c13` at 0.5 on sage measures 3.04:1. Borders and underlines use `line-NN`, light
 grounds in dark mode use `on-paper`.
 

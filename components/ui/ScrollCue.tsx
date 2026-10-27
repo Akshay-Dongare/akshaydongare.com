@@ -18,7 +18,7 @@ export function ScrollCue({ tone = "auto" }: { tone?: "auto" | "paper" }) {
         focusWithoutScroll(next.querySelector<HTMLElement>("h1, h2, h3") ?? (next as HTMLElement));
     };
 
-    const ink = tone === "paper" ? "text-on-paper/75 hover:text-on-paper" : "text-lbl-55 hover:text-lbl-90 light:hover:text-fg-100";
+    const ink = tone === "paper" ? "text-on-paper/75 hover:text-on-paper" : "text-lbl-55 hover:text-lbl-90 light:text-fg-100 light:hover:text-lbl-hover";
 
     return (
         <div className="absolute left-[clamp(1rem,2.5vw,2rem)] bottom-[clamp(1rem,3vw,2rem)] z-20">
