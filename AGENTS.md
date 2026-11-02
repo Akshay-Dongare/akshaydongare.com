@@ -237,13 +237,32 @@ Google builds the result from the server HTML, so these hold it to what a recrui
 - **Site name.** The WebSite JSON-LD pairs `name: "Akshay Dongare"` with the domain as
   `alternateName`, Google's documented fallback when it is not confident in the name.
 
-### Headers
+### Security headers
 
 `next.config.ts` sends the OWASP secure-headers baseline on every path, less what Vercel already sends (HSTS):
-`X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy: strict-origin-when-cross-origin` and a
-`Permissions-Policy` that denies the camera, microphone, geolocation and the Topics API. There is no
-Content-Security-Policy on purpose: the pre-paint scripts and JSON-LD are inline, and a nonce-based policy would make
-every page render dynamically instead of prerendering.
+`X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy: strict-origin-when-cross-origin`, a
+`Permissions-Policy` that denies the camera, microphone, geolocation and the Topics API, and a
+Content-Security-Policy that allows the site's own origin and nothing else. `poweredByHeader: false` drops
+`X-Powered-By`. Nothing a visitor types reaches a page, so the policy is defence in depth: a compromised dependency
+cannot load code from another origin or send data to one, and the browser enforces the no-trackers promise on
+/privacy. It enforces rather than reports, because the site collects nothing; a violation is a console error, which
+fails the routes spec, and that spec holds the policy string, so the two change together.
+
+- **Static, never nonce-based.** A nonce differs per response, so every page would render per request and lose its
+  prerendered, cached copy. So would a `proxy`, middleware, or a page that reads `headers()` or `cookies()`.
+- **`'unsafe-inline'` for scripts and styles.** Next inlines the RSC payload as scripts, and `app/layout.tsx` inlines
+  both pre-paint scripts; the payload changes per page and per build, so no hash list can follow it. React and Framer
+  Motion write style attributes. `script-src-attr 'none'` still refuses inline event handlers, which nothing uses. The
+  JSON-LD blocks are data, which the policy does not govern.
+- **`'unsafe-eval'` only under `next dev`**, which needs it for React's debugging, keyed on `NODE_ENV`.
+- **No allowance for the Vercel Toolbar.** No branch deploys (under Commands), so no preview loads it. If previews come
+  back, add the sources Vercel's Toolbar docs list (vercel.live and a few more) only when `VERCEL_ENV` is `preview`,
+  which the build fixes into the header.
+- **`img-src` takes `data:`** for the cursor's resync image (under CursorProvider). There is no
+  `upgrade-insecure-requests`, because the site loads nothing over `http:`.
+- **`/_next/image` keeps Next's own policy**, `script-src 'none'; frame-src 'none'; sandbox;`: the optimiser sets it on
+  the response, and a response's own header beats `headers()` (measured on `next start`), so that path carries one
+  policy, the stricter one.
 
 ### Accessible names and targets
 

@@ -1,8 +1,12 @@
 import { expect, test } from "@playwright/test";
 import { skipBoot } from "./helpers";
 
-// The OWASP baseline from next.config.ts, on every path.
+// The OWASP baseline from next.config.ts, on every path, with the production policy, which has no eval.
 const SECURITY_HEADERS = {
+  "content-security-policy":
+    "default-src 'self'; script-src 'self' 'unsafe-inline'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; " +
+    "img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; " +
+    "form-action 'self'; frame-ancestors 'none'",
   "x-content-type-options": "nosniff",
   "x-frame-options": "DENY",
   "referrer-policy": "strict-origin-when-cross-origin",
@@ -21,6 +25,7 @@ for (const path of PAGES) {
     const response = await page.goto(path, { waitUntil: "networkidle" });
     expect(response?.status()).toBe(200);
     expect(response?.headers()).toMatchObject(SECURITY_HEADERS);
+    expect(response?.headers()).not.toHaveProperty("x-powered-by");
     expect(errors).toEqual([]);
   });
 }
