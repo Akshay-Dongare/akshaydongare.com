@@ -75,13 +75,22 @@ version in that pull request before merging. The bot's pull requests are squash-
 and message set as below, but GitHub credits a squash commit to whoever opened the pull request, so they land on `main`
 as `dependabot[bot]`: the one exception to the authorship rule, and not one the merger can change.
 
+A commit that changes only Markdown builds no deployment either. `vercel.json`'s `ignoreCommand` diffs it against the
+last commit Vercel deployed on that branch (`VERCEL_GIT_PREVIOUS_SHA`, or the parent on a branch's first build) and
+skips the build when every changed path ends in `.md`, this file included; `.mdx` is a page and builds. So a new
+branch pushed with code under a Markdown-only head gets no preview until its next push; `main` always has a last
+deployment to compare with, so its squash commits are judged whole. A git error
+exits 1, which Vercel reads as build, so a broken diff costs an extra deployment, never a missed one. It matters
+because the hourly download refresh gives every deployment a server function, and Function Storage counts each one kept.
+
 Tests run on Node's built-in runner, which strips TypeScript itself, so they add no dependency: `tests/*.test.ts` import
 the modules they test with a `.ts` extension (`allowImportingTsExtensions`), and nothing those modules import at runtime
 may go through the `@/` alias. They cover what has broken before and runs where nothing else looks: the download figures
 and their fallback (`lib/downloads.ts`, with `fetch` stubbed), both pre-paint scripts (`lib/prepaint.ts`, run in a
-`node:vm` stand-in for the page before first paint), and the particle generators' buffers. Each was checked by
-reintroducing a past bug: flooring the monthly figure, accepting a "0" badge, and marking the boot played only after
-hydration, all fail.
+`node:vm` stand-in for the page before first paint), the particle generators' buffers, and `vercel.json`'s ignore
+command, run in a throwaway repository. Each was checked by reintroducing a past bug: flooring the monthly figure,
+accepting a "0" badge, and marking the boot played only after hydration, all fail. For the ignore command, excluding
+every path, dropping `|| false`, ignoring the last deployment and excluding `.mdx` fail too.
 `.github/workflows/ci.yml` runs lint, the type check and the tests on every pull request and on `main`, and beside
 that job a second one builds the site and runs the browser tests and the JS budget. It builds in the runner rather
 than testing the Vercel preview, which sits behind Vercel Authentication, and because the budget reads the build's own
