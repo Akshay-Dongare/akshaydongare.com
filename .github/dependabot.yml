@@ -1,5 +1,5 @@
-# Weekly dependency pull requests. CI runs lint, types and tests on each one and Vercel builds a preview, so a bump
-# that breaks something arrives red rather than on main. The notes under Commands in AGENTS.md say why the groups are
+# Weekly dependency pull requests. CI runs lint, types, tests and the browser build on each one, so a bump that breaks
+# something arrives red rather than on main. The notes under Commands in AGENTS.md say why the groups are
 # what they are.
 version: 2
 updates:
