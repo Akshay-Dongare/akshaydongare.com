@@ -1,8 +1,8 @@
 name: CI
 
 # Lint, types and unit tests on every pull request and on main; Next 16's build no longer runs the linter, so this is
-# the only place lint is enforced. The browser job builds here as well as on Vercel: previews sit behind Vercel
-# Authentication, and the budget reads the build's own output.
+# the only place lint is enforced. The browser job builds the site here, since branches get no Vercel deployment and
+# the budget reads the build's own output.
 on:
   pull_request:
   push:

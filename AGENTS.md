@@ -50,11 +50,13 @@ move the plugin on its own and bring new errors, as 7.1 did; update packages by
 name and run lint after.
 
 Dependabot (`.github/dependabot.yml`) opens update pull requests weekly, for npm and for the workflow's actions, and
-each goes through CI like any other, but with no Vercel deployment: `vercel.json` turns deployments off for
-`dependabot/**`. CI's browser job already builds every pull request, and each deployment Vercel keeps adds to the
-project's Function Storage, which the free plan caps at 10GB; a day of 89 deployments in October 2026 brought a 75%
-warning. The pattern needs both stars, because minimatch's single `*` stops at a slash and Dependabot's branches
-carry two (`dependabot/npm_and_yarn/...`), so `dependabot/*` matches none of them. Every action in the workflow is pinned to a full commit SHA
+each goes through CI like any other, with no Vercel deployment, because no branch but `main` deploys:
+`vercel.json`'s `git.deploymentEnabled` turns `**` off and `main` back on, and Vercel deploys a branch when any rule
+matching it is true. CI's browser job already builds every pull request, and each deployment Vercel keeps adds to
+Function Storage, which the free plan caps at 10GB across every project on the account; October 2026's 200-odd
+deployments, about 60% of them branch previews, went past it. The pattern needs both stars, because minimatch's single
+`*` stops at a slash and most branches carry one (`dependabot/npm_and_yarn/...`, `claude/...`), so `*` would leave
+them deploying. Every action in the workflow is pinned to a full commit SHA
 with its release in a comment, because a tag can be moved to other code and a commit cannot, which is how the
 tj-actions/changed-files compromise of March 2025 reached its users; Dependabot rewrites the SHA and the comment
 together. Pin any new action the same way, resolving the tag with `git ls-remote`. What must move together shares one pull request, majors
@@ -75,11 +77,10 @@ version in that pull request before merging. The bot's pull requests are squash-
 and message set as below, but GitHub credits a squash commit to whoever opened the pull request, so they land on `main`
 as `dependabot[bot]`: the one exception to the authorship rule, and not one the merger can change.
 
-A commit that changes only Markdown builds no deployment either. `vercel.json`'s `ignoreCommand` diffs it against the
-last commit Vercel deployed on that branch (`VERCEL_GIT_PREVIOUS_SHA`, or the parent on a branch's first build) and
-skips the build when every changed path ends in `.md`, this file included; `.mdx` is a page and builds. So a new
-branch pushed with code under a Markdown-only head gets no preview until its next push; `main` always has a last
-deployment to compare with, so its squash commits are judged whole. A git error
+A commit to `main` that changes only Markdown builds no deployment either. `vercel.json`'s `ignoreCommand` diffs it
+against the last commit Vercel deployed (`VERCEL_GIT_PREVIOUS_SHA`, or the parent when there is none) and skips the
+build when every changed path ends in `.md`, this file included; `.mdx` is a page and builds. A squash commit is
+judged whole against that last deployment. A git error
 exits 1, which Vercel reads as build, so a broken diff costs an extra deployment, never a missed one. It matters
 because the hourly download refresh gives every deployment a server function, and Function Storage counts each one kept.
 
@@ -92,9 +93,8 @@ command, run in a throwaway repository. Each was checked by reintroducing a past
 accepting a "0" badge, and marking the boot played only after hydration, all fail. For the ignore command, excluding
 every path, dropping `|| false`, ignoring the last deployment and excluding `.mdx` fail too.
 `.github/workflows/ci.yml` runs lint, the type check and the tests on every pull request and on `main`, and beside
-that job a second one builds the site and runs the browser tests and the JS budget. It builds in the runner rather
-than testing the Vercel preview, which sits behind Vercel Authentication, and because the budget reads the build's own
-output. It caches Playwright's browser download, keyed on the Playwright version, and uploads traces when a spec fails. The first job's last step, `scripts/check-fallback.ts`, fetches the live download
+that job a second one builds the site and runs the browser tests and the JS budget. It builds in the runner because
+branches get no Vercel deployment, and because the budget reads the build's own output. It caches Playwright's browser download, keyed on the Playwright version, and uploads traces when a spec fails. The first job's last step, `scripts/check-fallback.ts`, fetches the live download
 figures and prints a `::warning::` with the values to paste in when `FALLBACK` (under Download figures) has fallen more
 than 10% behind them or is no longer a floor under them. A network error is a warning too, and the step never fails
 the job. Dependabot's weekly pull requests run it, so it needs no schedule; the owner ruled out a scheduled workflow.
