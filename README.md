@@ -48,9 +48,9 @@ would only refetch an identical response.
 
 **An Open Graph card generated at build time.** `app/opengraph-image.tsx` renders
 the share card from the same values and design tokens as the site, so it cannot
-drift the way a hand-exported PNG does. Typeset in Geist, pulled from a pinned CDN
-URL inside a fallback so an unreachable CDN degrades the typeface instead of
-failing the build.
+drift the way a hand-exported PNG does. Typeset in Geist, read from a copy in
+`app/fonts` rather than a CDN, so a render never waits on the network for it; if
+the read fails, the card falls back to the renderer's default face.
 
 **A navbar that reads the page behind it.** It queries every `[data-theme]`
 element on scroll and flips its own colours based on what currently overlaps the

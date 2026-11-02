@@ -1,3 +1,5 @@
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
 import { ImageResponse } from "next/og";
 import { getPackageStats, type PackageStats } from "@/lib/downloads";
 
@@ -7,16 +9,11 @@ export const alt = "Akshay Dongare, AI Platform Engineer";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-// Pinned so the build is reproducible. If the CDN is unreachable, loadGeist returns null and the card
-// renders in ImageResponse's default face rather than failing the build.
-const GEIST_TTF =
-    "https://cdn.jsdelivr.net/npm/geist@1.3.1/dist/fonts/geist-sans/Geist-Regular.ttf";
-
-async function loadGeist(): Promise<ArrayBuffer | null> {
+// Geist 1.3.1 Regular from npm, read from the repo so a render never waits on a CDN. The path stays a literal so the
+// file is traced into the function; if the read fails, the card renders in ImageResponse's default face.
+async function loadGeist(): Promise<Buffer | null> {
     try {
-        const res = await fetch(GEIST_TTF);
-        if (!res.ok) return null;
-        return await res.arrayBuffer();
+        return await readFile(join(process.cwd(), "app/fonts/Geist-Regular.ttf"));
     } catch {
         return null;
     }
