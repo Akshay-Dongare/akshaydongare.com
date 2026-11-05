@@ -23,6 +23,27 @@
   --blend-warm: #e9e4da;
   --blend-accent: #6b9fd4;
   --blend-accent-dim: #3a6288;
+
+  /* Cards and portraits, through surface-corners. AGENTS.md, Branding. */
+  --surface-radius: 20px;
+  --surface-corner: superellipse(1.34);
+}
+@media (min-width: 768px) {
+  :root {
+    --surface-radius: 24px;
+  }
+}
+/* The raised radius needs the curve: alone it would be a visibly rounder round corner, so a browser without
+   corner-shape keeps 20px and 24px. */
+@supports (corner-shape: superellipse(1)) {
+  :root {
+    --surface-radius: 24.5px;
+  }
+  @media (min-width: 768px) {
+    :root {
+      --surface-radius: 29px;
+    }
+  }
 }
 
 /* Modes: light (Daylight Folio) is the default on :root; [data-mode="dark"] holds Deep Obsidian.
@@ -402,13 +423,9 @@ html.mode-switching *::after {
    text fades in on a card rather than over the page. */
 ::view-transition-group(card-flight) {
   overflow: clip;
-  border-radius: 20px;
+  border-radius: var(--surface-radius);
+  corner-shape: var(--surface-corner);
   background-color: var(--work-card-hover-bg);
-}
-@media (min-width: 768px) {
-  ::view-transition-group(card-flight) {
-    border-radius: 24px;
-  }
 }
 /* The outgoing card holds still underneath and the arriving one fades in over a short window mid-flight, so the
    card stays opaque and the two cards' text overlaps for about 140ms instead of the whole flight. */
@@ -635,6 +652,11 @@ html:not(.custom-cursor-active) .cursor-none {
   font-size: 0.8125rem;
   text-transform: uppercase;
   letter-spacing: 0.12em;
+}
+/* Cards and portraits only: on a pill the shape draws a rounded rectangle, and on a circle a rounded square. */
+@utility surface-corners {
+  border-radius: var(--surface-radius);
+  corner-shape: var(--surface-corner);
 }
 
 @layer utilities {

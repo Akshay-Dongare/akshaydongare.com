@@ -21,7 +21,7 @@ export function AboutContent({ stats }: { stats: PackageStats }) {
                 </h1>
 
                 <div
-                    className="enter relative mb-16 mx-auto w-full max-w-[320px] aspect-[4/5] rounded-[20px] md:rounded-3xl overflow-hidden"
+                    className="enter relative mb-16 mx-auto w-full max-w-[320px] aspect-[4/5] surface-corners overflow-hidden"
                     style={{ animationDelay: "100ms" }}
                 >
                     {/* priority: the page's LCP element must not lazy-load. sizes is the box's 320px cap, not a
