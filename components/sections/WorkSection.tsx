@@ -110,7 +110,8 @@ export function WorkSection({ stats }: { stats: PackageStats }) {
                                     <div className="flex items-center gap-3">
                                         <OrgLogo org={project.logo} paper className="[--logo-s:1.75rem] md:[--logo-s:2rem]" />
                                         {/* The name's link stretches over the card through its ::after, so the whole card opens this
-                                            entry on /work while the pills and inline links above it keep their own targets. */}
+                                            entry on /work while the pills and inline links above it keep their own targets. Its ring
+                                            sits inside the card, clear of the article's clip and always on paper. */}
                                         <h3 className="text-[1.5rem] md:text-[1.75rem] font-semibold leading-[1.1] tracking-[-0.01em] text-fg-100">
                                             <Link
                                                 href={`/work#${project.slug}`}
@@ -120,7 +121,7 @@ export function WorkSection({ stats }: { stats: PackageStats }) {
                                                     // The card flies to its place on /work (lib/cardFlight.ts), or the link navigates as usual.
                                                     flyCard(e, project.slug, () => router.push(`/work#${project.slug}`));
                                                 }}
-                                                className="cursor-none outline-none after:absolute after:inset-0 after:surface-corners focus-visible:after:outline-2 focus-visible:after:outline-offset-2 focus-visible:after:outline-current"
+                                                className="cursor-none outline-none after:absolute after:inset-0 after:surface-corners focus-visible:after:outline-2 focus-visible:after:-outline-offset-4 focus-visible:after:outline-current"
                                             >
                                                 {project.org}
                                             </Link>

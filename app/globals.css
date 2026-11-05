@@ -449,6 +449,11 @@ html.card-flight [data-landed],
 html.card-flight [data-landed] * {
   animation-play-state: paused;
 }
+/* A card pressed from the keyboard takes off without its ring: the box outgrows the outgoing snapshot, so the ring's
+   lower edge would cross the card. */
+html.card-flight .surface-paper h3 a::after {
+  outline: none;
+}
 
 /* The /work card a reader arrived at holds its hover look for the first half, then eases back to rest: held, it
    read as a stuck hover or a hung page. 100% is left out so each property returns to the card's own value. */
