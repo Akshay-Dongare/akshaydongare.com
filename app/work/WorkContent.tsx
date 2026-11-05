@@ -206,7 +206,7 @@ export function WorkContent({ stats }: { stats: PackageStats }) {
                                 id={proj.id}
                                 data-landed={proj.id && hash === proj.id ? "" : undefined}
                                 style={flight && flight.id === proj.id ? { viewTransitionName: FLIGHT_NAME } : undefined}
-                                className="group relative flex flex-col h-full scroll-mt-4 border border-[var(--work-card-edge)] rounded-[20px] md:rounded-3xl p-6 md:p-8 cursor-none bg-[var(--work-card)] shadow-[var(--work-card-shadow)] hover:bg-[var(--work-card-hover-bg)] hover:border-[var(--work-card-hover-edge)] hover:shadow-none landed:animate-[landed-card_2s_cubic-bezier(0,0,0.5,1)] transition-[background-color,border-color,box-shadow] duration-300 ease-[cubic-bezier(0,0,0.5,1)]"
+                                className="group relative flex flex-col h-full scroll-mt-4 border border-[var(--work-card-edge)] surface-corners p-6 md:p-8 cursor-none bg-[var(--work-card)] shadow-[var(--work-card-shadow)] hover:bg-[var(--work-card-hover-bg)] hover:border-[var(--work-card-hover-edge)] hover:shadow-none landed:animate-[landed-card_2s_cubic-bezier(0,0,0.5,1)] transition-[background-color,border-color,box-shadow] duration-300 ease-[cubic-bezier(0,0,0.5,1)]"
                             >
                                 {/* A row of its own, since Tech Mahindra's 4:1 lockup breaks titles inline. 40px holds
                                     the tallest mark, Harvard's shield, and the destination sits at its far end. */}
@@ -222,7 +222,7 @@ export function WorkContent({ stats }: { stats: PackageStats }) {
                                     <Link
                                         href={proj.link}
                                         aria-label={`${proj.title}${proj.affiliation ? `, ${proj.affiliation}` : ""}, on ${destinationLabel(proj.link).toLowerCase()}`}
-                                        className="cursor-none outline-none after:absolute after:inset-0 after:rounded-[20px] md:after:rounded-3xl focus-visible:after:outline-2 focus-visible:after:outline-offset-2 focus-visible:after:outline-current"
+                                        className="cursor-none outline-none after:absolute after:inset-0 after:surface-corners focus-visible:after:outline-2 focus-visible:after:outline-offset-2 focus-visible:after:outline-current"
                                     >
                                         {proj.title.replaceAll(" · ", "\u00a0· ")}
                                     </Link>

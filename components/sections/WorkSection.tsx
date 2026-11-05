@@ -99,7 +99,7 @@ export function WorkSection({ stats }: { stats: PackageStats }) {
                     {PROJECTS.map((project, i) => (
                         <m.article
                             key={project.org}
-                            className="surface-paper group relative rounded-[20px] md:rounded-3xl overflow-hidden border border-[var(--card-edge)] bg-[var(--card)] shadow-[var(--card-shadow)] hover:bg-[var(--card-hover-bg)] hover:border-[var(--card-hover-edge)] hover:shadow-none transition-[background-color,border-color,box-shadow] duration-300 ease-[cubic-bezier(0,0,0.5,1)]"
+                            className="surface-paper group relative surface-corners overflow-hidden border border-[var(--card-edge)] bg-[var(--card)] shadow-[var(--card-shadow)] hover:bg-[var(--card-hover-bg)] hover:border-[var(--card-hover-edge)] hover:shadow-none transition-[background-color,border-color,box-shadow] duration-300 ease-[cubic-bezier(0,0,0.5,1)]"
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
@@ -120,7 +120,7 @@ export function WorkSection({ stats }: { stats: PackageStats }) {
                                                     // The card flies to its place on /work (lib/cardFlight.ts), or the link navigates as usual.
                                                     flyCard(e, project.slug, () => router.push(`/work#${project.slug}`));
                                                 }}
-                                                className="cursor-none outline-none after:absolute after:inset-0 after:rounded-[20px] md:after:rounded-3xl focus-visible:after:outline-2 focus-visible:after:outline-offset-2 focus-visible:after:outline-current"
+                                                className="cursor-none outline-none after:absolute after:inset-0 after:surface-corners focus-visible:after:outline-2 focus-visible:after:outline-offset-2 focus-visible:after:outline-current"
                                             >
                                                 {project.org}
                                             </Link>

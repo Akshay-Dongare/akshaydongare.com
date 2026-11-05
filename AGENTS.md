@@ -112,14 +112,17 @@ answering 200 with no console error and the headers from `next.config.ts`, `/_no
 answers it 404, Vercel 200, so only the header is asserted), and the old URLs answering 308; the mode switch flipping
 `data-mode` both ways and `mode-switching` coming off after; every download figure on /, /work and /about a link to its
 source (under Download figures); and an unscrolled homepage fetching no three.js, while one
-scroll fetches it, so the marker string is known to still match; and a footer link or a homepage card pressed while the
-page glides landing where a calm press does. They wait on conditions, never on fixed sleeps, and there are no retries,
+scroll fetches it, so the marker string is known to still match; a footer link or a homepage card pressed while the
+page glides landing where a calm press does; and, on every page, each surface taking the superellipse and each pill and
+circle staying round, the flying card included, with a browser that has no `corner-shape` keeping the old round corners
+(under Branding), which only computed style can show, since the curve sits within a pixel of a round corner. They wait on conditions, never on fixed sleeps, and there are no retries,
 so a spec that passes on a second try counts as a flake to fix. The mode switch's frame flash is deliberately not
 tested: headless Chromium never shows it (under Navbar Dark/Light Theme Detection). Each spec was
 checked by reintroducing a past bug: PrepaintGuard doing nothing, the boot marked played only after hydration, the
 hero's facts on the site's `-10%` in-view reveal, the handoff scroll removed (40% landed as 67%), a static three.js
-import on the homepage, the mid-glide settle removed (a footer press landed 481px down), and the /work card's figures
-as plain text all fail.
+import on the homepage, the mid-glide settle removed (a footer press landed 481px down), the /work card's figures
+as plain text, the flying box left round, the `squircle` keyword on every corner, a stretched link on the old radius, a
+pill given `surface-corners` and the raised radius outside `@supports` all fail.
 
 The budget (`e2e/budget.ts`) reads `.next/diagnostics/route-bundle-stats.json`, which Next 16 writes on every build.
 Its chunk list per page matches the prerendered HTML's script tags exactly, less the nomodule polyfill a modern
@@ -338,9 +341,21 @@ frame is "AD" alone, rendered at native size: with brackets, each letter at that
 Keep these files byte-stable: Google wants a stable favicon URL, and Next's `?hash` changes
 whenever a file does.
 
-**Radii and shadows:** controls and chips are pills; every surface, cards and portraits alike, is
-20px, 24px from `md`. Shadows are ink-tinted (`var(--card-shadow)`), never black. Small controls reach
-about 44px through invisible padding or `::after`, never by drawing larger.
+**Radii and shadows:** controls and chips are pills and circles stay circles; every surface, cards and
+portraits alike, takes `surface-corners` in globals.css, on its stretched link's `::after` too, and the
+card flight's clip takes the same two tokens. Shadows are ink-tinted (`var(--card-shadow)`), never black.
+Small controls reach about 44px through invisible padding or `::after`, never by drawing larger.
+
+**The surface curve is `superellipse(1.34)` at 29px, 24.5px below `md`, by the owner's choice.** It is
+the closest `corner-shape` value to Figma's iOS corner preset (60% smoothing), 0.12px away at the desktop
+radius and 0.17px on phones. A browser without `corner-shape` keeps plain round corners at 24px and 20px,
+so the raised radius sits behind `@supports`: alone, it would be a visibly rounder round corner. In November
+2026 Chrome and Edge have it from 139, Safari's 27.3 beta notes add it and Firefox has it in Nightly only.
+The change is close to invisible by design. Round at 24px was already 0.30px from the preset, a gap of 1.25%
+of the radius, so it reaches 1px only near an 80px radius. Do not swap in the `squircle` keyword: at the same
+radius it is 4.54px from the preset and trims the corner like a plain 13px radius, so cards look tighter
+rather than smoother. Do not extend it to pills and circles either, because it turns a pill into a rounded
+rectangle and the mode knob into a rounded square. The focus ring and the hover edge follow the shape.
 
 **Portrait:** `/public/Akshay_Headshot.jpg` (1197x1497) — rendered through
 `next/image` with `fill` in two places, so each one needs a positioned ancestor
@@ -440,8 +455,8 @@ dark treatment tried (near-black, mid slate, a slate-to-navy gradient with a glo
 as flashy against it. The `.surface-paper` scope in globals.css gives everything inside the card the
 light ink ramp whatever `<html>` says, and `OrgLogo`'s `paper` prop pins LangChain to its light-ground
 file, because the `dark:` and `light:` variants still key on `<html>`. Names are 24 to 28px semibold,
-the role line is 15px sentence-case sans, the pills are flat 6% ink capsules, and corners are 20px,
-24px from `md`. ALL WORK is the same paper, darkening one step on hover as the pills do; an inverted
+the role line is 15px sentence-case sans, the pills are flat 6% ink capsules, and corners are
+`surface-corners` (under Branding). ALL WORK is the same paper, darkening one step on hover as the pills do; an inverted
 solid outweighed the cards. /work shares the geometry: opaque paper in light, and in dark one step of
 Apple-style elevation, `#1c2230`, rising to `#232a36` on hover with no glow, lift or border.
 `prefers-contrast: more` brings back a visible edge on all of them.
