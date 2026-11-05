@@ -124,6 +124,14 @@ import on the homepage, the mid-glide settle removed (a footer press landed 481p
 as plain text, the flying box left round, the `squircle` keyword on every corner, a stretched link on the old radius, a
 pill given `surface-corners` and the raised radius outside `@supports` all fail.
 
+`e2e/focus.spec.ts` is the spec that reads rendered pixels, because computed style looks right on a ring the card's clip
+hides (under Accessible names and targets): Tab onto each homepage work card ringing all four sides, at 900 wide as well
+and in both modes, and a card pressed from the keyboard taking off without that ring. The ring back outside the clip, no
+ring, a faint ring, a 1px ring and the flight's ring rule removed all fail, and dropping the clip with the ring outside it
+fails only the Harvard card at 375 in dark, while a ring flush with the card's edge passes, since the spec holds no offset.
+It waits out Tab's glide before centring a card: an instant scroll landing on a glide overshoots (under A link pressed
+mid-glide), which put the card's top under the nav in about 1 run in 40 with tracing on and in none of 380 with it off.
+
 The budget (`e2e/budget.ts`) reads `.next/diagnostics/route-bundle-stats.json`, which Next 16 writes on every build.
 Its chunk list per page matches the prerendered HTML's script tags exactly, less the nomodule polyfill a modern
 browser never fetches, so it is the first load as served; a browser fetches more right after (about 680KB on /),
@@ -316,6 +324,19 @@ router's layout-phase scroll and puts the page back there on the next frame, if 
 position again while that frame is pending, which keeps /work's pointer handoff. Reduced motion has no glide and never
 showed it. Dropping the smooth scroll would fix it too, but it would change how every focus jump, skip link and Page
 Down moves, so that is for the owner to decide, not a fix to slip in.
+
+**A homepage card's focus ring draws inside the card.** The title link's ring is on its stretched `::after`, which fills
+the article's padding box, and the article's `overflow-hidden` clips there. So the `outline-offset-2` that works on
+/work, whose cards do not clip, painted nothing: at 1440, 900 and 375, light and dark, a Tab onto any of the four changed
+nothing a reader could see at its edge, and from `lg` only the WORK label moved, while computed style read `solid 2px`.
+`-outline-offset-4` sets the ring 3px in from the edge with paper on both sides, 16.94:1 on every card, measured from 320
+to 1920 wide. Dropping the clip would show it too, and the clip paints almost nothing (3 to 50 pixels by at most 4
+levels, around the Airbnb logo), but the ring would then stand on the section's ground, which in dark mode runs into the dark
+arm: ink measured 1.9:1 along the Harvard card's lower edge at 375. A card pressed from the keyboard takes off without
+its ring (`html.card-flight` in globals.css), because the flying box outgrows the outgoing snapshot and the ring's lower
+edge would cross the card; so every frame of the flight matches a build without the ring byte for byte. `e2e/focus.spec.ts`
+compares a focused and a blurred shot of each card and asks for 2 device pixels turning 3:1 along the straight run of
+every side, SC 2.4.13's measure. It leaves the corners out, so the radius and corner shape can change under it.
 
 **Links in `.text-body` copy fill their line (`.link-in-text`).** SC 2.5.8 exempts links in a sentence
 and stock axe skips them, but the Vercel Toolbar's audit flagged Harvard University on /work. When it
