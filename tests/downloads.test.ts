@@ -32,8 +32,8 @@ afterEach(() => {
 function serve({ total, month, releases = pypi(35) }: { total: Reply; month: Reply; releases?: Reply }) {
     console.warn = () => {};
     globalThis.fetch = (async (input: string | URL | Request) => {
-        const url = String(input);
-        const reply = url.includes("personalized-badge") ? month : url.includes("pypi.org") ? releases : total;
+        const url = new URL(String(input));
+        const reply = url.pathname.includes("personalized-badge") ? month : url.hostname === "pypi.org" ? releases : total;
         if (reply instanceof Error) throw reply;
         return typeof reply === "string" ? new Response(reply) : new Response(reply.body ?? "", { status: reply.status });
     }) as typeof fetch;

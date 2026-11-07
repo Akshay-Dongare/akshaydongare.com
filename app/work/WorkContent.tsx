@@ -124,10 +124,12 @@ const buildProjects = (stats: PackageStats): Project[] => {
 };
 
 // Three cards point at the same LinkedIn profile, since that work is closed source; naming the destination up front
-// keeps a second visit to the same page from reading as a broken link.
+// keeps a second visit to the same page from reading as a broken link. It matches the host, not a substring, so a
+// path or another domain that merely contains "github.com" cannot take the label.
 function destinationLabel(url: string) {
-    if (url.includes("github.com")) return "GITHUB";
-    if (url.includes("linkedin.com")) return "LINKEDIN";
+    const host = new URL(url).hostname.replace(/^www\./, "");
+    if (host === "github.com") return "GITHUB";
+    if (host === "linkedin.com") return "LINKEDIN";
     return "OPEN";
 }
 
